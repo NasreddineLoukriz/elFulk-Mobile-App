@@ -65,5 +65,4 @@ class DefaultFirebaseOptions {
     storageBucket: 'elfulk-dev.firebasestorage.app',
     iosBundleId: 'com.elfulk.dev',
   );
-
 }
