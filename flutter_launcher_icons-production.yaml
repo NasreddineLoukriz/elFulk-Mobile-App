@@ -1,0 +1,11 @@
+# To Generate Launcher Icons
+#? dart run flutter_launcher_icons -f flutter_launcher_icons-production.yaml
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/production_launcher_icon.png"
+  remove_alpha_ios: true
+  adaptive_icon_foreground: "assets/images/production_launcher_icon_foreground.png"
+  adaptive_icon_background: "#ffffff"
+  min_sdk_android: 21
