@@ -1,46 +1,48 @@
 # Firebase Setup for Public Repository
 
-This repository follows a split policy:
+This repository keeps development Firebase configuration in version control and treats production Firebase configuration as local-only or CI-only setup.
 
-- Development Firebase config is committed.
-- Production Firebase config is local/CI only and must not be committed.
+## Committed files
 
-## Committed (development)
+Development Firebase configuration is committed:
 
 - `android/app/src/development/google-services.json`
 - `ios/config/development/GoogleService-Info.plist`
-- `lib/firebase_options_development.dart`
+- `lib/src/core/config/firebase/firebase_options_development.dart`
 
-## Not committed (production)
+## Local-only files
+
+Production Firebase configuration must not be committed:
 
 - `android/app/src/production/google-services.json`
 - `ios/config/production/GoogleService-Info.plist`
-- `lib/firebase_options_production.dart`
+- `lib/src/core/config/firebase/firebase_options_production.dart`
 
-Production files are ignored by `.gitignore`.
+## Templates included in the repo
 
-## Templates
-
-Reference templates are included:
+Reference templates are committed so production setup is discoverable:
 
 - `android/app/src/production/google-services.example.json`
 - `ios/config/production/GoogleService-Info.example.plist`
-- `lib/firebase_options_production.example.dart`
+- `lib/src/core/config/firebase/firebase_options_production.example.dart`
 
-## Contributor setup (development)
+## Development setup
 
-1. Install dependencies:
+Install dependencies:
+
 ```bash
 flutter pub get
 ```
-2. Run development flavor:
+
+Run development flavor:
+
 ```bash
 flutter run --flavor development -t lib/main_development.dart
 ```
 
-## Maintainer setup (production, local only)
+## Production local setup
 
-Generate production files locally:
+Generate production Firebase files locally:
 
 ```bash
 flutterfire configure \
@@ -48,21 +50,20 @@ flutterfire configure \
   --platforms=android,ios \
   --android-package-name=com.elfulk \
   --ios-bundle-id=com.elfulk \
-  --out=lib/firebase_options_production.dart \
+  --out=lib/src/core/config/firebase/firebase_options_production.dart \
   --android-out=android/app/src/production/google-services.json \
   --ios-out=ios/config/production/GoogleService-Info.plist \
   --yes
 ```
 
-Run production flavor:
+Current note:
 
-```bash
-flutter run --flavor production -t lib/main_production.dart
-```
+- `lib/main_production.dart` still points at the example Firebase options file in the committed baseline
+- switch it to the real local production file before treating production as fully runnable
 
 ## Safe commit check
 
-Before pushing, verify no production config is staged:
+Before pushing, confirm production Firebase files are not staged:
 
 ```bash
 git status --short
