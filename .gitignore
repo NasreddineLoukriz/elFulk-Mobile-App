@@ -48,3 +48,9 @@ app.*.map.json
 /android/app/src/production/google-services.json
 /ios/config/production/GoogleService-Info.plist
 /lib/firebase_options_production.dart
+
+# Tools and environments
+graphify-out/
+.venv/
+/README_screenutil.md 
+
