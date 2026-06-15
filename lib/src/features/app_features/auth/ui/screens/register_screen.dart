@@ -1,13 +1,15 @@
+import 'package:elfulk/src/core/helpers/src/assets_path_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart' show SvgPicture;
 import 'package:go_router/go_router.dart';
 
-import '../widgets/auth_screen_template.dart';
-import '../widgets/custom_text_field.dart';
-import '../widgets/primary_button.dart';
-import '../widgets/auth_footer_text.dart';
-import '../widgets/divider_with_text.dart';
-import '../widgets/social_button.dart';
+import 'package:elfulk/src/core/widgets/app_screen_template.dart';
+import 'package:elfulk/src/core/widgets/custom_text_field.dart';
+import 'package:elfulk/src/core/widgets/primary_button.dart';
+import 'package:elfulk/src/core/widgets/footer_text.dart';
+import 'package:elfulk/src/core/widgets/divider_with_text.dart';
+import 'package:elfulk/src/core/widgets/social_button.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -22,7 +24,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return AuthScreenTemplate(
+    return AppScreenTemplate(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
@@ -46,24 +48,24 @@ class _RegisterScreenState extends State<RegisterScreen> {
           SizedBox(height: 24.h),
 
           // حقل الاسم الكامل
-          const CustomTextField(
+           CustomTextField(
             hintText: 'الاسم كامل',
-            prefixIcon: Icons.person_outline,
+            prefixIcon: SvgPicture.asset(AssetsPathHelper.profile),
           ),
           SizedBox(height: 14.h),
 
           // حقل البريد الإلكتروني
-          const CustomTextField(
+           CustomTextField(
             hintText: 'البريد الإلكتروني',
-            prefixIcon: Icons.email_outlined,
+            prefixIcon: SvgPicture.asset(AssetsPathHelper.email),
             keyboardType: TextInputType.emailAddress,
           ),
           SizedBox(height: 14.h),
 
           // حقل كلمة المرور
-          const CustomTextField(
+           CustomTextField(
             hintText: 'كلمة المرور',
-            prefixIcon: Icons.lock_outline,
+            prefixIcon: SvgPicture.asset(AssetsPathHelper.lock),
             isPassword: true,
           ),
           SizedBox(height: 16.h),
@@ -112,7 +114,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           // زر إنشاء الحساب من الـ Widgets
           PrimaryButton(
             text: 'انشاء حساب',
-            icon: Icons.login_outlined, // استخدمنا أيقونة مشابهة للتصميم
+            icon: SvgPicture.asset(AssetsPathHelper.login), // استخدمنا أيقونة مشابهة للتصميم
             onPressed: _isTermsAccepted
                 ? () {
                     // منطق التسجيل
@@ -123,7 +125,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           SizedBox(height: 32.h),
 
           // النص السفلي للانتقال لتسجيل الدخول
-          AuthFooterText(
+          FooterText(
             questionText: 'لديك حساب بالفعل؟ ',
             actionText: 'سجل الدخول',
             onActionTap: () => context.pop(), // الرجوع لشاشة الدخول
@@ -142,7 +144,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               Expanded(
                 child: SocialButton(
                     iconSize: 22.sp,
-                  icon: Icons.apple,
+                  icon: SvgPicture.asset(AssetsPathHelper.apple),
                   type: 'Apple',
                   // appleIconSize: 22.sp,
                   onPressed: () {
@@ -154,7 +156,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               Expanded(
                 child: SocialButton(
                   iconSize: 30.sp,
-                  icon: Icons.g_mobiledata_rounded,
+                  icon: SvgPicture.asset(AssetsPathHelper.google),
                   type: 'Google',
                   // googleTextSize: 20.sp,
                   onPressed: () {

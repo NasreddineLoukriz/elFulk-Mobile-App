@@ -2,13 +2,13 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class AuthFooterText extends StatefulWidget {
+class FooterText extends StatefulWidget {
   final String questionText;
-  final String actionText; // النص الذي سيظهر كحالة افتراضية أو بعد انتهاء العداد
+  final String actionText;
   final VoidCallback onActionTap;
-  final int? countdownSeconds; // إذا تم تمرير قيمة هنا (مثال: 60)، سيتحول إلى عداد تلقائياً
+  final int? countdownSeconds;
 
-  const AuthFooterText({
+  const FooterText({
     super.key,
     required this.questionText,
     required this.actionText,
@@ -17,10 +17,10 @@ class AuthFooterText extends StatefulWidget {
   });
 
   @override
-  State<AuthFooterText> createState() => _AuthFooterTextState();
+  State<FooterText> createState() => _FooterTextState();
 }
 
-class _AuthFooterTextState extends State<AuthFooterText> {
+class _FooterTextState extends State<FooterText> {
   Timer? _timer;
   int _currentSeconds = 0;
   bool _isCountdownActive = false;
@@ -28,7 +28,6 @@ class _AuthFooterTextState extends State<AuthFooterText> {
   @override
   void initState() {
     super.initState();
-    // إذا تم تمرير عداد تنازلي، نقوم بتفعيله فوراً عند بناء الـ Widget
     if (widget.countdownSeconds != null && widget.countdownSeconds! > 0) {
       _startCountdown(widget.countdownSeconds!);
     }
@@ -40,7 +39,7 @@ class _AuthFooterTextState extends State<AuthFooterText> {
       _isCountdownActive = true;
     });
 
-    _timer?.cancel(); // إلغاء أي مؤقت قديم لتفادي تسريب الذاكرة (Memory Leak)
+    _timer?.cancel();
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (_currentSeconds == 1) {
         setState(() {
@@ -57,14 +56,12 @@ class _AuthFooterTextState extends State<AuthFooterText> {
 
   @override
   void dispose() {
-    _timer?.cancel(); // تنظيف الـ Timer فوراً عند الخروج من الشاشة
+    _timer?.cancel();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    // تحديد النص المعروض بناءً على حالة العداد
-    // إذا كان العداد نشطاً يعرض الوقت المتبقي بصيغة (0:45 مثلاً)، وإلا يعرض النص الثابت الافتراضي
     final String displayActionText = _isCountdownActive
         ? '${(_currentSeconds ~/ 60)}:${(_currentSeconds % 60).toString().padLeft(2, '0')}'
         : widget.actionText;
@@ -81,10 +78,9 @@ class _AuthFooterTextState extends State<AuthFooterText> {
         ),
         GestureDetector(
           onTap: _isCountdownActive
-              ? null // تجميد وتعطيل الضغط تماماً أثناء عمل العداد التنازلي
+              ? null
               : () {
                   widget.onActionTap();
-                  // إذا أردت إعادة تشغيل العداد تلقائياً فور الضغط على "إعادة الإرسال"
                   if (widget.countdownSeconds != null) {
                     _startCountdown(widget.countdownSeconds!);
                   }
@@ -93,8 +89,9 @@ class _AuthFooterTextState extends State<AuthFooterText> {
             displayActionText,
             style: TextStyle(
               fontSize: 13.sp,
-              // تغيير اللون إلى الرمادي ليعطي انطباعاً بصرياً بأنه غير قابل للضغط (Disabled) أثناء العد
-              color: _isCountdownActive ? Colors.grey[400] : const Color(0xFF2F857D),
+              color: _isCountdownActive
+                  ? Colors.grey[400]
+                  : const Color(0xFF2F857D),
               fontWeight: FontWeight.bold,
             ),
           ),

@@ -1,15 +1,17 @@
+import 'package:elfulk/src/core/helpers/src/assets_path_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:elfulk/src/core/config/routing/routes.dart';
 // تأكد من صحة مسار الاستيراد بناءً على مجلد مشروعك
-import 'package:elfulk/src/features/app_features/auth/ui/widgets/auth_screen_template.dart';
-import 'package:elfulk/src/features/app_features/auth/ui/widgets/custom_text_field.dart';
-import 'package:elfulk/src/features/app_features/auth/ui/widgets/primary_button.dart';
-import 'package:elfulk/src/features/app_features/auth/ui/widgets/divider_with_text.dart';
-import 'package:elfulk/src/features/app_features/auth/ui/widgets/auth_footer_text.dart';
-import 'package:elfulk/src/features/app_features/auth/ui/widgets/social_button.dart';
+import 'package:elfulk/src/core/widgets/app_screen_template.dart';
+import 'package:elfulk/src/core/widgets/custom_text_field.dart';
+import 'package:elfulk/src/core/widgets/primary_button.dart';
+import 'package:elfulk/src/core/widgets/divider_with_text.dart';
+import 'package:elfulk/src/core/widgets/footer_text.dart';
+import 'package:elfulk/src/core/widgets/social_button.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -21,7 +23,7 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
-    return AuthScreenTemplate(
+    return AppScreenTemplate(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
@@ -37,28 +39,33 @@ class _LoginScreenState extends State<LoginScreen> {
           SizedBox(height: 6.h),
           Text(
             'سجّل دخولك للوصول إلى لوحة التحكم ومتابعة أطفالك',
-            style: TextStyle(
-              fontSize: 13.sp,
-              color: Colors.grey[600],
-            ),
+            style: TextStyle(fontSize: 13.sp, color: Colors.grey[600]),
           ),
           SizedBox(height: 24.h),
 
           // حقل البريد الإلكتروني
-          const CustomTextField(
+          CustomTextField(
             hintText: 'البريد الإلكتروني',
-            prefixIcon: Icons.email_outlined,
+            prefixIcon: SvgPicture.asset(
+              AssetsPathHelper.email,
+              height: 20.w,
+              width: 20.w,
+            ),
             keyboardType: TextInputType.emailAddress,
           ),
           SizedBox(height: 14.h),
 
           // حقل كلمة المرور
-          const CustomTextField(
+          CustomTextField(
             hintText: 'كلمة المرور',
-            prefixIcon: Icons.lock_outline,
+            prefixIcon: SvgPicture.asset(
+              AssetsPathHelper.lock,
+              height: 20.w,
+              width: 20.w,
+            ),
             isPassword: true,
           ),
-          
+
           SizedBox(height: 4.h),
 
           // زر نسيت كلمة المرور؟
@@ -86,16 +93,16 @@ class _LoginScreenState extends State<LoginScreen> {
           // زر تسجيل الدخول
           PrimaryButton(
             text: 'تسجيل الدخول',
-            icon: Icons.login_outlined,
+            icon: SvgPicture.asset(AssetsPathHelper.login),
             onPressed: () {
               // Login logic
             },
           ),
-          
+
           SizedBox(height: 32.h),
 
           // النص السفلي لإنشاء حساب
-          AuthFooterText(
+          FooterText(
             questionText: 'ليس لديك حساب؟ ',
             actionText: 'أنشئ واحدًا الآن',
             onActionTap: () => context.push(Routes.registerScreen),
@@ -105,7 +112,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
           // الفاصل المعنون
           const DividerWithText(text: 'أو عن طريق'),
-          
+
           SizedBox(height: 16.h),
 
           // أزرار التسجيل عبر آبل وجوجل
@@ -114,7 +121,7 @@ class _LoginScreenState extends State<LoginScreen> {
               Expanded(
                 child: SocialButton(
                   iconSize: 22.sp,
-                  icon: Icons.apple,
+                  icon: SvgPicture.asset(AssetsPathHelper.apple),
                   type: 'Apple',
                   // appleIconSize: 22.sp,
                   onPressed: () {}, // إضافة منطق تسجيل دخول آبل
@@ -124,7 +131,7 @@ class _LoginScreenState extends State<LoginScreen> {
               Expanded(
                 child: SocialButton(
                   iconSize: 30.sp,
-                  icon: Icons.g_mobiledata_rounded,
+                  icon: SvgPicture.asset(AssetsPathHelper.google),
                   type: 'Google',
                   // googleTextSize: 20.sp,
                   onPressed: () {}, // إضافة منطق تسجيل دخول جوجل
