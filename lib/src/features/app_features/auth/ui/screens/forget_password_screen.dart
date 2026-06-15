@@ -1,20 +1,22 @@
+import 'package:elfulk/src/core/helpers/src/assets_path_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
-import '../widgets/auth_screen_template.dart';
-import '../widgets/custom_text_field.dart';
-import '../widgets/primary_button.dart';
-import '../widgets/auth_footer_text.dart';
-import '../widgets/divider_with_text.dart';
-import '../widgets/social_button.dart';
+import 'package:elfulk/src/core/widgets/app_screen_template.dart';
+import 'package:elfulk/src/core/widgets/custom_text_field.dart';
+import 'package:elfulk/src/core/widgets/primary_button.dart';
+import 'package:elfulk/src/core/widgets/footer_text.dart';
+import 'package:elfulk/src/core/widgets/divider_with_text.dart';
+import 'package:elfulk/src/core/widgets/social_button.dart';
 
 class ForgetPasswordScreen extends StatelessWidget {
   const ForgetPasswordScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return AuthScreenTemplate(
+    return AppScreenTemplate(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
@@ -38,9 +40,9 @@ class ForgetPasswordScreen extends StatelessWidget {
           SizedBox(height: 32.h),
           
           // حقل إدخال البريد الإلكتروني
-          const CustomTextField(
+           CustomTextField(
             hintText: 'البريد الإلكتروني',
-            prefixIcon: Icons.email_outlined,
+            prefixIcon: SvgPicture.asset(AssetsPathHelper.email),
             keyboardType: TextInputType.emailAddress,
           ),
           SizedBox(height: 24.h),
@@ -49,7 +51,7 @@ class ForgetPasswordScreen extends StatelessWidget {
           PrimaryButton(
             text: 'ارسال رمز التحقق',
             rtlIcon: true, // لجعل الأيقونة تظهر على اليمين
-            icon: Icons.send_rounded,
+            icon: SvgPicture.asset(AssetsPathHelper.send),
             onPressed: () {
               // إضافة منطق إرسال الرمز هنا
             },
@@ -57,7 +59,7 @@ class ForgetPasswordScreen extends StatelessWidget {
           SizedBox(height: 24.h),
           
           // نص الرجوع لتسجيل الدخول
-          AuthFooterText(
+          FooterText(
             questionText: 'تذكرت كلمة المرور الخاصة بك؟ ',
             actionText: 'سجل الدخول',
             onActionTap: () => context.pop(),
@@ -73,7 +75,7 @@ class ForgetPasswordScreen extends StatelessWidget {
             children: [
               Expanded(
                 child: SocialButton(
-                  icon: Icons.apple,
+                  icon: SvgPicture.asset(AssetsPathHelper.apple),
                   iconSize: 22.sp,
                   type: 'Apple',
                     // appleIconSize: 22.sp,
@@ -86,7 +88,7 @@ class ForgetPasswordScreen extends StatelessWidget {
               Expanded(
                 child: SocialButton(
                   iconSize: 30.sp,
-                  icon: Icons.g_mobiledata_rounded,
+                  icon: SvgPicture.asset(AssetsPathHelper.google),
                   type: 'Google',
                   // googleTextSize: 20.sp,
                   onPressed: () {

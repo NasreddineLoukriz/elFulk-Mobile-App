@@ -1,10 +1,11 @@
-import 'package:elfulk/src/features/app_features/auth/ui/widgets/auth_footer_text.dart';
+import 'package:elfulk/src/core/helpers/src/assets_path_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-// تأكد من صحة المسار حسب مجلد مشروعك
-import 'package:elfulk/src/features/app_features/auth/ui/widgets/auth_screen_template.dart';
-import 'package:elfulk/src/features/app_features/auth/ui/widgets/primary_button.dart';
+import 'package:elfulk/src/core/widgets/app_screen_template.dart';
+import 'package:elfulk/src/core/widgets/primary_button.dart';
+import 'package:elfulk/src/core/widgets/footer_text.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 // 1. تعريف الـ Enum لتحديد حالة الشاشة
 enum OtpVerificationType {
@@ -51,12 +52,9 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
     final String buttonText = isEmailActive
         ? 'تأكيد الرمز'
         : 'اعادة تعين كلمة مرور جديدة';
-    final IconData buttonIcon = isEmailActive
-        ? Icons.verified
-        : Icons.auto_fix_high;
 
     // استخدام القالب الأساسي للشاشات
-    return AuthScreenTemplate(
+    return AppScreenTemplate(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -110,7 +108,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
           SizedBox(height: 16.h),
 
           // المؤقت
-          AuthFooterText(
+          FooterText(
             countdownSeconds: 63,
             questionText: 'اعادة ارسال الرمز بعد ',
             actionText: "ارسلي",
@@ -124,7 +122,11 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
           // الزر الرئيسي من مجلد الـ Widgets
           PrimaryButton(
             text: buttonText,
-            icon: buttonIcon,
+            icon: SvgPicture.asset(
+              isEmailActive
+                  ? AssetsPathHelper.verify
+                  : AssetsPathHelper.reset,
+            ),
             // الزر سيكون Active فقط إذا تم كتابة الرمز كاملاً
             onPressed: _otpCode.length == 5
                 ? () {

@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class PrimaryButton extends StatelessWidget {
   final String text;
   final VoidCallback? onPressed;
-  final IconData? icon;
-  final bool rtlIcon; // لتحديد اتجاه الأيقونة (يمين أو يسار)
+  final SvgPicture icon;
+  final bool rtlIcon;
 
   const PrimaryButton({
-    this.rtlIcon = false, // القيمة الافتراضية هي false (الأيقونة على اليسار)
+    this.rtlIcon = false,
     super.key,
     required this.text,
     this.onPressed,
-    this.icon,
+    required this.icon,
   });
 
   @override
@@ -23,7 +24,7 @@ class PrimaryButton extends StatelessWidget {
       child: ElevatedButton(
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFF2F857D),
+          backgroundColor: const Color.fromARGB(255, 46, 140, 132),
           disabledBackgroundColor: Colors.grey.shade400,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16.r),
@@ -41,18 +42,18 @@ class PrimaryButton extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            if (icon != null) ...[
-              if (rtlIcon) ...[
-                Transform.flip(
-                  flipX: true, // قلب أفقي
-                  child: Icon(icon, color: Colors.white, size: 20.sp),
-                ),
-                SizedBox(width: 8.w),
-              ] else ...[
-                SizedBox(width: 8.w),
-                Icon(icon, color: Colors.white, size: 20.sp),
-              ],
+            ...[
+            if (rtlIcon) ...[
+              Transform.flip(
+                flipX: true,
+                child: icon,
+              ),
+              SizedBox(width: 8.w),
+            ] else ...[
+              SizedBox(width: 8.w),
+              icon,
             ],
+          ],
           ],
         ),
       ),
