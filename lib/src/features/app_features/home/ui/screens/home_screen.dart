@@ -1,15 +1,16 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
-
 import 'package:elfulk/src/core/config/app_environment.dart';
 import 'package:elfulk/src/core/config/di/dependency_injection.dart';
 import 'package:elfulk/src/core/config/routing/routes.dart';
+import 'package:elfulk/src/core/helpers/src/utils/extension/raduis_extension.dart';
+import 'package:elfulk/src/core/helpers/src/utils/extension/spacing_extension.dart';
 import 'package:elfulk/src/core/networking/helper/api_constants.dart';
 import 'package:elfulk/src/core/widgets/app_section_card.dart';
 import 'package:elfulk/src/features/app_features/home/data/view_models/home_overview_view_model.dart';
 import 'package:elfulk/src/features/app_features/home/logic/cubit/home_cubit.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -52,12 +53,17 @@ class _HomeLoadedView extends StatelessWidget {
         ),
         child: SafeArea(
           child: ListView(
-            padding: EdgeInsets.all(20.r),
+            padding: context.spacing.pagePadding,
+            // EdgeInsets.all(20.r),
             children: <Widget>[
               Container(
-                padding: EdgeInsets.all(24.r),
+                padding: EdgeInsets.all(context.spacing.lg.r),
+                //padding before is 24
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(32.r),
+                  borderRadius: BorderRadius.circular(
+                    context.radius.x4l.r,
+                  ), //x41 have value of 32
+                  // borderRadius: BorderRadius.circular(32.r),
                   gradient: const LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
@@ -80,7 +86,7 @@ class _HomeLoadedView extends StatelessWidget {
                   children: <Widget>[
                     Container(
                       padding: EdgeInsets.symmetric(
-                        horizontal: 12.w,
+                        horizontal: context.spacing.sm12,
                         vertical: 8.h,
                       ),
                       decoration: BoxDecoration(
@@ -119,7 +125,7 @@ class _HomeLoadedView extends StatelessWidget {
                     ),
                     SizedBox(height: 20.h),
                     Wrap(
-                      spacing: 10.w,
+                      spacing: context.spacing.m.w,
                       runSpacing: 10.h,
                       children: <Widget>[
                         FilledButton.tonal(
@@ -150,7 +156,7 @@ class _HomeLoadedView extends StatelessWidget {
                   ],
                 ),
               ),
-              SizedBox(height: 20.h),
+              SizedBox(height: context.spacing.lg.h),
               AppSectionCard(
                 eyebrow: 'Networking',
                 title: 'Dummy networking wired through the app stack',
@@ -159,7 +165,7 @@ class _HomeLoadedView extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Wrap(
-                      spacing: 10.w,
+                      spacing: context.spacing.m.w,
                       runSpacing: 10.h,
                       children: <Widget>[
                         _InfoChip(
@@ -180,20 +186,20 @@ class _HomeLoadedView extends StatelessWidget {
                   ],
                 ),
               ),
-              SizedBox(height: 20.h),
+              SizedBox(height: context.spacing.l.h),
               AppSectionCard(
                 eyebrow: 'Principles',
                 title: 'Current implementation principles',
                 accentColor: colorScheme.primary,
                 child: Wrap(
-                  spacing: 10.w,
+                  spacing: context.spacing.m.w,
                   runSpacing: 10.h,
                   children: overview.principles
                       .map(
                         (String principle) => Container(
                           padding: EdgeInsets.symmetric(
                             horizontal: 14.w,
-                            vertical: 10.h,
+                            vertical: context.spacing.m.h,
                           ),
                           decoration: BoxDecoration(
                             color: const Color(0xFFF0F7F5),
