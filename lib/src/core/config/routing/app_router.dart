@@ -17,16 +17,33 @@ import 'package:elfulk/src/features/parent_features/parent_home/logic/cubit/pare
 import 'package:elfulk/src/features/parent_features/parent_home/ui/screens/parent_home_screen.dart';
 import 'package:elfulk/src/features/parent_features/parent_requests/logic/bloc/parent_requests_bloc.dart';
 import 'package:elfulk/src/features/parent_features/parent_requests/ui/screens/parent_requests_screen.dart';
-
+import 'package:elfulk/src/features/app_features/onboarding/logic/cubit/onboarding_cubit.dart';
+import 'package:elfulk/src/features/app_features/onboarding/ui/screens/onboarding_screen.dart';
 import '../../../features/app_features/auth/ui/screens/otp_verification_screen.dart';
 import 'routes.dart';
 
 class AppRouter {
   AppRouter._();
-
   static final GoRouter router = GoRouter(
-    initialLocation: Routes.homeScreen,
+    initialLocation: Routes.onboardingScreen, // ✅ démarre sur onboarding
+    redirect: (context, state) async {
+      final bool done = await OnboardingCubit.isOnboardingDone();
+      if (done && state.matchedLocation == Routes.onboardingScreen) {
+        return Routes.loginScreen;
+      }
+      return null;
+    },
     routes: <RouteBase>[
+      // ✅ Route onboarding — première dans la liste
+      GoRoute(
+        path: Routes.onboardingScreen,
+        pageBuilder: (context, state) => MaterialPage<void>(
+          child: BlocProvider(
+            create: (_) => OnboardingCubit(),
+            child: const OnboardingScreen(),
+          ),
+        ),
+      ),
       GoRoute(
         path: Routes.homeScreen,
         pageBuilder: (BuildContext context, GoRouterState state) =>
@@ -39,32 +56,28 @@ class AppRouter {
       ),
       GoRoute(
         path: Routes.loginScreen,
-        pageBuilder:
-            (BuildContext context, GoRouterState state) =>
-                const MaterialPage<void>(child: LoginScreen()),
+        pageBuilder: (BuildContext context, GoRouterState state) =>
+            const MaterialPage<void>(child: LoginScreen()),
       ),
       GoRoute(
         path: Routes.registerScreen,
-        pageBuilder:
-            (BuildContext context, GoRouterState state) =>
-                const MaterialPage<void>(child: RegisterScreen()),
-
+        pageBuilder: (BuildContext context, GoRouterState state) =>
+            const MaterialPage<void>(child: RegisterScreen()),
       ),
-      GoRoute(path: Routes.otpVerificationScreen,
+      GoRoute(
+        path: Routes.otpVerificationScreen,
         pageBuilder: (BuildContext context, GoRouterState state) {
-          final OtpVerificationType type = state.uri.queryParameters['type'] == 'email'
+          final OtpVerificationType type =
+              state.uri.queryParameters['type'] == 'email'
               ? OtpVerificationType.emailVerification
               : OtpVerificationType.passwordReset;
-          return MaterialPage<void>(
-            child: OtpVerificationScreen(type: type),
-          );
+          return MaterialPage<void>(child: OtpVerificationScreen(type: type));
         },
       ),
       GoRoute(
         path: Routes.forgetPasswordScreen,
-        pageBuilder:
-            (BuildContext context, GoRouterState state) =>
-                const MaterialPage<void>(child: ForgetPasswordScreen()),
+        pageBuilder: (BuildContext context, GoRouterState state) =>
+            const MaterialPage<void>(child: ForgetPasswordScreen()),
       ),
       GoRoute(
         path: Routes.parentHomeScreen,
