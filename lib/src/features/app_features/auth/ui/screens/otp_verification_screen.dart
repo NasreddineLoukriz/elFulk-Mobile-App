@@ -1,22 +1,20 @@
-import 'package:elfulk/src/core/helpers/src/assets_path_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
-import 'package:elfulk/src/core/widgets/app_screen_template.dart';
-import 'package:elfulk/src/core/widgets/primary_button.dart';
-import 'package:elfulk/src/core/widgets/footer_text.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-// 1. تعريف الـ Enum لتحديد حالة الشاشة
+import 'package:elfulk/src/core/helpers/src/assets_path_helper.dart';
+import 'package:elfulk/src/core/widgets/app_screen_template.dart';
+import 'package:elfulk/src/core/widgets/footer_text.dart';
+import 'package:elfulk/src/core/widgets/primary_button.dart';
+
 enum OtpVerificationType {
-  emailVerification, // تفقد بريدك الالكتروني
-  passwordReset, // أرسلنا لك رمز التحقق
+  emailVerification,
+  passwordReset,
 }
 
 class OtpVerificationScreen extends StatefulWidget {
   final OtpVerificationType type;
- 
- 
+
   const OtpVerificationScreen({super.key, required this.type});
 
   @override
@@ -24,7 +22,7 @@ class OtpVerificationScreen extends StatefulWidget {
 }
 
 class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
-  String _otpCode = ''; // الكود المدخل من 5 أرقام
+  String _otpCode = '';
 
   void _onDigitPress(String digit) {
     if (_otpCode.length < 5) {
@@ -44,7 +42,9 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isEmailActive = widget.type == OtpVerificationType.emailVerification;
+    final ThemeData theme = Theme.of(context);
+    final bool isEmailActive =
+        widget.type == OtpVerificationType.emailVerification;
 
     final String titleText = isEmailActive
         ? 'تفقد بريدك الالكتروني.'
@@ -53,73 +53,81 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
         ? 'تأكيد الرمز'
         : 'اعادة تعين كلمة مرور جديدة';
 
-    // استخدام القالب الأساسي للشاشات
     return AppScreenTemplate(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             titleText,
-            style: TextStyle(
-              fontSize: 24.sp,
-              fontWeight: FontWeight.bold,
-              color: const Color(0xFF10363A),
-            ),
+            style: theme.textTheme.headlineSmall?.copyWith(
+                  fontSize: 24.sp,
+                  fontWeight: FontWeight.bold,
+                ) ??
+                TextStyle(
+                  fontSize: 24.sp,
+                  fontWeight: FontWeight.bold,
+                  color: theme.colorScheme.onSurface,
+                ),
           ),
           SizedBox(height: 8.h),
           Text(
             'ادخل الرمز المكون من 5 أرقام الذي أرسلناه.',
-            style: TextStyle(fontSize: 14.sp, color: Colors.grey[500]),
+            style: theme.textTheme.bodyMedium?.copyWith(
+              fontSize: 14.sp,
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+            ),
           ),
           SizedBox(height: 24.h),
 
-          // مربعات إدخال الرمز (5 خانات)
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            textDirection: TextDirection.ltr, // لضمان ترتيب الخانات من اليسار لليمين
+            textDirection: TextDirection.ltr,
             children: List.generate(5, (index) {
-              bool isFilled = index < _otpCode.length;
-  
+              final bool isFilled = index < _otpCode.length;
+
               return Container(
                 width: 50.w,
                 height: 55.h,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: theme.colorScheme.surfaceContainerHighest,
                   borderRadius: BorderRadius.circular(8.r),
                   border: Border.all(
                     color: isFilled
-                        ? const Color(0xFF2F857D)
-                        : Colors.grey.shade400,
+                        ? theme.colorScheme.primary
+                        : theme.colorScheme.outline,
                     width: 1.5,
                   ),
                 ),
                 child: Text(
                   isFilled ? _otpCode[index] : '',
-                  style: TextStyle(
-                    fontSize: 22.sp,
-                    fontWeight: FontWeight.bold,
-                    color: const Color(0xFF2F857D),
-                  ),
+                  style: theme.textTheme.headlineSmall?.copyWith(
+                        fontSize: 22.sp,
+                        fontWeight: FontWeight.bold,
+                        color: theme.colorScheme.primary,
+                      ) ??
+                      TextStyle(
+                        fontSize: 22.sp,
+                        fontWeight: FontWeight.bold,
+                        color: theme.colorScheme.primary,
+                      ),
                 ),
               );
             }),
           ),
           SizedBox(height: 16.h),
 
-          // المؤقت
           FooterText(
             countdownSeconds: 63,
             questionText: 'اعادة ارسال الرمز بعد ',
             actionText: "ارسلي",
             onActionTap: () {
-              // منطق إعادة إرسال الرمز
+              // Resend code logic
             },
           ),
-      
+
           SizedBox(height: 16.h),
 
-          // الزر الرئيسي من مجلد الـ Widgets
           PrimaryButton(
             text: buttonText,
             icon: SvgPicture.asset(
@@ -127,54 +135,54 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                   ? AssetsPathHelper.verify
                   : AssetsPathHelper.reset,
             ),
-            // الزر سيكون Active فقط إذا تم كتابة الرمز كاملاً
             onPressed: _otpCode.length == 5
                 ? () {
-                    // منطق التحقق والانتقال
+                    // Verify logic
                   }
                 : null,
           ),
 
-          SizedBox(height: 32.h), // مساحة بدلاً من Spacer بسبب الـ ScrollView
-          // لوحة الأرقام
-          _buildCustomKeypad(),
+          SizedBox(height: 32.h),
+          _buildCustomKeypad(theme),
         ],
       ),
     );
   }
 
-  Widget _buildCustomKeypad() {
+  Widget _buildCustomKeypad(ThemeData theme) {
     return Column(
       children: [
-        _buildKeypadRow(['1', '2', '3']),
+        _buildKeypadRow(theme, ['1', '2', '3']),
         SizedBox(height: 12.h),
-        _buildKeypadRow(['4', '5', '6']),
+        _buildKeypadRow(theme, ['4', '5', '6']),
         SizedBox(height: 12.h),
-        _buildKeypadRow(['7', '8', '9']),
+        _buildKeypadRow(theme, ['7', '8', '9']),
         SizedBox(height: 12.h),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             _buildKeypadButton(
+              theme,
               icon: Icons.backspace_outlined,
               isBackspace: true,
             ),
-            _buildKeypadButton(text: '0'),
-            _buildKeypadButton(icon: Icons.refresh),
+            _buildKeypadButton(theme, text: '0'),
+            _buildKeypadButton(theme, icon: Icons.refresh),
           ],
         ),
       ],
     );
   }
 
-  Widget _buildKeypadRow(List<String> digits) {
+  Widget _buildKeypadRow(ThemeData theme, List<String> digits) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: digits.map((digit) => _buildKeypadButton(text: digit)).toList(),
+      children: digits.map((digit) => _buildKeypadButton(theme, text: digit)).toList(),
     );
   }
 
-  Widget _buildKeypadButton({
+  Widget _buildKeypadButton(
+    ThemeData theme, {
     String? text,
     IconData? icon,
     bool isBackspace = false,
@@ -195,20 +203,24 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
         width: 100.w,
         height: 42.h,
         decoration: BoxDecoration(
-          color: const Color(0xFFE8EEF1),
+          color: theme.colorScheme.surfaceContainer,
           borderRadius: BorderRadius.circular(12.r),
         ),
         child: Center(
           child: text != null
               ? Text(
                   text,
-                  style: TextStyle(
-                    fontSize: 22.sp,
-                    fontWeight: FontWeight.w600,
-                    color: const Color(0xFF10363A),
-                  ),
+                  style: theme.textTheme.titleMedium?.copyWith(
+                        fontSize: 22.sp,
+                        fontWeight: FontWeight.w600,
+                      ) ??
+                      TextStyle(
+                        fontSize: 22.sp,
+                        fontWeight: FontWeight.w600,
+                        color: theme.colorScheme.onSurface,
+                      ),
                 )
-              : Icon(icon, size: 24.sp, color: const Color(0xFF10363A)),
+              : Icon(icon, size: 24.sp, color: theme.colorScheme.onSurface),
         ),
       ),
     );

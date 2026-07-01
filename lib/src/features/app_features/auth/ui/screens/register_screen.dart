@@ -1,14 +1,14 @@
-import 'package:elfulk/src/core/helpers/src/assets_path_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart' show SvgPicture;
 import 'package:go_router/go_router.dart';
 
+import 'package:elfulk/src/core/helpers/src/assets_path_helper.dart';
 import 'package:elfulk/src/core/widgets/app_screen_template.dart';
 import 'package:elfulk/src/core/widgets/custom_text_field.dart';
-import 'package:elfulk/src/core/widgets/primary_button.dart';
-import 'package:elfulk/src/core/widgets/footer_text.dart';
 import 'package:elfulk/src/core/widgets/divider_with_text.dart';
+import 'package:elfulk/src/core/widgets/footer_text.dart';
+import 'package:elfulk/src/core/widgets/primary_button.dart';
 import 'package:elfulk/src/core/widgets/social_button.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -19,58 +19,58 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
-  // متغير للتحكم في حالة الموافقة على الشروط
   bool _isTermsAccepted = true;
 
   @override
   Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+
     return AppScreenTemplate(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          // النصوص العلوية
           Text(
             'ابدأ رحلتك مع الفلك.',
-            style: TextStyle(
-              fontSize: 24.sp,
-              fontWeight: FontWeight.bold,
-              color: const Color(0xFF10363A),
-            ),
+            style: theme.textTheme.headlineSmall?.copyWith(
+                  fontSize: 24.sp,
+                  fontWeight: FontWeight.bold,
+                ) ??
+                TextStyle(
+                  fontSize: 24.sp,
+                  fontWeight: FontWeight.bold,
+                  color: theme.colorScheme.onSurface,
+                ),
           ),
           SizedBox(height: 6.h),
           Text(
             'أنشئ حسابك في دقيقة وامنح طفلك فضاءً رقميًا آمنًا.',
-            style: TextStyle(
+            style: theme.textTheme.bodyMedium?.copyWith(
               fontSize: 13.sp,
-              color: Colors.grey[600],
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
             ),
           ),
           SizedBox(height: 24.h),
 
-          // حقل الاسم الكامل
-           CustomTextField(
+          CustomTextField(
             hintText: 'الاسم كامل',
             prefixIcon: SvgPicture.asset(AssetsPathHelper.profile),
           ),
           SizedBox(height: 14.h),
 
-          // حقل البريد الإلكتروني
-           CustomTextField(
+          CustomTextField(
             hintText: 'البريد الإلكتروني',
             prefixIcon: SvgPicture.asset(AssetsPathHelper.email),
             keyboardType: TextInputType.emailAddress,
           ),
           SizedBox(height: 14.h),
 
-          // حقل كلمة المرور
-           CustomTextField(
+          CustomTextField(
             hintText: 'كلمة المرور',
             prefixIcon: SvgPicture.asset(AssetsPathHelper.lock),
             isPassword: true,
           ),
           SizedBox(height: 16.h),
 
-          // زر الموافقة على الشروط والأحكام
           Row(
             children: [
               GestureDetector(
@@ -81,7 +81,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 },
                 child: Icon(
                   _isTermsAccepted ? Icons.check_circle : Icons.circle_outlined,
-                  color: const Color(0xFF2F857D),
+                  color: theme.colorScheme.primary,
                   size: 20.sp,
                 ),
               ),
@@ -90,16 +90,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 child: RichText(
                   text: TextSpan(
                     text: 'أوافق على ',
-                    style: TextStyle(
-                      fontSize: 12.sp,
-                      color: const Color(0xFF10363A),
-                      fontWeight: FontWeight.w600,
-                    ),
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                          fontSize: 12.sp,
+                          fontWeight: FontWeight.w600,
+                        ) ??
+                        TextStyle(
+                          fontSize: 12.sp,
+                          color: theme.colorScheme.onSurface,
+                          fontWeight: FontWeight.w600,
+                        ),
                     children: [
                       TextSpan(
                         text: 'شروط الاستخدام وسياسة الخصوصية.',
-                        style: const TextStyle(
-                          color: Color(0xFF2F857D),
+                        style: TextStyle(
+                          color: theme.colorScheme.primary,
                           decoration: TextDecoration.underline,
                         ),
                       ),
@@ -111,45 +115,38 @@ class _RegisterScreenState extends State<RegisterScreen> {
           ),
           SizedBox(height: 24.h),
 
-          // زر إنشاء الحساب من الـ Widgets
           PrimaryButton(
             text: 'انشاء حساب',
-            icon: SvgPicture.asset(AssetsPathHelper.login), // استخدمنا أيقونة مشابهة للتصميم
+            icon: SvgPicture.asset(AssetsPathHelper.login),
             onPressed: _isTermsAccepted
                 ? () {
-                    // منطق التسجيل
+                    // Register logic
                   }
-                : null, // تعطيل الزر إذا لم تتم الموافقة
+                : null,
           ),
-          
+
           SizedBox(height: 32.h),
 
-          // النص السفلي للانتقال لتسجيل الدخول
           FooterText(
             questionText: 'لديك حساب بالفعل؟ ',
             actionText: 'سجل الدخول',
-            onActionTap: () => context.pop(), // الرجوع لشاشة الدخول
+            onActionTap: () => context.pop(),
           ),
 
           SizedBox(height: 16.h),
 
-          // الفاصل المعنون
           const DividerWithText(text: 'او عن طريق'),
-          
+
           SizedBox(height: 16.h),
 
-          // أزرار التسجيل عبر آبل وجوجل
           Row(
             children: [
               Expanded(
                 child: SocialButton(
-                    iconSize: 22.sp,
+                  iconSize: 22.sp,
                   icon: SvgPicture.asset(AssetsPathHelper.apple),
                   type: 'Apple',
-                  // appleIconSize: 22.sp,
-                  onPressed: () {
-                    // منطق آبل
-                  },
+                  onPressed: () {},
                 ),
               ),
               SizedBox(width: 16.w),
@@ -158,10 +155,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   iconSize: 30.sp,
                   icon: SvgPicture.asset(AssetsPathHelper.google),
                   type: 'Google',
-                  // googleTextSize: 20.sp,
-                  onPressed: () {
-                    // منطق جوجل
-                  },
+                  onPressed: () {},
                 ),
               ),
             ],

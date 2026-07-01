@@ -1,14 +1,14 @@
-import 'package:elfulk/src/core/helpers/src/assets_path_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:elfulk/src/core/helpers/src/assets_path_helper.dart';
 import 'package:elfulk/src/core/widgets/app_screen_template.dart';
 import 'package:elfulk/src/core/widgets/custom_text_field.dart';
-import 'package:elfulk/src/core/widgets/primary_button.dart';
-import 'package:elfulk/src/core/widgets/footer_text.dart';
 import 'package:elfulk/src/core/widgets/divider_with_text.dart';
+import 'package:elfulk/src/core/widgets/footer_text.dart';
+import 'package:elfulk/src/core/widgets/primary_button.dart';
 import 'package:elfulk/src/core/widgets/social_button.dart';
 
 class ForgetPasswordScreen extends StatelessWidget {
@@ -16,61 +16,62 @@ class ForgetPasswordScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+
     return AppScreenTemplate(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Text(
             'نسيت كلمة المرور؟',
-            style: TextStyle(
-              fontSize: 26.sp,
-              fontWeight: FontWeight.bold,
-              color: const Color(0xFF10363A),
-            ),
+            style: theme.textTheme.headlineSmall?.copyWith(
+                  fontSize: 26.sp,
+                  fontWeight: FontWeight.bold,
+                ) ??
+                TextStyle(
+                  fontSize: 26.sp,
+                  fontWeight: FontWeight.bold,
+                  color: theme.colorScheme.onSurface,
+                ),
           ),
           SizedBox(height: 12.h),
           Text(
             'أدخل بريدك الإلكتروني وسنرسل لك رمز التحقق.',
-            style: TextStyle(
+            style: theme.textTheme.bodyMedium?.copyWith(
               fontSize: 14.sp,
-              color: Colors.grey[500],
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
             ),
             textAlign: TextAlign.center,
           ),
           SizedBox(height: 32.h),
-          
-          // حقل إدخال البريد الإلكتروني
-           CustomTextField(
+
+          CustomTextField(
             hintText: 'البريد الإلكتروني',
             prefixIcon: SvgPicture.asset(AssetsPathHelper.email),
             keyboardType: TextInputType.emailAddress,
           ),
           SizedBox(height: 24.h),
-          
-          // زر الإرسال الرئيسي
+
           PrimaryButton(
             text: 'ارسال رمز التحقق',
-            rtlIcon: true, // لجعل الأيقونة تظهر على اليمين
+            rtlIcon: true,
             icon: SvgPicture.asset(AssetsPathHelper.send),
             onPressed: () {
-              // إضافة منطق إرسال الرمز هنا
+              // Send code logic
             },
           ),
           SizedBox(height: 24.h),
-          
-          // نص الرجوع لتسجيل الدخول
+
           FooterText(
             questionText: 'تذكرت كلمة المرور الخاصة بك؟ ',
             actionText: 'سجل الدخول',
             onActionTap: () => context.pop(),
           ),
           SizedBox(height: 32.h),
-          
-          // فاصل الدخول بطرق أخرى
+
           const DividerWithText(text: 'او عن طريق'),
           SizedBox(height: 24.h),
-          
-          // أزرار آبل وجوجل
+
           Row(
             children: [
               Expanded(
@@ -78,10 +79,7 @@ class ForgetPasswordScreen extends StatelessWidget {
                   icon: SvgPicture.asset(AssetsPathHelper.apple),
                   iconSize: 22.sp,
                   type: 'Apple',
-                    // appleIconSize: 22.sp,
-                  onPressed: () {
-                    // منطق تسجيل الدخول عبر آبل
-                  },
+                  onPressed: () {},
                 ),
               ),
               SizedBox(width: 16.w),
@@ -90,10 +88,7 @@ class ForgetPasswordScreen extends StatelessWidget {
                   iconSize: 30.sp,
                   icon: SvgPicture.asset(AssetsPathHelper.google),
                   type: 'Google',
-                  // googleTextSize: 20.sp,
-                  onPressed: () {
-                    // منطق تسجيل الدخول عبر جوجل
-                  },
+                  onPressed: () {},
                 ),
               ),
             ],
@@ -103,4 +98,3 @@ class ForgetPasswordScreen extends StatelessWidget {
     );
   }
 }
-
