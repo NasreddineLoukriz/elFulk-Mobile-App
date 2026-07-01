@@ -17,6 +17,7 @@ import 'package:elfulk/src/features/parent_features/parent_home/data/repos/paren
 import 'package:elfulk/src/features/parent_features/parent_home/logic/cubit/parent_home_cubit.dart';
 import 'package:elfulk/src/features/parent_features/parent_requests/data/repos/parent_requests_repository.dart';
 import 'package:elfulk/src/features/parent_features/parent_requests/logic/bloc/parent_requests_bloc.dart';
+import 'package:elfulk/src/core/theme/logic/cubit/theme_cubit.dart';
 
 final GetIt getIt = GetIt.instance;
 
@@ -69,4 +70,6 @@ Future<void> setupGetIt(AppEnvironment environment) async {
   getIt.registerFactory<ArchitectureCubit>(
     () => ArchitectureCubit(getIt<ArchitectureRepository>()),
   );
+
+  getIt.registerFactory<ThemeCubit>(() => ThemeCubit());
 }
