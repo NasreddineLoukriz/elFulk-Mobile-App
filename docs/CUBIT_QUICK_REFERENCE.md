@@ -20,6 +20,7 @@ Use `Bloc` when:
 Current Cubit examples:
 
 - `app_features/onboarding` (page index, completion flag)
+- `core/theme` (theme mode persistence)
 - `app_features/home`
 - `app_features/architecture`
 - `parent_features/parent_home`

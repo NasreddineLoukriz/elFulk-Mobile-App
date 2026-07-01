@@ -40,6 +40,7 @@ lib/src/features/<group>/<feature>/
 Cubit examples:
 
 - `app_features/onboarding` (local page state + SharedPreferences completion flag)
+- `core/theme` (theme mode persistence)
 - `app_features/home`
 - `app_features/architecture`
 - `parent_features/parent_home`

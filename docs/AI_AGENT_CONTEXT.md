@@ -24,6 +24,9 @@ Core app paths:
 - `lib/src/core/config/routing/app_router.dart`
 - `lib/src/core/helpers/helpers.dart`
 - `lib/src/core/networking/`
+- `lib/src/core/theme/app_theme.dart`
+- `lib/src/core/theme/app_colors.dart`
+- `lib/src/core/theme/logic/cubit/theme_cubit.dart`
 - `lib/src/features/`
 
 ## 2) Current app baseline
@@ -85,7 +88,7 @@ Current usage:
 
 Current examples:
 
-- Cubit: `HomeCubit`, `ParentHomeCubit`, `ChildHomeCubit`, `ArchitectureCubit`
+- Cubit: `HomeCubit`, `ParentHomeCubit`, `ChildHomeCubit`, `ArchitectureCubit`, `OnboardingCubit`, `ThemeCubit`
 - Bloc: `ParentRequestsBloc`
 
 ## 5) Routing
@@ -196,6 +199,8 @@ Current status:
 - move shared reusable widgets into `lib/src/core/widgets/` only after actual repetition appears
 - use the core design tokens for spacing and radius (`AppSpacing`, `AppRadius`, `AppBreakpoints`) where appropriate
 - auth and onboarding screens are RTL and use the shared `AppScreenTemplate`
+- the app supports light and dark themes; read colors from `Theme.of(context).colorScheme` or `Theme.of(context).textTheme` instead of hard-coding them
+- `ThemeCubit` persists the user's choice in `SharedPreferences` and provides `themeMode` to `MaterialApp.router`
 
 ## 11) Common commands
 

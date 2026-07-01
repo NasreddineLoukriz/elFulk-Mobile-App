@@ -14,8 +14,12 @@ flowchart TD
     F --> G[configureApiBaseUrl]
     F --> H[DioFactory.getDio]
     F --> I[register ApiServices Repositories Cubits and Blocs]
+    F --> T[register ThemeCubit]
     I --> J[runApp ElFulkApp]
+    T --> J
     J --> K[ScreenUtilInit]
+    K --> L[BlocProvider ThemeCubit]
+    L --> M[MaterialApp.router theme darkTheme themeMode]
 ```
 
 ## 2) Routing and feature groups
@@ -89,7 +93,12 @@ lib/
         error/
         helper/
       theme/
+        app_colors.dart
         app_theme.dart
+        logic/
+          cubit/
+            theme_cubit.dart
+            theme_state.dart
       widgets/
         app_screen_template.dart
         app_section_card.dart
@@ -98,6 +107,7 @@ lib/
         footer_text.dart
         primary_button.dart
         social_button.dart
+        theme_toggle_button.dart
     features/
       app_features/
         onboarding/

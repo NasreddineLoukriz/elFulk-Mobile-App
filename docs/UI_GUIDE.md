@@ -21,9 +21,11 @@ Typical optional folders:
 - `data/request_models/` only when the feature writes data
 - `ui/widgets/` only when the feature has local reusable widgets
 
-## 2) Design tokens and responsive sizing
+## 2) Design tokens, theming, and responsive sizing
 
-The app now uses a small design-token layer in `lib/src/core/constants/`:
+### Spacing and radius tokens
+
+The app uses a small design-token layer in `lib/src/core/constants/`:
 
 - `AppBreakpoints`: `mobile = 600`, `tablet = 1024`
 - `AppSpacing`: responsive spacing values that switch between mobile and tablet breakpoints
@@ -35,6 +37,23 @@ Access them through `BuildContext` extensions in `lib/src/core/helpers/src/utils
 context.spacing.md   // responsive spacing
 context.radius.lg    // radius token
 ```
+
+### Theming
+
+The app supports light and dark modes:
+
+- `lib/src/core/theme/app_colors.dart` defines semantic color tokens for both brightness values
+- `lib/src/core/theme/app_theme.dart` exposes `buildLightTheme()` and `buildDarkTheme()`
+- `ThemeCubit` loads and persists the user's choice (`light` / `dark` / `system`) in `SharedPreferences`
+- `ElFulkApp` supplies `theme`, `darkTheme`, and `themeMode` to `MaterialApp.router`
+- `ThemeToggleButton` cycles through light → dark → system
+
+Rules:
+
+- do not hard-code `Color(0xFF…)` or `Colors.white` / `Colors.black` in widgets
+- read colors from `Theme.of(context).colorScheme` or text styles from `Theme.of(context).textTheme`
+- use `AppColors` directly only for colors that do not map cleanly to `ColorScheme`
+- when opacity is needed, use `.withValues(alpha: …)` (not the deprecated `.withOpacity`)
 
 Existing sizing rules:
 
