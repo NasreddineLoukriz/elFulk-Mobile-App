@@ -21,12 +21,44 @@ Typical optional folders:
 - `data/request_models/` only when the feature writes data
 - `ui/widgets/` only when the feature has local reusable widgets
 
-Sizing rule:
+## 2) Design tokens and responsive sizing
+
+The app now uses a small design-token layer in `lib/src/core/constants/`:
+
+- `AppBreakpoints`: `mobile = 600`, `tablet = 1024`
+- `AppSpacing`: responsive spacing values that switch between mobile and tablet breakpoints
+- `AppRadius`: semantic radius tokens (`xs`, `sm`, `md`, `lg`, `xl`, `xxl`, ...)
+
+Access them through `BuildContext` extensions in `lib/src/core/helpers/src/utils/extension/`:
+
+```dart
+context.spacing.md   // responsive spacing
+context.radius.lg    // radius token
+```
+
+Existing sizing rules:
 
 - initialize `ScreenUtilInit` once at the app shell
 - use `.w`, `.h`, `.r`, and `.sp` for UI dimensions and font sizes
+- prefer design tokens over hard-coded values for spacing and radius
 
-## 2) State and UI contract
+## 3) Shared core widgets
+
+Reusable widgets live in `lib/src/core/widgets/`. Use them for auth, onboarding, and future form flows:
+
+- `AppScreenTemplate`: RTL scaffold with top logo area, rounded white bottom sheet, and keyboard-aware layout
+- `PrimaryButton`: full-width elevated button with optional icon and RTL icon flipping
+- `CustomTextField`: text field with SVG prefix icon, optional password toggle, and error border coloring
+- `SocialButton`: outlined button for social login icons
+- `DividerWithText`: horizontal divider with centered label
+- `FooterText`: question/action link row with optional countdown timer (used for resend OTP)
+
+Guideline:
+
+- extract a widget to `lib/src/core/widgets/` only after it is reused across features
+- keep feature-specific variants inside the feature's `ui/widgets/`
+
+## 4) State and UI contract
 
 Use `BlocBuilder`, `BlocListener`, or `BlocConsumer`.
 
@@ -37,10 +69,10 @@ Rules:
 - repositories and services stay out of widgets
 - widgets and screens consume view models only
 - request models and response models stay out of the UI layer
-- avoid hard-coded pixel dimensions in widgets when a ScreenUtil unit is appropriate
+- avoid hard-coded pixel dimensions in widgets when a ScreenUtil unit or design token is appropriate
 - prefer `lib/src/core/helpers/helpers.dart` for shared spacing, validators, extensions, and formatting instead of duplicating utility code inside features
 
-## 3) Networking contract
+## 5) Networking contract
 
 Use the same pattern for all features:
 
@@ -50,15 +82,17 @@ Use the same pattern for all features:
 - `Cubit` or `Bloc` maps response models into view models before state emission
 - `Screen` for rendering
 
-## 4) Current example features
+## 6) Current example features
 
+- `app_features/onboarding`
+- `app_features/auth` (login, register, forget password, OTP verification)
 - `app_features/home`
 - `parent_features/parent_home`
 - `parent_features/parent_requests`
 - `child_features/child_home`
 - `app_features/architecture`
 
-## 5) Build runner
+## 7) Build runner
 
 Run after changing Freezed, Retrofit, or JsonSerializable files:
 

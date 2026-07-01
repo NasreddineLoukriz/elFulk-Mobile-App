@@ -12,11 +12,19 @@ Development Firebase configuration is committed:
 
 ## Local-only files
 
-Production Firebase configuration must not be committed:
+Real production Firebase configuration must not be committed:
 
 - `android/app/src/production/google-services.json`
 - `ios/config/production/GoogleService-Info.plist`
 - `lib/src/core/config/firebase/firebase_options_production.dart`
+
+## Committed placeholder
+
+The production Dart options file is currently committed with dummy values so the app stays compilable:
+
+- `lib/src/core/config/firebase/firebase_options_production.dart`
+
+This file uses placeholder API keys and project IDs. Replace it with a real generated file before connecting to a production Firebase project.
 
 ## Templates included in the repo
 
@@ -58,8 +66,9 @@ flutterfire configure \
 
 Current note:
 
-- `lib/main_production.dart` still points at the example Firebase options file in the committed baseline
-- switch it to the real local production file before treating production as fully runnable
+- `lib/main_production.dart` should point at the generated `firebase_options_production.dart`
+- the committed `firebase_options_production.dart` contains dummy values so the production flavor compiles out of the box
+- switch it to a real generated file before treating production as fully runnable
 
 ## Safe commit check
 

@@ -32,6 +32,8 @@ This repo is currently a scaffolded ElFulk baseline, not a fully built product y
 
 The implemented sample areas are:
 
+- `app_features/onboarding`
+- `app_features/auth` (login, register, forget password, OTP verification)
 - `app_features/home`
 - `app_features/architecture`
 - `parent_features/parent_home`
@@ -92,13 +94,22 @@ Routing is centralized in `lib/src/core/config/routing/app_router.dart` using `G
 
 Current routes:
 
+- `/onboarding`
 - `/`
+- `/login`
+- `/register`
+- `/otp-verification`
+- `/forget-password`
 - `/parent`
 - `/parent/requests`
 - `/child`
 - `/architecture`
 
-Route-level `BlocProvider` creation is the current convention.
+Current conventions:
+
+- route-level `BlocProvider` creation for logic classes
+- onboarding is the initial route and redirects to `/login` once completed
+- auth screens (login, register, OTP, forget password) are provided without DI factories because they currently manage local form state
 
 ## 6) Dependency injection
 
@@ -142,7 +153,9 @@ Shared helpers live in `lib/src/core/helpers/`.
 
 Current helper coverage:
 
-- spacing helpers
+- responsive spacing system (`AppSpacing`, `AppRadius`, `AppBreakpoints`)
+- spacing/radius `BuildContext` extensions (`context.spacing`, `context.radius`)
+- centralized asset paths (`AssetsPathHelper`)
 - validators
 - regex and input formatters
 - date, duration, and number formatters
@@ -181,6 +194,8 @@ Current status:
 - keep rendering in `BlocBuilder`
 - keep side effects in `BlocListener` or `BlocConsumer`
 - move shared reusable widgets into `lib/src/core/widgets/` only after actual repetition appears
+- use the core design tokens for spacing and radius (`AppSpacing`, `AppRadius`, `AppBreakpoints`) where appropriate
+- auth and onboarding screens are RTL and use the shared `AppScreenTemplate`
 
 ## 11) Common commands
 
@@ -248,5 +263,7 @@ lib/src/features/<group>/<feature>/
 
 Current examples to copy from:
 
+- `app_features/onboarding`: local state + Cubit + page view + route
 - `app_features/home`: GET + Cubit + route
+- `app_features/auth`: form screens + request models + shared core widgets
 - `parent_features/parent_requests`: GET + POST + PATCH + Bloc + request models

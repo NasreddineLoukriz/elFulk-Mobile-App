@@ -39,6 +39,7 @@ lib/src/features/<group>/<feature>/
 
 Cubit examples:
 
+- `app_features/onboarding` (local page state + SharedPreferences completion flag)
 - `app_features/home`
 - `app_features/architecture`
 - `parent_features/parent_home`
@@ -103,6 +104,7 @@ Use Cubit when:
 - the feature mostly loads data and updates local state directly
 - there are only a few commands like `loadOverview()`, `refresh()`, or `retry()`
 - there is no complex event sequencing
+- the feature holds local UI state such as page index or completion flags
 
 ## 8) When to choose Bloc
 

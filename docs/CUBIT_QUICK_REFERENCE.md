@@ -9,12 +9,21 @@ Use `Cubit` when:
 - the screen has a small number of command-style actions
 - one repository call maps directly to one state update
 - the feature is mostly load, refresh, retry, or simple local state changes
+- the feature holds local UI state such as page index or completion flags
 
 Use `Bloc` when:
 
 - the screen coordinates multiple event types
 - GET and write operations happen together
 - mutation feedback needs to be cleared independently of full reloads
+
+Current Cubit examples:
+
+- `app_features/onboarding` (page index, completion flag)
+- `app_features/home`
+- `app_features/architecture`
+- `parent_features/parent_home`
+- `child_features/child_home`
 
 Current Bloc example:
 

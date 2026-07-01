@@ -22,13 +22,17 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-    R[GoRouter] --> A[app_features home]
+    R[GoRouter] --> O[app_features onboarding]
+    R --> A[app_features auth]
+    R --> H[app_features home]
     R --> P[parent_features parent_home]
     R --> PR[parent_features parent_requests]
     R --> C[child_features child_home]
     R --> X[app_features architecture]
 
-    A --> BA[BlocProvider HomeCubit]
+    O --> BO[BlocProvider OnboardingCubit]
+    A --> BA[login register otp forget_password screens]
+    H --> BH[BlocProvider HomeCubit]
     P --> BP[BlocProvider ParentHomeCubit]
     PR --> BR[BlocProvider ParentRequestsBloc]
     C --> BC[BlocProvider ChildHomeCubit]
@@ -70,6 +74,10 @@ lib/
         di/
         routing/
         firebase/
+      constants/
+        app_breakpoint.dart
+        app_raduis.dart
+        app_spacing.dart
       helpers/
         helpers.dart
         src/
@@ -83,9 +91,17 @@ lib/
       theme/
         app_theme.dart
       widgets/
+        app_screen_template.dart
         app_section_card.dart
+        custom_text_field.dart
+        divider_with_text.dart
+        footer_text.dart
+        primary_button.dart
+        social_button.dart
     features/
       app_features/
+        onboarding/
+        auth/
         home/
         architecture/
       parent_features/
