@@ -9,17 +9,18 @@ void main() {
     await getIt.reset();
   });
 
-  testWidgets('app, parent, and child example entry points render on home', (
+  testWidgets('app starts on onboarding and renders first content page', (
     WidgetTester tester,
   ) async {
     await setupGetIt(AppEnvironment.fromFlavor(AppFlavor.development));
 
     await tester.pumpWidget(const ElFulkApp());
+    await tester.pump();
+
+    // Wait for the logo page auto-advance (4s) and the page animation.
+    await tester.pump(const Duration(seconds: 5));
     await tester.pumpAndSettle();
 
-    expect(find.text('ElFulk App Features'), findsOneWidget);
-    expect(find.text('Open parent example'), findsOneWidget);
-    expect(find.text('Open parent Bloc example'), findsOneWidget);
-    expect(find.text('Open child example'), findsOneWidget);
+    expect(find.text('عالم آمن يبدأ من هنا'), findsOneWidget);
   });
 }
