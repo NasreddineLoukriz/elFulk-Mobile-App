@@ -24,8 +24,6 @@ class PrimaryButton extends StatelessWidget {
       child: ElevatedButton(
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
-          backgroundColor: const Color.fromARGB(255, 46, 140, 132),
-          disabledBackgroundColor: Colors.grey.shade400,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16.r),
           ),
@@ -38,22 +36,21 @@ class PrimaryButton extends StatelessWidget {
               text,
               style: TextStyle(
                 fontSize: 16.sp,
-                color: Colors.white,
                 fontWeight: FontWeight.bold,
               ),
             ),
             ...[
-            if (rtlIcon) ...[
-              Transform.flip(
-                flipX: true,
-                child: icon,
-              ),
-              SizedBox(width: 8.w),
-            ] else ...[
-              SizedBox(width: 8.w),
-              icon,
+              if (rtlIcon) ...[
+                Transform.flip(
+                  flipX: true,
+                  child: icon,
+                ),
+                SizedBox(width: 8.w),
+              ] else ...[
+                SizedBox(width: 8.w),
+                icon,
+              ],
             ],
-          ],
           ],
         ),
       ),

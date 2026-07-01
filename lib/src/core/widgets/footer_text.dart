@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class FooterText extends StatefulWidget {
   final String questionText;
@@ -62,6 +61,7 @@ class _FooterTextState extends State<FooterText> {
 
   @override
   Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
     final String displayActionText = _isCountdownActive
         ? '${(_currentSeconds ~/ 60)}:${(_currentSeconds % 60).toString().padLeft(2, '0')}'
         : widget.actionText;
@@ -71,9 +71,8 @@ class _FooterTextState extends State<FooterText> {
       children: [
         Text(
           widget.questionText,
-          style: TextStyle(
-            fontSize: 13.sp,
-            color: Colors.grey[600],
+          style: theme.textTheme.bodyMedium?.copyWith(
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
           ),
         ),
         GestureDetector(
@@ -87,11 +86,10 @@ class _FooterTextState extends State<FooterText> {
                 },
           child: Text(
             displayActionText,
-            style: TextStyle(
-              fontSize: 13.sp,
+            style: theme.textTheme.bodyMedium?.copyWith(
               color: _isCountdownActive
-                  ? Colors.grey[400]
-                  : const Color(0xFF2F857D),
+                  ? theme.colorScheme.onSurface.withValues(alpha: 0.4)
+                  : theme.colorScheme.primary,
               fontWeight: FontWeight.bold,
             ),
           ),

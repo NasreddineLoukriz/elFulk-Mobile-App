@@ -1,7 +1,8 @@
-import 'package:elfulk/src/core/helpers/src/assets_path_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+
+import 'package:elfulk/src/core/helpers/src/assets_path_helper.dart';
 
 class CustomTextField extends StatefulWidget {
   final String hintText;
@@ -30,18 +31,26 @@ class _CustomTextFieldState extends State<CustomTextField> {
 
   @override
   Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+    final Color borderColor =
+        widget.hasError ? theme.colorScheme.error : theme.colorScheme.outline;
+    final Color focusedBorderColor =
+        widget.hasError ? theme.colorScheme.error : theme.colorScheme.primary;
+
     return TextField(
       controller: widget.controller,
       obscureText: widget.isPassword ? _isObscured : false,
       keyboardType: widget.keyboardType,
       decoration: InputDecoration(
         hintText: widget.hintText,
-        hintStyle: TextStyle(color: Colors.grey[400], fontSize: 13.sp),
+        hintStyle: theme.textTheme.bodyMedium?.copyWith(
+          color: theme.colorScheme.onSurface.withValues(alpha: 0.4),
+          fontSize: 13.sp,
+        ),
         prefixIcon: Padding(
           padding: const EdgeInsets.all(10),
           child: widget.prefixIcon,
         ),
-
         suffixIcon: widget.isPassword
             ? IconButton(
                 icon: SvgPicture.asset(
@@ -55,19 +64,15 @@ class _CustomTextFieldState extends State<CustomTextField> {
               )
             : null,
         filled: true,
-        fillColor: Colors.white,
+        fillColor: theme.colorScheme.surfaceContainerHighest,
         contentPadding: EdgeInsets.symmetric(vertical: 14.h, horizontal: 16.w),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12.r),
-          borderSide: BorderSide(
-            color: widget.hasError ? Colors.red : Colors.grey.shade300,
-          ),
+          borderSide: BorderSide(color: borderColor),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12.r),
-          borderSide: BorderSide(
-            color: widget.hasError ? Colors.red : const Color(0xFF2F857D),
-          ),
+          borderSide: BorderSide(color: focusedBorderColor),
         ),
       ),
     );

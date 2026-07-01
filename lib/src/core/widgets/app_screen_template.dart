@@ -1,7 +1,8 @@
-import 'package:elfulk/src/core/helpers/src/assets_path_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+
+import 'package:elfulk/src/core/helpers/src/assets_path_helper.dart';
 
 class AppScreenTemplate extends StatelessWidget {
   final Widget child;
@@ -15,12 +16,13 @@ class AppScreenTemplate extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
     final bool isKeyboardOpen = MediaQuery.of(context).viewInsets.bottom > 0;
 
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        backgroundColor: const Color(0xFFF7F3EC),
+        backgroundColor: theme.colorScheme.surface,
         resizeToAvoidBottomInset: true,
         body: SafeArea(
           child: CustomScrollView(
@@ -42,8 +44,7 @@ class AppScreenTemplate extends StatelessWidget {
                           height: isKeyboardOpen ? 60.h : 110.h,
                           child: topWidget ??
                               SvgPicture.asset(
-                                AssetsPathHelper.elFulkLogo,  
-
+                                AssetsPathHelper.elFulkLogo,
                               ),
                         ),
                       ),
@@ -51,7 +52,7 @@ class AppScreenTemplate extends StatelessWidget {
                     Container(
                       width: double.infinity,
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: theme.cardTheme.color,
                         borderRadius: BorderRadius.only(
                           topLeft: Radius.circular(32.r),
                           topRight: Radius.circular(32.r),

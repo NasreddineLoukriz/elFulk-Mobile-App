@@ -18,14 +18,11 @@ class SocialButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const Color buttonColor = Color(0xFF55B5A6);
-
     return OutlinedButton(
       onPressed: onPressed,
       style: OutlinedButton.styleFrom(
         minimumSize: Size(double.infinity, 48.h),
         padding: EdgeInsets.symmetric(vertical: 12.h),
-        side: const BorderSide(color: buttonColor, width: 1),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16.r),
         ),

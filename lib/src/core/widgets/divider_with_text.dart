@@ -8,20 +8,21 @@ class DividerWithText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+
     return Row(
       children: [
-        Expanded(child: Divider(color: Colors.grey.shade300)),
+        Expanded(child: Divider(color: theme.colorScheme.outlineVariant)),
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 16.w),
           child: Text(
             text,
-            style: TextStyle(
-              fontSize: 12.sp,
-              color: Colors.grey[500],
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
             ),
           ),
         ),
-        Expanded(child: Divider(color: Colors.grey.shade300)),
+        Expanded(child: Divider(color: theme.colorScheme.outlineVariant)),
       ],
     );
   }

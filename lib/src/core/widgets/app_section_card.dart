@@ -26,12 +26,12 @@ class AppSectionCard extends StatelessWidget {
       width: double.infinity,
       padding: EdgeInsets.all(20.r),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: theme.cardTheme.color,
         borderRadius: BorderRadius.circular(28.r),
         border: Border.all(color: borderColor.withValues(alpha: 0.32)),
         boxShadow: <BoxShadow>[
           BoxShadow(
-            color: const Color(0x14000000),
+            color: theme.shadowColor.withValues(alpha: 0.08),
             blurRadius: 28.r,
             offset: Offset(0, 14.h),
           ),
