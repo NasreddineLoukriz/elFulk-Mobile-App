@@ -4,9 +4,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:elfulk/src/core/config/app_environment.dart';
 import 'package:elfulk/src/core/config/di/dependency_injection.dart';
 import 'package:elfulk/src/core/helpers/helpers.dart';
-import 'package:elfulk/src/core/config/routing/app_router.dart';
 import 'package:elfulk/src/core/theme/app_theme.dart';
-
+import 'package:elfulk/src/core/config/routing/app_router.dart'; 
 class ElFulkApp extends StatelessWidget {
   const ElFulkApp({super.key});
 
