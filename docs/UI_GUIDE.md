@@ -106,12 +106,49 @@ Use the same pattern for all features:
 - `app_features/onboarding`
 - `app_features/auth` (login, register, forget password, OTP verification)
 - `app_features/home`
+- `app_features/dev_hub`
 - `parent_features/parent_home`
 - `parent_features/parent_requests`
 - `child_features/child_home`
 - `app_features/architecture`
 
-## 7) Build runner
+## 7) Dev Hub (UI development catalog)
+
+The `app_features/dev_hub` screen is a development-only route catalog.
+
+What it does:
+
+- Lists every route registered in `Routes.catalog`
+- Groups items by category (`screen`, `dialog`, `bottomSheet`)
+- Tapping a route pushes it so you can preview the UI in isolation
+- Has a theme-mode menu (light / dark / system) in the app bar for quick UI testing
+
+Behavior:
+
+- In **development**, the app starts at `/dev-hub`
+- In **production**, `/dev-hub` redirects to `/onboarding`
+- A "Dev Hub" floating action button is shown on the Home screen in development
+
+How to add a new route to the catalog:
+
+1. Add the route constant and `GoRoute` wiring as usual in:
+   - `lib/src/core/config/routing/routes.dart`
+   - `lib/src/core/config/routing/app_router.dart`
+2. Append a `RouteCatalogItem` to `Routes.catalog` in `routes.dart`:
+
+```dart
+const RouteCatalogItem(
+  path: Routes.myNewScreen,
+  label: 'My New Screen',
+  category: RouteCategory.screen,
+  description: 'Optional helpful description',
+  queryParameters: <String, String>{'tab': 'default'}, // optional
+),
+```
+
+The Dev Hub will render the new item automatically.
+
+## 8) Build runner
 
 Run after changing Freezed, Retrofit, or JsonSerializable files:
 

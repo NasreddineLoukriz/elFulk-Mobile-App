@@ -84,9 +84,10 @@ Add `request_models/` only if the feature has `POST`, `PATCH`, or similar writes
 9. Add Cubit or Bloc and map `response_models` into `view_models`
 10. Register the repository and logic in `lib/src/core/config/di/dependency_injection.dart`
 11. If the feature is navigable, add route constants and route wiring in:
-   - `lib/src/core/config/routing/routes.dart`
-   - `lib/src/core/config/routing/app_router.dart`
-12. Run:
+    - `lib/src/core/config/routing/routes.dart`
+    - `lib/src/core/config/routing/app_router.dart`
+12. If the route should appear in the Dev Hub catalog, add a `RouteCatalogItem` to `Routes.catalog` in `routes.dart`
+13. Run:
 
 ```bash
 dart run build_runner build --delete-conflicting-outputs
@@ -103,6 +104,7 @@ Current feature references to copy from:
 
 - `app_features/home`: Cubit + GET example
 - `app_features/architecture`: architecture reference screen
+- `app_features/dev_hub`: development-only route catalog and theme switcher
 - `parent_features/parent_home`: Cubit + GET example
 - `parent_features/parent_requests`: Bloc + GET/POST/PATCH example
 - `child_features/child_home`: Cubit + GET example
