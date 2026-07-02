@@ -43,6 +43,13 @@ class _HomeLoadedView extends StatelessWidget {
     final AppEnvironment environment = getIt<AppEnvironment>();
 
     return Scaffold(
+      floatingActionButton: environment.isProduction
+          ? null
+          : FloatingActionButton.extended(
+              onPressed: () => context.push(Routes.devHubScreen),
+              icon: const Icon(Icons.developer_mode),
+              label: const Text('Dev Hub'),
+            ),
       body: DecoratedBox(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
