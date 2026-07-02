@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import 'package:elfulk/src/core/helpers/helpers.dart';
 import 'package:elfulk/src/core/widgets/app_section_card.dart';
 import 'package:elfulk/src/features/parent_features/parent_requests/data/view_models/parent_requests_overview_view_model.dart';
 import 'package:elfulk/src/features/parent_features/parent_requests/logic/bloc/parent_requests_bloc.dart';
@@ -71,7 +72,7 @@ class _ParentRequestsLoadedView extends StatelessWidget {
         ],
       ),
       body: ListView(
-        padding: EdgeInsets.all(20.r),
+        padding: context.spacing.pagePadding,
         children: <Widget>[
           if (feedbackMessage != null) ...<Widget>[
             AppSectionCard(
@@ -90,7 +91,7 @@ class _ParentRequestsLoadedView extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(height: 20.h),
+            SizedBox(height: context.spacing.l.h),
           ],
           AppSectionCard(
             eyebrow: 'Bloc Example',
@@ -100,10 +101,10 @@ class _ParentRequestsLoadedView extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(overview.summary, style: theme.textTheme.bodyLarge),
-                SizedBox(height: 16.h),
+                SizedBox(height: context.spacing.md.h),
                 Wrap(
-                  spacing: 10,
-                  runSpacing: 10,
+                  spacing: context.spacing.m.w,
+                  runSpacing: context.spacing.m.h,
                   children: <Widget>[
                     _InfoChip(label: 'Base URL', value: overview.baseUrl),
                     _InfoChip(label: 'GET', value: overview.endpoint),
@@ -114,7 +115,7 @@ class _ParentRequestsLoadedView extends StatelessWidget {
                     ),
                   ],
                 ),
-                SizedBox(height: 16.h),
+                SizedBox(height: context.spacing.md.h),
                 Text(
                   'Event flow: ParentRequestsBloc -> ParentRequestsRepository -> ParentApiService -> DioFactory -> DummyApiInterceptor',
                   style: theme.textTheme.bodyMedium,
@@ -122,7 +123,7 @@ class _ParentRequestsLoadedView extends StatelessWidget {
               ],
             ),
           ),
-          SizedBox(height: 20.h),
+          SizedBox(height: context.spacing.l.h),
           AppSectionCard(
             eyebrow: 'Bloc Events',
             title: 'Why this screen uses Bloc instead of Cubit',
@@ -132,20 +133,22 @@ class _ParentRequestsLoadedView extends StatelessWidget {
               children: overview.recommendedEvents
                   .map(
                     (String eventLabel) => Padding(
-                      padding: EdgeInsets.only(bottom: 12.h),
+                      padding: EdgeInsets.only(
+                        bottom: context.spacing.sm12.h,
+                      ),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Container(
-                            width: 8.w,
-                            height: 8.w,
-                            margin: EdgeInsets.only(top: 7.h),
+                            width: context.spacing.sm.w,
+                            height: context.spacing.sm.w,
+                            margin: EdgeInsets.only(top: context.spacing.s.h),
                             decoration: const BoxDecoration(
                               color: Color(0xFF7C3AED),
                               shape: BoxShape.circle,
                             ),
                           ),
-                          SizedBox(width: 12.w),
+                          SizedBox(width: context.spacing.sm12.w),
                           Expanded(
                             child: Text(
                               eventLabel,
@@ -159,7 +162,7 @@ class _ParentRequestsLoadedView extends StatelessWidget {
                   .toList(),
             ),
           ),
-          SizedBox(height: 20.h),
+          SizedBox(height: context.spacing.l.h),
           AppSectionCard(
             eyebrow: 'POST Example',
             title: 'Create a dummy parent request',
@@ -171,7 +174,7 @@ class _ParentRequestsLoadedView extends StatelessWidget {
                   'The button below dispatches a create intent and the Bloc builds the request model before calling the repository.',
                   style: theme.textTheme.bodyLarge,
                 ),
-                SizedBox(height: 16.h),
+                SizedBox(height: context.spacing.md.h),
                 FilledButton.tonal(
                   onPressed: isBusy
                       ? null
@@ -193,7 +196,7 @@ class _ParentRequestsLoadedView extends StatelessWidget {
               ],
             ),
           ),
-          SizedBox(height: 20.h),
+          SizedBox(height: context.spacing.l.h),
           AppSectionCard(
             eyebrow: 'PATCH Example',
             title: 'Approve or inspect pending requests',
@@ -226,40 +229,40 @@ class _ParentRequestTile extends StatelessWidget {
 
     return Container(
       width: double.infinity,
-      margin: EdgeInsets.only(bottom: 14.h),
-      padding: EdgeInsets.all(18.r),
+      margin: EdgeInsets.only(bottom: context.spacing.md.h),
+      padding: EdgeInsets.all(context.spacing.l.r),
       decoration: BoxDecoration(
         color: const Color(0xFFFAF8F3),
-        borderRadius: BorderRadius.circular(22.r),
+        borderRadius: BorderRadius.circular(context.radius.x3l.r),
         border: Border.all(color: const Color(0xFFE0D7C8)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Wrap(
-            spacing: 10,
-            runSpacing: 10,
+            spacing: context.spacing.m.w,
+            runSpacing: context.spacing.m.h,
             children: <Widget>[
               _InfoChip(label: 'ID', value: request.id),
               _InfoChip(label: 'Child', value: request.childName),
               _InfoChip(label: 'Status', value: request.status),
             ],
           ),
-          SizedBox(height: 12.h),
+          SizedBox(height: context.spacing.sm12.h),
           Text(
             request.requestType,
             style: theme.textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.w700,
             ),
           ),
-          SizedBox(height: 8.h),
+          SizedBox(height: context.spacing.sm.h),
           Text(request.note, style: theme.textTheme.bodyLarge),
-          SizedBox(height: 8.h),
+          SizedBox(height: context.spacing.sm.h),
           Text(
             'Requested at ${request.requestedAt}',
             style: theme.textTheme.bodyMedium,
           ),
-          SizedBox(height: 16.h),
+          SizedBox(height: context.spacing.md.h),
           FilledButton.tonal(
             onPressed: canApprove
                 ? () {
@@ -304,7 +307,7 @@ class _ParentRequestsErrorView extends StatelessWidget {
       appBar: AppBar(title: const Text('Parent Requests')),
       body: Center(
         child: Padding(
-          padding: EdgeInsets.all(24.r),
+          padding: EdgeInsets.all(context.spacing.lg.r),
           child: Text(message, textAlign: TextAlign.center),
         ),
       ),
@@ -321,10 +324,13 @@ class _InfoChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+      padding: EdgeInsets.symmetric(
+        horizontal: context.spacing.sm12.w,
+        vertical: context.spacing.sm.h,
+      ),
       decoration: BoxDecoration(
         color: const Color(0xFFF0F7F5),
-        borderRadius: BorderRadius.circular(999.r),
+        borderRadius: BorderRadius.circular(context.radius.full.r),
       ),
       child: Text('$label: $value'),
     );

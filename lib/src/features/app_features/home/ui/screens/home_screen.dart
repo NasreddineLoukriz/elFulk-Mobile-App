@@ -54,16 +54,11 @@ class _HomeLoadedView extends StatelessWidget {
         child: SafeArea(
           child: ListView(
             padding: context.spacing.pagePadding,
-            // EdgeInsets.all(20.r),
             children: <Widget>[
               Container(
                 padding: EdgeInsets.all(context.spacing.lg.r),
-                //padding before is 24
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(
-                    context.radius.x4l.r,
-                  ), //x41 have value of 32
-                  // borderRadius: BorderRadius.circular(32.r),
+                  borderRadius: BorderRadius.circular(context.radius.x4l.r),
                   gradient: const LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
@@ -76,8 +71,8 @@ class _HomeLoadedView extends StatelessWidget {
                   boxShadow: <BoxShadow>[
                     BoxShadow(
                       color: const Color(0x300F766E),
-                      blurRadius: 32.r,
-                      offset: Offset(0, 18.h),
+                      blurRadius: context.radius.x4l.r,
+                      offset: Offset(0, context.spacing.l.h),
                     ),
                   ],
                 ),
@@ -87,11 +82,13 @@ class _HomeLoadedView extends StatelessWidget {
                     Container(
                       padding: EdgeInsets.symmetric(
                         horizontal: context.spacing.sm12,
-                        vertical: 8.h,
+                        vertical: context.spacing.sm.h,
                       ),
                       decoration: BoxDecoration(
                         color: Colors.white.withValues(alpha: 0.14),
-                        borderRadius: BorderRadius.circular(999.r),
+                        borderRadius: BorderRadius.circular(
+                          context.radius.full.r,
+                        ),
                       ),
                       child: Text(
                         'Flavor: ${environment.apiEnvironmentLabel}',
@@ -101,7 +98,7 @@ class _HomeLoadedView extends StatelessWidget {
                         ),
                       ),
                     ),
-                    SizedBox(height: 18.h),
+                    SizedBox(height: context.spacing.l.h),
                     Text(
                       'ElFulk App Features',
                       style: theme.textTheme.headlineLarge?.copyWith(
@@ -109,64 +106,69 @@ class _HomeLoadedView extends StatelessWidget {
                         fontWeight: FontWeight.w800,
                       ),
                     ),
-                    SizedBox(height: 12.h),
+                    SizedBox(height: context.spacing.sm12.h),
                     Text(
                       overview.headline,
                       style: theme.textTheme.titleLarge?.copyWith(
                         color: const Color(0xFFE8FBF8),
                       ),
                     ),
-                    SizedBox(height: 12.h),
+                    SizedBox(height: context.spacing.sm12.h),
                     Text(
                       overview.summary,
                       style: theme.textTheme.bodyLarge?.copyWith(
                         color: const Color(0xFFE2F5F1),
                       ),
                     ),
-                    SizedBox(height: 20.h),
+                    SizedBox(height: context.spacing.l.h),
                     Wrap(
                       spacing: context.spacing.m.w,
-                      runSpacing: 10.h,
+                      runSpacing: context.spacing.m.h,
                       children: <Widget>[
                         FilledButton.tonal(
                           onPressed: () =>
                               context.push(Routes.parentHomeScreen),
-                          style: _buttonStyle(),
+                          style: _buttonStyle(context),
                           child: const Text('Open parent example'),
                         ),
                         FilledButton.tonal(
-                          onPressed: () =>
-                              context.push(Routes.loginScreen),
-                          style: _buttonStyle(),
+                          onPressed: () => context.push(Routes.loginScreen),
+                          style: _buttonStyle(context),
                           child: const Text('Open Auth (Login)'),
                         ),
-                              FilledButton.tonal(
-                          onPressed: () =>
-                              context.push('${Routes.otpVerificationScreen}?type=email'),
-                          style: _buttonStyle(),
-                          child: const Text('Open Auth (OTP Verification template)'),
+                        FilledButton.tonal(
+                          onPressed: () => context.push(
+                            '${Routes.otpVerificationScreen}?type=email',
+                          ),
+                          style: _buttonStyle(context),
+                          child: const Text(
+                            'Open Auth (OTP Verification template)',
+                          ),
                         ),
-                                FilledButton.tonal(
-                          onPressed: () =>
-                              context.push('${Routes.otpVerificationScreen}?type=password'),
-                          style: _buttonStyle(),
-                          child: const Text('Open Auth (OTP Password Reset template)' ),
+                        FilledButton.tonal(
+                          onPressed: () => context.push(
+                            '${Routes.otpVerificationScreen}?type=password',
+                          ),
+                          style: _buttonStyle(context),
+                          child: const Text(
+                            'Open Auth (OTP Password Reset template)',
+                          ),
                         ),
                         FilledButton.tonal(
                           onPressed: () =>
                               context.push(Routes.parentRequestsScreen),
-                          style: _buttonStyle(),
+                          style: _buttonStyle(context),
                           child: const Text('Open parent Bloc example'),
                         ),
                         FilledButton.tonal(
                           onPressed: () => context.push(Routes.childHomeScreen),
-                          style: _buttonStyle(),
+                          style: _buttonStyle(context),
                           child: const Text('Open child example'),
                         ),
                         FilledButton.tonal(
                           onPressed: () =>
                               context.push(Routes.architectureScreen),
-                          style: _buttonStyle(),
+                          style: _buttonStyle(context),
                           child: const Text('Open architecture'),
                         ),
                       ],
@@ -184,7 +186,7 @@ class _HomeLoadedView extends StatelessWidget {
                   children: <Widget>[
                     Wrap(
                       spacing: context.spacing.m.w,
-                      runSpacing: 10.h,
+                      runSpacing: context.spacing.m.h,
                       children: <Widget>[
                         _InfoChip(
                           label: 'Resolved base URL',
@@ -196,7 +198,7 @@ class _HomeLoadedView extends StatelessWidget {
                         ),
                       ],
                     ),
-                    SizedBox(height: 14.h),
+                    SizedBox(height: context.spacing.md.h),
                     Text(
                       'Flow: HomeCubit -> HomeRepository -> AppApiService -> DioFactory -> DummyApiInterceptor',
                       style: theme.textTheme.bodyLarge,
@@ -211,17 +213,19 @@ class _HomeLoadedView extends StatelessWidget {
                 accentColor: colorScheme.primary,
                 child: Wrap(
                   spacing: context.spacing.m.w,
-                  runSpacing: 10.h,
+                  runSpacing: context.spacing.m.h,
                   children: overview.principles
                       .map(
                         (String principle) => Container(
                           padding: EdgeInsets.symmetric(
-                            horizontal: 14.w,
+                            horizontal: context.spacing.md.w,
                             vertical: context.spacing.m.h,
                           ),
                           decoration: BoxDecoration(
                             color: const Color(0xFFF0F7F5),
-                            borderRadius: BorderRadius.circular(999.r),
+                            borderRadius: BorderRadius.circular(
+                              context.radius.full.r,
+                            ),
                           ),
                           child: Text(
                             principle,
@@ -235,7 +239,7 @@ class _HomeLoadedView extends StatelessWidget {
                       .toList(),
                 ),
               ),
-              SizedBox(height: 20.h),
+              SizedBox(height: context.spacing.l.h),
               AppSectionCard(
                 eyebrow: 'Feature Groups',
                 title: 'Scaffolded modules in this repo',
@@ -249,7 +253,7 @@ class _HomeLoadedView extends StatelessWidget {
                       .toList(),
                 ),
               ),
-              SizedBox(height: 20.h),
+              SizedBox(height: context.spacing.l.h),
               AppSectionCard(
                 eyebrow: 'Next',
                 title: 'Recommended evolution path',
@@ -259,20 +263,24 @@ class _HomeLoadedView extends StatelessWidget {
                   children: overview.nextMilestones
                       .map(
                         (String step) => Padding(
-                          padding: EdgeInsets.only(bottom: 12.h),
+                          padding: EdgeInsets.only(
+                            bottom: context.spacing.sm12.h,
+                          ),
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
                               Container(
-                                width: 8.w,
-                                height: 8.w,
-                                margin: EdgeInsets.only(top: 7.h),
+                                width: context.spacing.sm.w,
+                                height: context.spacing.sm.w,
+                                margin: EdgeInsets.only(
+                                  top: context.spacing.s.h,
+                                ),
                                 decoration: const BoxDecoration(
                                   color: Color(0xFFB7791F),
                                   shape: BoxShape.circle,
                                 ),
                               ),
-                              SizedBox(width: 12.w),
+                              SizedBox(width: context.spacing.sm12.w),
                               Expanded(
                                 child: Text(
                                   step,
@@ -293,12 +301,17 @@ class _HomeLoadedView extends StatelessWidget {
     );
   }
 
-  ButtonStyle _buttonStyle() {
+  ButtonStyle _buttonStyle(BuildContext context) {
     return FilledButton.styleFrom(
       backgroundColor: Colors.white.withValues(alpha: 0.18),
       foregroundColor: Colors.white,
-      padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 14.h),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18.r)),
+      padding: EdgeInsets.symmetric(
+        horizontal: context.spacing.l.w,
+        vertical: context.spacing.md.h,
+      ),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(context.radius.x2_5l.r),
+      ),
     );
   }
 }
@@ -314,11 +327,11 @@ class _ModuleTile extends StatelessWidget {
 
     return Container(
       width: double.infinity,
-      margin: EdgeInsets.only(bottom: 14.h),
-      padding: EdgeInsets.all(18.r),
+      margin: EdgeInsets.only(bottom: context.spacing.md.h),
+      padding: EdgeInsets.all(context.spacing.l.r),
       decoration: BoxDecoration(
         color: const Color(0xFFFAF8F3),
-        borderRadius: BorderRadius.circular(22.r),
+        borderRadius: BorderRadius.circular(context.radius.x3l.r),
         border: Border.all(color: const Color(0xFFE0D7C8)),
       ),
       child: Column(
@@ -335,10 +348,13 @@ class _ModuleTile extends StatelessWidget {
                 ),
               ),
               Container(
-                padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+                padding: EdgeInsets.symmetric(
+                  horizontal: context.spacing.sm12.w,
+                  vertical: context.spacing.sm.h,
+                ),
                 decoration: BoxDecoration(
                   color: const Color(0xFFE8F5E9),
-                  borderRadius: BorderRadius.circular(999.r),
+                  borderRadius: BorderRadius.circular(context.radius.full.r),
                 ),
                 child: Text(
                   module.status,
@@ -350,22 +366,24 @@ class _ModuleTile extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(height: 10.h),
+          SizedBox(height: context.spacing.m.h),
           Text(module.description, style: theme.textTheme.bodyLarge),
-          SizedBox(height: 14.h),
+          SizedBox(height: context.spacing.md.h),
           Wrap(
-            spacing: 8.w,
-            runSpacing: 8.h,
+            spacing: context.spacing.sm.w,
+            runSpacing: context.spacing.sm.h,
             children: module.folders
                 .map(
                   (String folder) => Container(
                     padding: EdgeInsets.symmetric(
-                      horizontal: 12.w,
-                      vertical: 8.h,
+                      horizontal: context.spacing.sm12.w,
+                      vertical: context.spacing.sm.h,
                     ),
                     decoration: BoxDecoration(
                       color: const Color(0xFFF0F7F5),
-                      borderRadius: BorderRadius.circular(999.r),
+                      borderRadius: BorderRadius.circular(
+                        context.radius.full.r,
+                      ),
                     ),
                     child: Text(
                       folder,
@@ -377,7 +395,7 @@ class _ModuleTile extends StatelessWidget {
                 )
                 .toList(),
           ),
-          SizedBox(height: 14.h),
+          SizedBox(height: context.spacing.md.h),
           Text(
             module.nextStep,
             style: theme.textTheme.bodyMedium?.copyWith(
@@ -410,7 +428,7 @@ class _HomeErrorView extends StatelessWidget {
       appBar: AppBar(title: const Text('ElFulk')),
       body: Center(
         child: Padding(
-          padding: EdgeInsets.all(24.r),
+          padding: EdgeInsets.all(context.spacing.lg.r),
           child: Text(message, textAlign: TextAlign.center),
         ),
       ),
@@ -427,10 +445,13 @@ class _InfoChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+      padding: EdgeInsets.symmetric(
+        horizontal: context.spacing.sm12.w,
+        vertical: context.spacing.sm.h,
+      ),
       decoration: BoxDecoration(
         color: const Color(0xFFF0F7F5),
-        borderRadius: BorderRadius.circular(999.r),
+        borderRadius: BorderRadius.circular(context.radius.full.r),
       ),
       child: Text('$label: $value'),
     );

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import 'package:elfulk/src/core/helpers/src/assets_path_helper.dart';
+import 'package:elfulk/src/core/helpers/helpers.dart';
 import 'package:elfulk/src/core/widgets/app_screen_template.dart';
 import 'package:elfulk/src/core/widgets/footer_text.dart';
 import 'package:elfulk/src/core/widgets/primary_button.dart';
@@ -69,7 +69,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                   color: theme.colorScheme.onSurface,
                 ),
           ),
-          SizedBox(height: 8.h),
+          SizedBox(height: context.spacing.sm.h),
           Text(
             'ادخل الرمز المكون من 5 أرقام الذي أرسلناه.',
             style: theme.textTheme.bodyMedium?.copyWith(
@@ -77,7 +77,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
               color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
             ),
           ),
-          SizedBox(height: 24.h),
+          SizedBox(height: context.spacing.lg.h),
 
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -91,7 +91,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
                   color: theme.colorScheme.surfaceContainerHighest,
-                  borderRadius: BorderRadius.circular(8.r),
+                  borderRadius: BorderRadius.circular(context.radius.lg.r),
                   border: Border.all(
                     color: isFilled
                         ? theme.colorScheme.primary
@@ -115,7 +115,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
               );
             }),
           ),
-          SizedBox(height: 16.h),
+          SizedBox(height: context.spacing.md.h),
 
           FooterText(
             countdownSeconds: 63,
@@ -126,7 +126,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
             },
           ),
 
-          SizedBox(height: 16.h),
+          SizedBox(height: context.spacing.md.h),
 
           PrimaryButton(
             text: buttonText,
@@ -142,7 +142,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                 : null,
           ),
 
-          SizedBox(height: 32.h),
+          SizedBox(height: context.spacing.xl.h),
           _buildCustomKeypad(theme),
         ],
       ),
@@ -153,11 +153,11 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
     return Column(
       children: [
         _buildKeypadRow(theme, ['1', '2', '3']),
-        SizedBox(height: 12.h),
+        SizedBox(height: context.spacing.sm12.h),
         _buildKeypadRow(theme, ['4', '5', '6']),
-        SizedBox(height: 12.h),
+        SizedBox(height: context.spacing.sm12.h),
         _buildKeypadRow(theme, ['7', '8', '9']),
-        SizedBox(height: 12.h),
+        SizedBox(height: context.spacing.sm12.h),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -204,7 +204,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
         height: 42.h,
         decoration: BoxDecoration(
           color: theme.colorScheme.surfaceContainer,
-          borderRadius: BorderRadius.circular(12.r),
+          borderRadius: BorderRadius.circular(context.radius.xl.r),
         ),
         child: Center(
           child: text != null

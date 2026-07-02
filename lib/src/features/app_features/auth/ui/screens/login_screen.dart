@@ -4,7 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:elfulk/src/core/config/routing/routes.dart';
-import 'package:elfulk/src/core/helpers/src/assets_path_helper.dart';
+import 'package:elfulk/src/core/helpers/helpers.dart';
 import 'package:elfulk/src/core/widgets/app_screen_template.dart';
 import 'package:elfulk/src/core/widgets/custom_text_field.dart';
 import 'package:elfulk/src/core/widgets/divider_with_text.dart';
@@ -40,7 +40,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   color: theme.colorScheme.onSurface,
                 ),
           ),
-          SizedBox(height: 6.h),
+          SizedBox(height: context.spacing.s.h),
           Text(
             'سجّل دخولك للوصول إلى لوحة التحكم ومتابعة أطفالك',
             style: theme.textTheme.bodyMedium?.copyWith(
@@ -48,7 +48,7 @@ class _LoginScreenState extends State<LoginScreen> {
               color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
             ),
           ),
-          SizedBox(height: 24.h),
+          SizedBox(height: context.spacing.lg.h),
 
           CustomTextField(
             hintText: 'البريد الإلكتروني',
@@ -59,7 +59,7 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             keyboardType: TextInputType.emailAddress,
           ),
-          SizedBox(height: 14.h),
+          SizedBox(height: context.spacing.md.h),
 
           CustomTextField(
             hintText: 'كلمة المرور',
@@ -71,7 +71,7 @@ class _LoginScreenState extends State<LoginScreen> {
             isPassword: true,
           ),
 
-          SizedBox(height: 4.h),
+          SizedBox(height: context.spacing.xs.h),
 
           Align(
             alignment: Alignment.centerLeft,
@@ -97,7 +97,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             ),
           ),
-          SizedBox(height: 24.h),
+          SizedBox(height: context.spacing.lg.h),
 
           PrimaryButton(
             text: 'تسجيل الدخول',
@@ -107,7 +107,7 @@ class _LoginScreenState extends State<LoginScreen> {
             },
           ),
 
-          SizedBox(height: 32.h),
+          SizedBox(height: context.spacing.xl.h),
 
           FooterText(
             questionText: 'ليس لديك حساب؟ ',
@@ -115,11 +115,11 @@ class _LoginScreenState extends State<LoginScreen> {
             onActionTap: () => context.push(Routes.registerScreen),
           ),
 
-          SizedBox(height: 16.h),
+          SizedBox(height: context.spacing.md.h),
 
           const DividerWithText(text: 'أو عن طريق'),
 
-          SizedBox(height: 16.h),
+          SizedBox(height: context.spacing.md.h),
 
           Row(
             children: [
@@ -131,7 +131,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   onPressed: () {},
                 ),
               ),
-              SizedBox(width: 16.w),
+              SizedBox(width: context.spacing.md.w),
               Expanded(
                 child: SocialButton(
                   iconSize: 30.sp,

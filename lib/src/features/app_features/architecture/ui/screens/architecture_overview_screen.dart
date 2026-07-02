@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import 'package:elfulk/src/core/helpers/helpers.dart';
 import 'package:elfulk/src/core/widgets/app_section_card.dart';
 import 'package:elfulk/src/features/app_features/architecture/data/view_models/architecture_overview_view_model.dart';
 import 'package:elfulk/src/features/app_features/architecture/logic/cubit/architecture_cubit.dart';
@@ -37,7 +38,7 @@ class _ArchitectureLoadedView extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('Architecture Reference')),
       body: ListView(
-        padding: EdgeInsets.all(20.r),
+        padding: context.spacing.pagePadding,
         children: <Widget>[
           AppSectionCard(
             eyebrow: 'Startup',
@@ -50,7 +51,7 @@ class _ArchitectureLoadedView extends StatelessWidget {
                   .entries
                   .map(
                     (MapEntry<int, String> entry) => Padding(
-                      padding: EdgeInsets.only(bottom: 12.h),
+                      padding: EdgeInsets.only(bottom: context.spacing.sm12.h),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
@@ -70,7 +71,7 @@ class _ArchitectureLoadedView extends StatelessWidget {
                               ),
                             ),
                           ),
-                          SizedBox(width: 12.w),
+                          SizedBox(width: context.spacing.sm12.w),
                           Expanded(
                             child: Text(
                               entry.value,
@@ -84,7 +85,7 @@ class _ArchitectureLoadedView extends StatelessWidget {
                   .toList(),
             ),
           ),
-          SizedBox(height: 20.h),
+          SizedBox(height: context.spacing.l.h),
           AppSectionCard(
             eyebrow: 'Layers',
             title: 'Responsibilities by layer',
@@ -94,11 +95,11 @@ class _ArchitectureLoadedView extends StatelessWidget {
                   .map(
                     (ArchitectureLayerViewModel layer) => Container(
                       width: double.infinity,
-                      margin: EdgeInsets.only(bottom: 14.h),
-                      padding: EdgeInsets.all(18.r),
+                      margin: EdgeInsets.only(bottom: context.spacing.md.h),
+                      padding: EdgeInsets.all(context.spacing.l.r),
                       decoration: BoxDecoration(
                         color: const Color(0xFFFAF8F3),
-                        borderRadius: BorderRadius.circular(22.r),
+                        borderRadius: BorderRadius.circular(context.radius.x3l.r),
                         border: Border.all(color: const Color(0xFFE0D7C8)),
                       ),
                       child: Column(
@@ -110,26 +111,26 @@ class _ArchitectureLoadedView extends StatelessWidget {
                               fontWeight: FontWeight.w800,
                             ),
                           ),
-                          SizedBox(height: 8.h),
+                          SizedBox(height: context.spacing.sm.h),
                           Text(
                             layer.responsibility,
                             style: theme.textTheme.bodyLarge,
                           ),
-                          SizedBox(height: 12.h),
+                          SizedBox(height: context.spacing.sm12.h),
                           Wrap(
-                            spacing: 8.w,
-                            runSpacing: 8.h,
+                            spacing: context.spacing.sm.w,
+                            runSpacing: context.spacing.sm.h,
                             children: layer.directories
                                 .map(
                                   (String directory) => Container(
                                     padding: EdgeInsets.symmetric(
-                                      horizontal: 10.w,
-                                      vertical: 8.h,
+                                      horizontal: context.spacing.m.w,
+                                      vertical: context.spacing.sm.h,
                                     ),
                                     decoration: BoxDecoration(
                                       color: Colors.white,
                                       borderRadius: BorderRadius.circular(
-                                        999.r,
+                                        context.radius.full.r,
                                       ),
                                       border: Border.all(
                                         color: const Color(0xFFDDD3C4),
@@ -140,7 +141,7 @@ class _ArchitectureLoadedView extends StatelessWidget {
                                 )
                                 .toList(),
                           ),
-                          SizedBox(height: 12.h),
+                          SizedBox(height: context.spacing.sm12.h),
                           Text(
                             layer.note,
                             style: theme.textTheme.bodyMedium?.copyWith(
@@ -154,17 +155,17 @@ class _ArchitectureLoadedView extends StatelessWidget {
                   .toList(),
             ),
           ),
-          SizedBox(height: 20.h),
+          SizedBox(height: context.spacing.l.h),
           AppSectionCard(
             eyebrow: 'Structure',
             title: 'Target folder map',
             accentColor: const Color(0xFFB7791F),
             child: Container(
               width: double.infinity,
-              padding: EdgeInsets.all(18.r),
+              padding: EdgeInsets.all(context.spacing.l.r),
               decoration: BoxDecoration(
                 color: const Color(0xFF102221),
-                borderRadius: BorderRadius.circular(22.r),
+                borderRadius: BorderRadius.circular(context.radius.x3l.r),
               ),
               child: SelectableText(
                 overview.folderTree,
@@ -176,7 +177,7 @@ class _ArchitectureLoadedView extends StatelessWidget {
               ),
             ),
           ),
-          SizedBox(height: 20.h),
+          SizedBox(height: context.spacing.l.h),
           AppSectionCard(
             eyebrow: 'Patterns',
             title: 'Current implementation patterns',
@@ -186,11 +187,11 @@ class _ArchitectureLoadedView extends StatelessWidget {
                   .map(
                     (ArchitecturePatternViewModel mapping) => Container(
                       width: double.infinity,
-                      margin: EdgeInsets.only(bottom: 14.h),
-                      padding: EdgeInsets.all(18.r),
+                      margin: EdgeInsets.only(bottom: context.spacing.md.h),
+                      padding: EdgeInsets.all(context.spacing.l.r),
                       decoration: BoxDecoration(
                         color: const Color(0xFFF0F7F5),
-                        borderRadius: BorderRadius.circular(22.r),
+                        borderRadius: BorderRadius.circular(context.radius.x3l.r),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -202,7 +203,7 @@ class _ArchitectureLoadedView extends StatelessWidget {
                               color: const Color(0xFF10363A),
                             ),
                           ),
-                          SizedBox(height: 10.h),
+                          SizedBox(height: context.spacing.m.h),
                           Text(
                             mapping.implementation,
                             style: theme.textTheme.bodyLarge,
@@ -214,7 +215,7 @@ class _ArchitectureLoadedView extends StatelessWidget {
                   .toList(),
             ),
           ),
-          SizedBox(height: 20.h),
+          SizedBox(height: context.spacing.l.h),
           AppSectionCard(
             eyebrow: 'Next',
             title: 'Implementation sequence',
@@ -224,20 +225,20 @@ class _ArchitectureLoadedView extends StatelessWidget {
               children: overview.nextMilestones
                   .map(
                     (String milestone) => Padding(
-                      padding: EdgeInsets.only(bottom: 12.h),
+                      padding: EdgeInsets.only(bottom: context.spacing.sm12.h),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Container(
-                            width: 8.w,
-                            height: 8.w,
-                            margin: EdgeInsets.only(top: 7.h),
+                            width: context.spacing.sm.w,
+                            height: context.spacing.sm.w,
+                            margin: EdgeInsets.only(top: context.spacing.s.h),
                             decoration: const BoxDecoration(
                               color: Color(0xFF7A4B08),
                               shape: BoxShape.circle,
                             ),
                           ),
-                          SizedBox(width: 12.w),
+                          SizedBox(width: context.spacing.sm12.w),
                           Expanded(
                             child: Text(
                               milestone,
@@ -277,7 +278,7 @@ class _ArchitectureErrorView extends StatelessWidget {
       appBar: AppBar(title: const Text('Architecture')),
       body: Center(
         child: Padding(
-          padding: EdgeInsets.all(24.r),
+          padding: EdgeInsets.all(context.spacing.lg.r),
           child: Text(
             'Failed to load architecture overview.\n$message',
             textAlign: TextAlign.center,

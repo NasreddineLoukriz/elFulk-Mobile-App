@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:elfulk/src/core/config/routing/routes.dart';
+import 'package:elfulk/src/core/helpers/helpers.dart';
 import 'package:elfulk/src/core/widgets/app_section_card.dart';
 import 'package:elfulk/src/features/parent_features/parent_home/data/view_models/parent_home_overview_view_model.dart';
 import 'package:elfulk/src/features/parent_features/parent_home/logic/cubit/parent_home_cubit.dart';
@@ -39,7 +40,7 @@ class _ParentLoadedView extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('Parent Features')),
       body: ListView(
-        padding: EdgeInsets.all(20.r),
+        padding: context.spacing.pagePadding,
         children: <Widget>[
           AppSectionCard(
             eyebrow: 'Parent',
@@ -49,16 +50,16 @@ class _ParentLoadedView extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(overview.summary, style: theme.textTheme.bodyLarge),
-                SizedBox(height: 16.h),
+                SizedBox(height: context.spacing.md.h),
                 Wrap(
-                  spacing: 10,
-                  runSpacing: 10,
+                  spacing: context.spacing.m.w,
+                  runSpacing: context.spacing.m.h,
                   children: <Widget>[
                     _InfoChip(label: 'Base URL', value: overview.baseUrl),
                     _InfoChip(label: 'Endpoint', value: overview.endpoint),
                   ],
                 ),
-                SizedBox(height: 16.h),
+                SizedBox(height: context.spacing.md.h),
                 FilledButton.tonal(
                   onPressed: () => context.push(Routes.parentRequestsScreen),
                   child: const Text('Open Bloc-based parent requests'),
@@ -66,7 +67,7 @@ class _ParentLoadedView extends StatelessWidget {
               ],
             ),
           ),
-          SizedBox(height: 20.h),
+          SizedBox(height: context.spacing.l.h),
           AppSectionCard(
             eyebrow: 'Dummy Data',
             title: 'Parent dashboard highlights',
@@ -76,11 +77,13 @@ class _ParentLoadedView extends StatelessWidget {
                   .map(
                     (ParentHighlightViewModel highlight) => Container(
                       width: double.infinity,
-                      margin: EdgeInsets.only(bottom: 14.h),
-                      padding: EdgeInsets.all(18.r),
+                      margin: EdgeInsets.only(bottom: context.spacing.md.h),
+                      padding: EdgeInsets.all(context.spacing.l.r),
                       decoration: BoxDecoration(
                         color: const Color(0xFFFAF8F3),
-                        borderRadius: BorderRadius.circular(22.r),
+                        borderRadius: BorderRadius.circular(
+                          context.radius.x3l.r,
+                        ),
                         border: Border.all(color: const Color(0xFFE0D7C8)),
                       ),
                       child: Column(
@@ -92,14 +95,14 @@ class _ParentLoadedView extends StatelessWidget {
                               fontWeight: FontWeight.w800,
                             ),
                           ),
-                          SizedBox(height: 6.h),
+                          SizedBox(height: context.spacing.s.h),
                           Text(
                             highlight.label,
                             style: theme.textTheme.titleMedium?.copyWith(
                               fontWeight: FontWeight.w700,
                             ),
                           ),
-                          SizedBox(height: 8.h),
+                          SizedBox(height: context.spacing.sm.h),
                           Text(
                             highlight.detail,
                             style: theme.textTheme.bodyMedium,
@@ -111,7 +114,7 @@ class _ParentLoadedView extends StatelessWidget {
                   .toList(),
             ),
           ),
-          SizedBox(height: 20.h),
+          SizedBox(height: context.spacing.l.h),
           AppSectionCard(
             eyebrow: 'Actions',
             title: 'What this feature group can own',
@@ -121,20 +124,22 @@ class _ParentLoadedView extends StatelessWidget {
               children: overview.nextActions
                   .map(
                     (String action) => Padding(
-                      padding: EdgeInsets.only(bottom: 12.h),
+                      padding: EdgeInsets.only(
+                        bottom: context.spacing.sm12.h,
+                      ),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Container(
-                            width: 8.w,
-                            height: 8.w,
-                            margin: EdgeInsets.only(top: 7.h),
+                            width: context.spacing.sm.w,
+                            height: context.spacing.sm.w,
+                            margin: EdgeInsets.only(top: context.spacing.s.h),
                             decoration: const BoxDecoration(
                               color: Color(0xFFB7791F),
                               shape: BoxShape.circle,
                             ),
                           ),
-                          SizedBox(width: 12.w),
+                          SizedBox(width: context.spacing.sm12.w),
                           Expanded(
                             child: Text(
                               action,
@@ -174,7 +179,7 @@ class _ParentErrorView extends StatelessWidget {
       appBar: AppBar(title: const Text('Parent Features')),
       body: Center(
         child: Padding(
-          padding: EdgeInsets.all(24.r),
+          padding: EdgeInsets.all(context.spacing.lg.r),
           child: Text(message, textAlign: TextAlign.center),
         ),
       ),
@@ -191,10 +196,13 @@ class _InfoChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+      padding: EdgeInsets.symmetric(
+        horizontal: context.spacing.sm12.w,
+        vertical: context.spacing.sm.h,
+      ),
       decoration: BoxDecoration(
         color: const Color(0xFFF0F7F5),
-        borderRadius: BorderRadius.circular(999.r),
+        borderRadius: BorderRadius.circular(context.radius.full.r),
       ),
       child: Text('$label: $value'),
     );

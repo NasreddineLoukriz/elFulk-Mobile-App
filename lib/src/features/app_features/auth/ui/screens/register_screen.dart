@@ -3,7 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart' show SvgPicture;
 import 'package:go_router/go_router.dart';
 
-import 'package:elfulk/src/core/helpers/src/assets_path_helper.dart';
+import 'package:elfulk/src/core/helpers/helpers.dart';
 import 'package:elfulk/src/core/widgets/app_screen_template.dart';
 import 'package:elfulk/src/core/widgets/custom_text_field.dart';
 import 'package:elfulk/src/core/widgets/divider_with_text.dart';
@@ -41,7 +41,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   color: theme.colorScheme.onSurface,
                 ),
           ),
-          SizedBox(height: 6.h),
+          SizedBox(height: context.spacing.s.h),
           Text(
             'أنشئ حسابك في دقيقة وامنح طفلك فضاءً رقميًا آمنًا.',
             style: theme.textTheme.bodyMedium?.copyWith(
@@ -49,27 +49,27 @@ class _RegisterScreenState extends State<RegisterScreen> {
               color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
             ),
           ),
-          SizedBox(height: 24.h),
+          SizedBox(height: context.spacing.lg.h),
 
           CustomTextField(
             hintText: 'الاسم كامل',
             prefixIcon: SvgPicture.asset(AssetsPathHelper.profile),
           ),
-          SizedBox(height: 14.h),
+          SizedBox(height: context.spacing.md.h),
 
           CustomTextField(
             hintText: 'البريد الإلكتروني',
             prefixIcon: SvgPicture.asset(AssetsPathHelper.email),
             keyboardType: TextInputType.emailAddress,
           ),
-          SizedBox(height: 14.h),
+          SizedBox(height: context.spacing.md.h),
 
           CustomTextField(
             hintText: 'كلمة المرور',
             prefixIcon: SvgPicture.asset(AssetsPathHelper.lock),
             isPassword: true,
           ),
-          SizedBox(height: 16.h),
+          SizedBox(height: context.spacing.md.h),
 
           Row(
             children: [
@@ -85,7 +85,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   size: 20.sp,
                 ),
               ),
-              SizedBox(width: 8.w),
+              SizedBox(width: context.spacing.sm.w),
               Expanded(
                 child: RichText(
                   text: TextSpan(
@@ -113,7 +113,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ),
             ],
           ),
-          SizedBox(height: 24.h),
+          SizedBox(height: context.spacing.lg.h),
 
           PrimaryButton(
             text: 'انشاء حساب',
@@ -125,7 +125,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 : null,
           ),
 
-          SizedBox(height: 32.h),
+          SizedBox(height: context.spacing.xl.h),
 
           FooterText(
             questionText: 'لديك حساب بالفعل؟ ',
@@ -133,11 +133,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
             onActionTap: () => context.pop(),
           ),
 
-          SizedBox(height: 16.h),
+          SizedBox(height: context.spacing.md.h),
 
           const DividerWithText(text: 'او عن طريق'),
 
-          SizedBox(height: 16.h),
+          SizedBox(height: context.spacing.md.h),
 
           Row(
             children: [
@@ -149,7 +149,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   onPressed: () {},
                 ),
               ),
-              SizedBox(width: 16.w),
+              SizedBox(width: context.spacing.md.w),
               Expanded(
                 child: SocialButton(
                   iconSize: 30.sp,

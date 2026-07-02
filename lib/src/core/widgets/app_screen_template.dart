@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import 'package:elfulk/src/core/helpers/src/assets_path_helper.dart';
+import 'package:elfulk/src/core/helpers/helpers.dart';
 
 class AppScreenTemplate extends StatelessWidget {
   final Widget child;
@@ -37,7 +37,9 @@ class AppScreenTemplate extends StatelessWidget {
                       child: Container(
                         alignment: Alignment.center,
                         padding: EdgeInsets.symmetric(
-                          vertical: isKeyboardOpen ? 10.h : 20.h,
+                          vertical: isKeyboardOpen
+                              ? context.spacing.m.h
+                              : context.spacing.l.h,
                         ),
                         child: AnimatedContainer(
                           duration: const Duration(milliseconds: 200),
@@ -54,15 +56,15 @@ class AppScreenTemplate extends StatelessWidget {
                       decoration: BoxDecoration(
                         color: theme.cardTheme.color,
                         borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(32.r),
-                          topRight: Radius.circular(32.r),
+                          topLeft: Radius.circular(context.radius.x4l.r),
+                          topRight: Radius.circular(context.radius.x4l.r),
                         ),
                       ),
                       padding: EdgeInsets.only(
-                        left: 24.w,
-                        right: 24.w,
-                        top: 28.h,
-                        bottom: 24.h,
+                        left: context.spacing.lg.w,
+                        right: context.spacing.lg.w,
+                        top: context.spacing.lg.h,
+                        bottom: context.spacing.lg.h,
                       ),
                       child: child,
                     ),

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import 'package:elfulk/src/core/helpers/helpers.dart';
+
 class DividerWithText extends StatelessWidget {
   final String text;
 
@@ -14,7 +16,7 @@ class DividerWithText extends StatelessWidget {
       children: [
         Expanded(child: Divider(color: theme.colorScheme.outlineVariant)),
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16.w),
+          padding: EdgeInsets.symmetric(horizontal: context.spacing.md.w),
           child: Text(
             text,
             style: theme.textTheme.bodySmall?.copyWith(

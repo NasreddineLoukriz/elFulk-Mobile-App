@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import 'package:elfulk/src/core/helpers/helpers.dart';
 import 'package:elfulk/src/core/widgets/app_section_card.dart';
 import 'package:elfulk/src/features/child_features/child_home/data/view_models/child_home_overview_view_model.dart';
 import 'package:elfulk/src/features/child_features/child_home/logic/cubit/child_home_cubit.dart';
@@ -37,7 +38,7 @@ class _ChildLoadedView extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('Child Features')),
       body: ListView(
-        padding: EdgeInsets.all(20.r),
+        padding: context.spacing.pagePadding,
         children: <Widget>[
           AppSectionCard(
             eyebrow: 'Child',
@@ -47,10 +48,10 @@ class _ChildLoadedView extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(overview.summary, style: theme.textTheme.bodyLarge),
-                SizedBox(height: 16.h),
+                SizedBox(height: context.spacing.md.h),
                 Wrap(
-                  spacing: 10,
-                  runSpacing: 10,
+                  spacing: context.spacing.m.w,
+                  runSpacing: context.spacing.m.h,
                   children: <Widget>[
                     _InfoChip(label: 'Base URL', value: overview.baseUrl),
                     _InfoChip(label: 'Endpoint', value: overview.endpoint),
@@ -59,7 +60,7 @@ class _ChildLoadedView extends StatelessWidget {
               ],
             ),
           ),
-          SizedBox(height: 20.h),
+          SizedBox(height: context.spacing.l.h),
           AppSectionCard(
             eyebrow: 'Dummy Data',
             title: 'Child tasks loaded through networking',
@@ -69,11 +70,13 @@ class _ChildLoadedView extends StatelessWidget {
                   .map(
                     (ChildTaskViewModel task) => Container(
                       width: double.infinity,
-                      margin: EdgeInsets.only(bottom: 14.h),
-                      padding: EdgeInsets.all(18.r),
+                      margin: EdgeInsets.only(bottom: context.spacing.md.h),
+                      padding: EdgeInsets.all(context.spacing.l.r),
                       decoration: BoxDecoration(
                         color: const Color(0xFFFAF8F3),
-                        borderRadius: BorderRadius.circular(22.r),
+                        borderRadius: BorderRadius.circular(
+                          context.radius.x3l.r,
+                        ),
                         border: Border.all(color: const Color(0xFFE0D7C8)),
                       ),
                       child: Row(
@@ -89,7 +92,7 @@ class _ChildLoadedView extends StatelessWidget {
                                     fontWeight: FontWeight.w800,
                                   ),
                                 ),
-                                SizedBox(height: 8.h),
+                                SizedBox(height: context.spacing.sm.h),
                                 Text(
                                   'Status: ${task.status}',
                                   style: theme.textTheme.bodyMedium,
@@ -99,12 +102,14 @@ class _ChildLoadedView extends StatelessWidget {
                           ),
                           Container(
                             padding: EdgeInsets.symmetric(
-                              horizontal: 10.w,
-                              vertical: 8.h,
+                              horizontal: context.spacing.m.w,
+                              vertical: context.spacing.sm.h,
                             ),
                             decoration: BoxDecoration(
                               color: const Color(0xFFF0F7F5),
-                              borderRadius: BorderRadius.circular(999.r),
+                              borderRadius: BorderRadius.circular(
+                                context.radius.full.r,
+                              ),
                             ),
                             child: Text(task.reward),
                           ),
@@ -115,7 +120,7 @@ class _ChildLoadedView extends StatelessWidget {
                   .toList(),
             ),
           ),
-          SizedBox(height: 20.h),
+          SizedBox(height: context.spacing.l.h),
           AppSectionCard(
             eyebrow: 'Tips',
             title: 'How to structure child features',
@@ -125,20 +130,22 @@ class _ChildLoadedView extends StatelessWidget {
               children: overview.tips
                   .map(
                     (String tip) => Padding(
-                      padding: EdgeInsets.only(bottom: 12.h),
+                      padding: EdgeInsets.only(
+                        bottom: context.spacing.sm12.h,
+                      ),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Container(
-                            width: 8.w,
-                            height: 8.w,
-                            margin: EdgeInsets.only(top: 7.h),
+                            width: context.spacing.sm.w,
+                            height: context.spacing.sm.w,
+                            margin: EdgeInsets.only(top: context.spacing.s.h),
                             decoration: const BoxDecoration(
                               color: Color(0xFFB7791F),
                               shape: BoxShape.circle,
                             ),
                           ),
-                          SizedBox(width: 12.w),
+                          SizedBox(width: context.spacing.sm12.w),
                           Expanded(
                             child: Text(tip, style: theme.textTheme.bodyLarge),
                           ),
@@ -175,7 +182,7 @@ class _ChildErrorView extends StatelessWidget {
       appBar: AppBar(title: const Text('Child Features')),
       body: Center(
         child: Padding(
-          padding: EdgeInsets.all(24.r),
+          padding: EdgeInsets.all(context.spacing.lg.r),
           child: Text(message, textAlign: TextAlign.center),
         ),
       ),
@@ -192,10 +199,13 @@ class _InfoChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+      padding: EdgeInsets.symmetric(
+        horizontal: context.spacing.sm12.w,
+        vertical: context.spacing.sm.h,
+      ),
       decoration: BoxDecoration(
         color: const Color(0xFFF0F7F5),
-        borderRadius: BorderRadius.circular(999.r),
+        borderRadius: BorderRadius.circular(context.radius.full.r),
       ),
       child: Text('$label: $value'),
     );

@@ -12,6 +12,8 @@ export 'src/utils/app_regex.dart';
 export 'src/utils/app_validators.dart';
 export 'src/utils/constants.dart';
 export 'src/utils/extensions.dart';
+export 'src/utils/extension/raduis_extension.dart';
+export 'src/utils/extension/spacing_extension.dart';
 export 'src/utils/spacing.dart';
 
 // ---------------------------

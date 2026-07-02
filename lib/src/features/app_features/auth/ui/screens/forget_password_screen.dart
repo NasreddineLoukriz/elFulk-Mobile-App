@@ -3,7 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:elfulk/src/core/helpers/src/assets_path_helper.dart';
+import 'package:elfulk/src/core/helpers/helpers.dart';
 import 'package:elfulk/src/core/widgets/app_screen_template.dart';
 import 'package:elfulk/src/core/widgets/custom_text_field.dart';
 import 'package:elfulk/src/core/widgets/divider_with_text.dart';
@@ -34,7 +34,7 @@ class ForgetPasswordScreen extends StatelessWidget {
                   color: theme.colorScheme.onSurface,
                 ),
           ),
-          SizedBox(height: 12.h),
+          SizedBox(height: context.spacing.sm12.h),
           Text(
             'أدخل بريدك الإلكتروني وسنرسل لك رمز التحقق.',
             style: theme.textTheme.bodyMedium?.copyWith(
@@ -43,14 +43,14 @@ class ForgetPasswordScreen extends StatelessWidget {
             ),
             textAlign: TextAlign.center,
           ),
-          SizedBox(height: 32.h),
+          SizedBox(height: context.spacing.xl.h),
 
           CustomTextField(
             hintText: 'البريد الإلكتروني',
             prefixIcon: SvgPicture.asset(AssetsPathHelper.email),
             keyboardType: TextInputType.emailAddress,
           ),
-          SizedBox(height: 24.h),
+          SizedBox(height: context.spacing.lg.h),
 
           PrimaryButton(
             text: 'ارسال رمز التحقق',
@@ -60,17 +60,17 @@ class ForgetPasswordScreen extends StatelessWidget {
               // Send code logic
             },
           ),
-          SizedBox(height: 24.h),
+          SizedBox(height: context.spacing.lg.h),
 
           FooterText(
             questionText: 'تذكرت كلمة المرور الخاصة بك؟ ',
             actionText: 'سجل الدخول',
             onActionTap: () => context.pop(),
           ),
-          SizedBox(height: 32.h),
+          SizedBox(height: context.spacing.xl.h),
 
           const DividerWithText(text: 'او عن طريق'),
-          SizedBox(height: 24.h),
+          SizedBox(height: context.spacing.lg.h),
 
           Row(
             children: [
@@ -82,7 +82,7 @@ class ForgetPasswordScreen extends StatelessWidget {
                   onPressed: () {},
                 ),
               ),
-              SizedBox(width: 16.w),
+              SizedBox(width: context.spacing.md.w),
               Expanded(
                 child: SocialButton(
                   iconSize: 30.sp,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+import 'package:elfulk/src/core/helpers/helpers.dart';
 import 'package:elfulk/src/features/app_features/onboarding/data/view_models/onboarding_page_view_model.dart';
 
 class OnboardingPageWidget extends StatelessWidget {
@@ -32,7 +33,7 @@ class OnboardingPageWidget extends StatelessWidget {
     }
 
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 24.w),
+      padding: EdgeInsets.symmetric(horizontal: context.spacing.lg.w),
       child: CustomScrollView(
         physics: const ClampingScrollPhysics(),
         slivers: [
@@ -48,7 +49,7 @@ class OnboardingPageWidget extends StatelessWidget {
                     fit: BoxFit.contain,
                   ),
                 ),
-                SizedBox(height: 32.h),
+                SizedBox(height: context.spacing.xl.h),
                 Text(
                   viewModel.title,
                   style: theme.textTheme.headlineMedium?.copyWith(
@@ -63,7 +64,7 @@ class OnboardingPageWidget extends StatelessWidget {
                   textAlign: TextAlign.center,
                   textDirection: TextDirection.rtl,
                 ),
-                SizedBox(height: 12.h),
+                SizedBox(height: context.spacing.sm12.h),
                 Text(
                   viewModel.description,
                   style: theme.textTheme.bodyLarge?.copyWith(
@@ -79,7 +80,7 @@ class OnboardingPageWidget extends StatelessWidget {
                   textAlign: TextAlign.center,
                   textDirection: TextDirection.rtl,
                 ),
-                SizedBox(height: 40.h),
+                SizedBox(height: context.spacing.xl.h),
               ],
             ),
           ),

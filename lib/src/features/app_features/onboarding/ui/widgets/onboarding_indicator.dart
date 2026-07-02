@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import 'package:elfulk/src/core/helpers/helpers.dart';
+
 class OnboardingIndicator extends StatelessWidget {
   const OnboardingIndicator({
     super.key,
@@ -21,12 +23,12 @@ class OnboardingIndicator extends StatelessWidget {
         final isActive = index == currentIndex;
         return AnimatedContainer(
           duration: const Duration(milliseconds: 250),
-          margin: EdgeInsets.symmetric(horizontal: 4.w),
-          width: isActive ? 20.w : 8.w,
-          height: 8.h,
+          margin: EdgeInsets.symmetric(horizontal: context.spacing.xs.w),
+          width: isActive ? 20.w : context.spacing.sm.w,
+          height: context.spacing.sm.h,
           decoration: BoxDecoration(
             color: isActive ? activeColor : activeColor.withValues(alpha: 0.3),
-            borderRadius: BorderRadius.circular(4.r),
+            borderRadius: BorderRadius.circular(context.radius.sm.r),
           ),
         );
       }),

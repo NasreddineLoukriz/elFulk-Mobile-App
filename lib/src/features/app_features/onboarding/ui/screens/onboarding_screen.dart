@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:elfulk/src/core/config/routing/routes.dart';
+import 'package:elfulk/src/core/helpers/helpers.dart';
 import 'package:elfulk/src/features/app_features/onboarding/logic/cubit/onboarding_cubit.dart';
 import 'package:elfulk/src/features/app_features/onboarding/data/view_models/onboarding_page_view_model.dart';
 import 'package:elfulk/src/features/app_features/onboarding/ui/widgets/onboarding_page_widget.dart';
@@ -97,10 +98,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
                   Padding(
                     padding: EdgeInsetsDirectional.fromSTEB(
-                      24.w,
+                      context.spacing.lg.w,
                       0,
-                      24.w,
-                      32.h,
+                      context.spacing.lg.w,
+                      context.spacing.xl.h,
                     ),
                     child: Column(
                       children: [
@@ -114,7 +115,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                             ),
                           ),
 
-                        SizedBox(height: 24.h),
+                        SizedBox(height: context.spacing.lg.h),
 
                         if (!currentPageData.isLogoPage)
                           SizedBox(
@@ -124,14 +125,16 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                               onPressed: cubit.nextPage,
                               style: ElevatedButton.styleFrom(
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(16.r),
+                                  borderRadius: BorderRadius.circular(
+                                    context.radius.xxl.r,
+                                  ),
                                 ),
                               ),
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Icon(Icons.chevron_left, size: 20.r),
-                                  SizedBox(width: 8.w),
+                                  SizedBox(width: context.spacing.sm.w),
                                   Text(
                                     currentPageData.actionLabel,
                                     style: TextStyle(
@@ -159,8 +162,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                             ),
                           )
                         else
-                          SizedBox(height: 48.h),
-                        SizedBox(height: 16.h),
+                          SizedBox(height: context.spacing.xl.h),
+                        SizedBox(height: context.spacing.md.h),
                       ],
                     ),
                   ),

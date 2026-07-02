@@ -24,16 +24,16 @@ class AppSectionCard extends StatelessWidget {
 
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.all(20.r),
+      padding: context.spacing.pagePadding,
       decoration: BoxDecoration(
         color: theme.cardTheme.color,
-        borderRadius: BorderRadius.circular(28.r),
+        borderRadius: BorderRadius.circular(context.radius.x4l.r),
         border: Border.all(color: borderColor.withValues(alpha: 0.32)),
         boxShadow: <BoxShadow>[
           BoxShadow(
             color: theme.shadowColor.withValues(alpha: 0.08),
-            blurRadius: 28.r,
-            offset: Offset(0, 14.h),
+            blurRadius: context.radius.x4l.r,
+            offset: Offset(0, context.spacing.md.h),
           ),
         ],
       ),
@@ -49,7 +49,7 @@ class AppSectionCard extends StatelessWidget {
                 letterSpacing: 1.1.w,
               ),
             ),
-            verticalSpace(8),
+            verticalSpace(context.spacing.sm),
           ],
           Text(
             title,
@@ -57,7 +57,7 @@ class AppSectionCard extends StatelessWidget {
               fontWeight: FontWeight.w800,
             ),
           ),
-          verticalSpace(16),
+          verticalSpace(context.spacing.md),
           child,
         ],
       ),

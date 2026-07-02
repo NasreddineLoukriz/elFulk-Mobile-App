@@ -1,5 +1,6 @@
 import 'package:elfulk/src/core/constants/app_breakpoint.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class AppSpacing {
   final double xs;
@@ -23,7 +24,7 @@ class AppSpacing {
     required this.lg,
     required this.xl,
   });
-  EdgeInsets get pagePadding => EdgeInsets.all(l);
+  EdgeInsets get pagePadding => EdgeInsets.all(l.r);
   static AppSpacing of(BuildContext context) {
     final width = MediaQuery.sizeOf(context).width;
 

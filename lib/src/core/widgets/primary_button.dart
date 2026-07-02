@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+import 'package:elfulk/src/core/helpers/helpers.dart';
+
 class PrimaryButton extends StatelessWidget {
   final String text;
   final VoidCallback? onPressed;
@@ -25,7 +27,7 @@ class PrimaryButton extends StatelessWidget {
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16.r),
+            borderRadius: BorderRadius.circular(context.radius.xxl.r),
           ),
           elevation: 0,
         ),
@@ -45,9 +47,9 @@ class PrimaryButton extends StatelessWidget {
                   flipX: true,
                   child: icon,
                 ),
-                SizedBox(width: 8.w),
+                SizedBox(width: context.spacing.sm.w),
               ] else ...[
-                SizedBox(width: 8.w),
+                SizedBox(width: context.spacing.sm.w),
                 icon,
               ],
             ],

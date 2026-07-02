@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import 'package:elfulk/src/core/constants/app_raduis.dart';
 import 'package:elfulk/src/core/theme/app_colors.dart';
 
 ThemeData buildLightTheme() => _buildTheme(const AppColors.light());
@@ -8,6 +9,7 @@ ThemeData buildLightTheme() => _buildTheme(const AppColors.light());
 ThemeData buildDarkTheme() => _buildTheme(const AppColors.dark());
 
 ThemeData _buildTheme(AppColors colors) {
+  const AppRadius radius = AppRadius();
   final Brightness brightness =
       colors.scaffoldBackground.computeLuminance() > 0.5
           ? Brightness.light
@@ -41,26 +43,28 @@ ThemeData _buildTheme(AppColors colors) {
       elevation: 0,
       margin: EdgeInsets.zero,
       surfaceTintColor: Colors.transparent,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28.r)),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(radius.x4l.r),
+      ),
     ),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
       fillColor: colors.inputFill,
       contentPadding: EdgeInsets.symmetric(vertical: 14.h, horizontal: 16.w),
       enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12.r),
+        borderRadius: BorderRadius.circular(radius.xl.r),
         borderSide: BorderSide(color: colors.inputBorder),
       ),
       focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12.r),
+        borderRadius: BorderRadius.circular(radius.xl.r),
         borderSide: BorderSide(color: colors.inputBorderFocused),
       ),
       errorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12.r),
+        borderRadius: BorderRadius.circular(radius.xl.r),
         borderSide: BorderSide(color: colors.error),
       ),
       focusedErrorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12.r),
+        borderRadius: BorderRadius.circular(radius.xl.r),
         borderSide: BorderSide(color: colors.error),
       ),
     ),
@@ -72,7 +76,7 @@ ThemeData _buildTheme(AppColors colors) {
         disabledForegroundColor: colors.onDisabled,
         elevation: 0,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16.r),
+          borderRadius: BorderRadius.circular(radius.xxl.r),
         ),
       ),
     ),
@@ -80,7 +84,7 @@ ThemeData _buildTheme(AppColors colors) {
       style: OutlinedButton.styleFrom(
         side: BorderSide(color: colors.socialButtonBorder, width: 1),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16.r),
+          borderRadius: BorderRadius.circular(radius.xxl.r),
         ),
       ),
     ),

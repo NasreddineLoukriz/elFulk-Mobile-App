@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import 'package:elfulk/src/core/helpers/src/assets_path_helper.dart';
+import 'package:elfulk/src/core/helpers/helpers.dart';
 
 class CustomTextField extends StatefulWidget {
   final String hintText;
@@ -48,7 +48,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
           fontSize: 13.sp,
         ),
         prefixIcon: Padding(
-          padding: const EdgeInsets.all(10),
+          padding: EdgeInsets.all(context.spacing.m.r),
           child: widget.prefixIcon,
         ),
         suffixIcon: widget.isPassword
@@ -65,13 +65,16 @@ class _CustomTextFieldState extends State<CustomTextField> {
             : null,
         filled: true,
         fillColor: theme.colorScheme.surfaceContainerHighest,
-        contentPadding: EdgeInsets.symmetric(vertical: 14.h, horizontal: 16.w),
+        contentPadding: EdgeInsets.symmetric(
+          vertical: context.spacing.md.h,
+          horizontal: context.spacing.md.w,
+        ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12.r),
+          borderRadius: BorderRadius.circular(context.radius.xl.r),
           borderSide: BorderSide(color: borderColor),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12.r),
+          borderRadius: BorderRadius.circular(context.radius.xl.r),
           borderSide: BorderSide(color: focusedBorderColor),
         ),
       ),
