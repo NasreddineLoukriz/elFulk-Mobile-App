@@ -11,6 +11,8 @@ import 'package:elfulk/src/features/app_features/architecture/logic/cubit/archit
 import 'package:elfulk/src/features/app_features/architecture/ui/screens/architecture_overview_screen.dart';
 import 'package:elfulk/src/features/app_features/home/logic/cubit/home_cubit.dart';
 import 'package:elfulk/src/features/app_features/home/ui/screens/home_screen.dart';
+import 'package:elfulk/src/features/parent_features/add_child/ui/screens/add_child_screen.dart';
+import 'package:elfulk/src/features/parent_features/add_child/ui/screens/Add_new_child_screen.dart';
 import 'package:elfulk/src/features/child_features/child_home/logic/cubit/child_home_cubit.dart';
 import 'package:elfulk/src/features/child_features/child_home/ui/screens/child_home_screen.dart';
 import 'package:elfulk/src/features/parent_features/parent_home/logic/cubit/parent_home_cubit.dart';
@@ -96,6 +98,16 @@ class AppRouter {
           path: Routes.forgetPasswordScreen,
           pageBuilder: (BuildContext context, GoRouterState state) =>
               const MaterialPage<void>(child: ForgetPasswordScreen()),
+        ),
+        GoRoute(
+          path: Routes.addChildScreen,
+          pageBuilder: (BuildContext context, GoRouterState state) =>
+              const MaterialPage<void>(child: AddChildScreen()),
+        ),
+        GoRoute(
+          path: Routes.addNewChildScreen,
+          pageBuilder: (BuildContext context, GoRouterState state) =>
+              const MaterialPage<void>(child: AddNewChildScreen()),
         ),
         GoRoute(
           path: Routes.parentHomeScreen,
