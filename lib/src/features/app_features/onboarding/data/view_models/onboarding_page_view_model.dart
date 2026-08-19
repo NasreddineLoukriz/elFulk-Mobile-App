@@ -5,25 +5,16 @@ class OnboardingPageViewModel {
     required this.title,
     required this.description,
     required this.actionLabel,
-    this.isLogoPage = false,
   });
 
   final String imagePath;
   final String title;
   final String description;
   final String actionLabel;
-  final bool isLogoPage;
 }
 
 class OnboardingData {
   static const List<OnboardingPageViewModel> pages = [
-    OnboardingPageViewModel(
-      imagePath: 'assets/icons/elFulk_icon.svg',
-      title: '',
-      description: '',
-      actionLabel: '',
-      isLogoPage: true,
-    ),
      OnboardingPageViewModel(
       imagePath: 'assets/images/onboarding_image_1.png',
       title: 'عالم آمن يبدأ من هنا',

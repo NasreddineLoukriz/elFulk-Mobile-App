@@ -28,18 +28,22 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
     _controller = PageController();
 
-    Future.delayed(const Duration(seconds: 4), () {
-      if (!mounted) return;
-
-      _controller.animateToPage(
-        1,
-        duration: const Duration(milliseconds: 500),
-        curve: Curves.easeInOut,
-      );
-
-      context.read<OnboardingCubit>().onPageChanged(1);
-    });
+    // _startAutoTransition();
   }
+// nasreddine loukriz edit:I commented out the _startAutoTransition method because it was causing issues with the onboarding flow.  and it was better to let users manually navigate through the onboarding pages.
+  // void _startAutoTransition() {
+  //   Future.delayed(const Duration(seconds: 4), () {
+  //     if (!mounted) return;
+
+  //     final cubit = context.read<OnboardingCubit>();
+  //     // التحقق من أننا لم نصل بعد لآخر صفحة
+  //     if (cubit.state.currentPage < _pages.length - 1) {
+  //       cubit.nextPage();
+  //       // استدعاء التابع مرة أخرى لجدولة الانتقال التالي
+  //       _startAutoTransition();
+  //     }
+  //   });
+  // }
 
   @override
   void dispose() {
@@ -88,10 +92,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       itemCount: _pages.length,
                       onPageChanged: cubit.onPageChanged,
                       itemBuilder: (context, index) {
-                        return OnboardingPageWidget(
-                          viewModel: _pages[index],
-                          isLogoPage: _pages[index].isLogoPage,
-                        );
+                        return OnboardingPageWidget(viewModel: _pages[index]);
                       },
                     ),
                   ),
@@ -105,64 +106,61 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     ),
                     child: Column(
                       children: [
-                        if (!currentPageData.isLogoPage)
-                          Directionality(
-                            textDirection: TextDirection.rtl,
-                            child: OnboardingIndicator(
-                              count: _pages.length - 1,
-                              currentIndex: state.currentPage - 1,
-                              activeColor: theme.colorScheme.primary,
-                            ),
+                        Directionality(
+                          textDirection: TextDirection.rtl,
+                          child: OnboardingIndicator(
+                            count: _pages.length - 1,
+                            currentIndex: state.currentPage - 1,
+                            activeColor: theme.colorScheme.primary,
                           ),
+                        ),
 
                         SizedBox(height: context.spacing.lg.h),
 
-                        if (!currentPageData.isLogoPage)
-                          SizedBox(
-                            width: double.infinity,
-                            height: 42.h,
-                            child: ElevatedButton(
-                              onPressed: cubit.nextPage,
-                              style: ElevatedButton.styleFrom(
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(
-                                    context.radius.xxl.r,
-                                  ),
+                        SizedBox(
+                          width: double.infinity,
+                          height: 42.h,
+                          child: ElevatedButton(
+                            onPressed: cubit.nextPage,
+                            style: ElevatedButton.styleFrom(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(
+                                  context.radius.xxl.r,
                                 ),
                               ),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(Icons.chevron_left, size: 20.r),
-                                  SizedBox(width: context.spacing.sm.w),
-                                  Text(
-                                    currentPageData.actionLabel,
-                                    style: TextStyle(
-                                      fontSize: 16.sp,
-                                      fontWeight: FontWeight.w600,
-                                    ),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.chevron_left, size: 20.r),
+                                SizedBox(width: context.spacing.sm.w),
+                                Text(
+                                  currentPageData.actionLabel,
+                                  style: TextStyle(
+                                    fontSize: 16.sp,
+                                    fontWeight: FontWeight.w600,
                                   ),
-                                ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+
+                        Align(
+                          alignment: AlignmentDirectional.center,
+                          child: TextButton(
+                            onPressed: cubit.skip,
+                            child: Text(
+                              'تخطي',
+                              style: theme.textTheme.bodyLarge?.copyWith(
+                                fontSize: 16.sp,
+                                color: theme.colorScheme.onSurface.withValues(
+                                  alpha: 0.6,
+                                ),
                               ),
                             ),
                           ),
-                        if (!currentPageData.isLogoPage)
-                          Align(
-                            alignment: AlignmentDirectional.center,
-                            child: TextButton(
-                              onPressed: cubit.skip,
-                              child: Text(
-                                'تخطي',
-                                style: theme.textTheme.bodyLarge?.copyWith(
-                                  fontSize: 16.sp,
-                                  color: theme.colorScheme.onSurface
-                                      .withValues(alpha: 0.6),
-                                ),
-                              ),
-                            ),
-                          )
-                        else
-                          SizedBox(height: context.spacing.xl.h),
+                        ),
                         SizedBox(height: context.spacing.md.h),
                       ],
                     ),

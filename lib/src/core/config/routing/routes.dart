@@ -23,6 +23,8 @@ class Routes {
   static const String registerScreen = '/register';
   static const String otpVerificationScreen = '/otp-verification';
   static const String forgetPasswordScreen = '/forget-password';
+  static const String addChildScreen = '/parent/add-child';
+  static const String addNewChildScreen = '/parent/add-new-child';
   static const String parentHomeScreen = '/parent';
   static const String parentRequestsScreen = '/parent/requests';
   static const String childHomeScreen = '/child';
@@ -71,6 +73,16 @@ class Routes {
     RouteCatalogItem(
       path: forgetPasswordScreen,
       label: 'Forget Password',
+      category: RouteCategory.screen,
+    ),
+    RouteCatalogItem(
+      path: addChildScreen,
+      label: 'Add Child',
+      category: RouteCategory.screen,
+    ),
+    RouteCatalogItem(
+      path: addNewChildScreen,
+      label: 'Add New Child',
       category: RouteCategory.screen,
     ),
     RouteCatalogItem(
