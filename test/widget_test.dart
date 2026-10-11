@@ -212,7 +212,9 @@ void main() {
         ),
       );
 
-      // Titles, subtitle, trailing controls and dividers render.
+      // Titles, description, trailing controls and dividers render:
+      // one full-bleed mid divider under the described row, two inset
+      // bottom dividers.
       expect(find.text('إشعارات التنبيهات الحرجة.'), findsOneWidget);
       expect(find.text('تنبيهك فورًا عند أي محاولة لتجاوز القيود.'),
           findsOneWidget);
@@ -221,8 +223,15 @@ void main() {
       expect(find.byKey(const ValueKey('settings-tile-chevron')),
           findsOneWidget);
       expect(find.text('العربية'), findsOneWidget);
+      expect(find.byKey(const ValueKey('settings-tile-divider-mid')),
+          findsOneWidget);
       expect(find.byKey(const ValueKey('settings-tile-divider')),
           findsNWidgets(2));
+
+      // Tapping the description does NOT fire onTap (outside InkWell).
+      await tester.tap(find.text('تنبيهك فورًا عند أي محاولة لتجاوز القيود.'));
+      await tester.pump();
+      expect(tapped, isFalse);
 
       // Toggling the switch flips the parent-owned value.
       await tester.tap(find.byKey(const ValueKey('settings-tile-switch')));
@@ -236,7 +245,7 @@ void main() {
         isFalse,
       );
 
-      // Tapping the row fires onTap.
+      // Tapping the title row fires onTap.
       await tester.tap(find.text('إشعارات التنبيهات الحرجة.'));
       await tester.pump();
       expect(tapped, isTrue);

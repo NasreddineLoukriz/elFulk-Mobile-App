@@ -85,16 +85,17 @@ class _ValueTrailing extends SettingsTileTrailing {
 /// صف إعدادات قابل لإعادة الاستخدام ومدفوع بالبارامترات بالكامل.
 ///
 /// يغطي هذا الـ widget كل نسخ صفوف الإعدادات دون تكرار الكود:
-/// عنوان مع/بدون نص ثانوي، وأيقونة بداية، وعنصر نهائي
-/// ([SettingsTileTrailing])، وفاصل سفلي اختياري. النسخة التحذيرية
-/// (عنوان أحمر + أيقونة تحذير) تتحقق بالبارامترات فقط
-/// (`titleColor` و`leading`) دون widget مخصص.
+/// عنوان وأيقونة بداية وعنصر نهائي ([SettingsTileTrailing]) في صف
+/// تفاعلي، يليه فاصل ثم كتلة وصفية ثابتة اختيارية ([subtitle]) تحت
+/// الفاصل — لا أزرار تحت الفاصل أبداً — ثم فاصل سفلي اختياري.
+/// النسخة التحذيرية (عنوان ملوّن + أيقونة تحذير) تتحقق بالبارامترات
+/// فقط (`titleColor` و`leading`) دون widget مخصص.
 ///
 /// التخطيط: حاوية بحشوة أفقية ورأسية من التوكنز وحد أدنى للارتفاع
-/// (`56.h` مع النص الثانوي و`48.h` بدونه)، ثم `Row`: حاوية الأيقونة
-/// (`40.w` بزاوية مستديرة وخلفية ملوّنة) ← عمود النص المتمدّد ← العنصر
-/// النهائي. عند `onTap` غير فارغ يُغلَّف الصف بـ `InkWell`، وإلا يكون
-/// الصف غير تفاعلي.
+/// (`48.h`) تضم `Row` (أيقونة البداية ← العنوان المتمدّد ← العنصر
+/// النهائي). عند `onTap` غير فارغ يُغلَّف الصف وحده بـ `InkWell`
+/// (الكتلة الوصفية خارج منطقة الضغط دائماً)، وإلا يكون الصف
+/// غير تفاعلي.
 ///
 /// آمن لاتجاه RTL: تنعكس خانتا البداية والنهاية مع اتجاه
 /// [Directionality] المحيط تلقائياً، فيبقى المثلث التحذيري والمفتاح
@@ -121,8 +122,12 @@ class SettingsListTile extends StatelessWidget {
   /// عنوان الصف (مثال: `'إشعارات التنبيهات الحرجة.'`).
   final String title;
 
-  /// النص التوضيحي أسفل العنوان. يُعرض فقط عندما يكون غير فارغ
-  /// وغير فارغ المحتوى (`null` أو `''` تعني بلا نص ثانوي).
+  /// نص وصفي اختياري يشرح فائدة الميزة (فائدة التفعيل أو الإلغاء).
+  /// يُعرض فقط عندما يكون غير فارغ وغير فارغ المحتوى (`null` أو `''`
+  /// تعني بلا وصف).
+  ///
+  /// يُرسم ككتلة ثابتة تحت فاصل الصف (خارج منطقة الضغط دائماً)،
+  /// ويفصل بينه وبين الصف فاصل بعرض كامل يظهر فقط مع وجود الوصف.
   final String? subtitle;
 
   /// أيقونة البداية (أي widget: `SvgPicture.asset(...)` أو [Icon]).
@@ -130,9 +135,10 @@ class SettingsListTile extends StatelessWidget {
   /// تُعرض داخل مربع ملوّن بزاوية مستديرة (`40.w`).
   final Widget? leading;
 
-  /// خلفية مربع أيقونة البداية.
+  /// خلفية مربع أيقونة البداية (`40.w` بزاوية مستديرة).
   ///
-  /// الافتراضي: اللون الرئيسي `colorScheme.primary` بشفافية 12%.
+  /// عند تمريرها تُعرض الأيقونة داخل المربع الملوّن، وعند `null`
+  /// (الافتراضي) تُعرض الأيقونة عارية كما في التصميم المرجعي.
   final Color? leadingBackgroundColor;
 
   /// لون مقدمة أيقونة البداية (يُطبَّق عبر `IconTheme` على أبناء [Icon]).
@@ -151,13 +157,14 @@ class SettingsListTile extends StatelessWidget {
   /// الافتراضي: [SettingsTileTrailing.none].
   final SettingsTileTrailing trailing;
 
-  /// إظهار فاصل رفيع أسفل الصف.
+  /// إظهار الفاصل السفلي (بإزاحة أفقية) في نهاية البلاطة.
   ///
-  /// الافتراضي: `true`.
+  /// الافتراضي: `true`. (فاصل الصف الأوسط بعرض كامل ويظهر فقط مع
+  /// وجود [subtitle]).
   final bool showDivider;
 
-  /// تُستدعى عند ضغط الصف. عند `null` يكون الصف غير تفاعلي
-  /// (بلا `InkWell`).
+  /// تُستدعى عند ضغط صف العنوان فقط (الكتلة الوصفية خارج منطقة
+  /// الضغط). عند `null` يكون الصف غير تفاعلي (بلا `InkWell`).
   final VoidCallback? onTap;
 
   const SettingsListTile({
@@ -180,7 +187,7 @@ class SettingsListTile extends StatelessWidget {
 
     final Widget content = Container(
       constraints: BoxConstraints(
-        minHeight: (hasSubtitle ? 56 : 48).h,
+        minHeight: 48.h,
       ),
       padding: EdgeInsets.symmetric(
         horizontal: context.spacing.lg.w,
@@ -189,72 +196,25 @@ class SettingsListTile extends StatelessWidget {
       child: Row(
         children: [
           if (leading != null) ...[
-            Container(
-              width: 40.w,
-              height: 40.h,
-              decoration: BoxDecoration(
-                color: leadingBackgroundColor ??
-                    theme.colorScheme.primary.withValues(alpha: 0.12),
-                borderRadius:
-                    BorderRadius.circular(context.radius.lg.r),
-              ),
-              child: Padding(
-                padding: EdgeInsets.all(8.w),
-                child: Center(
-                  child: IconTheme(
-                    data: IconThemeData(
-                      color: leadingForegroundColor ??
-                          theme.colorScheme.primary,
-                      size: 22.sp,
-                    ),
-                    child: leading!,
-                  ),
-                ),
-              ),
-            ),
+            _buildLeading(context, theme),
             SizedBox(width: context.spacing.md.w),
           ],
           Expanded(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  key: const ValueKey('settings-tile-title'),
-                  style: theme.textTheme.titleMedium?.copyWith(
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.w700,
-                        color: titleColor ??
-                            theme.colorScheme.onSurface,
-                      ) ??
-                      TextStyle(
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.w700,
-                        color: titleColor ??
-                            theme.colorScheme.onSurface,
-                      ),
-                ),
-                if (hasSubtitle) ...[
-                  SizedBox(height: 4.h),
-                  Text(
-                    subtitle!,
-                    key: const ValueKey('settings-tile-subtitle'),
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                          fontSize: 13.sp,
-                          fontWeight: FontWeight.w400,
-                          color: theme.colorScheme.onSurface
-                              .withValues(alpha: 0.6),
-                        ) ??
-                        TextStyle(
-                          fontSize: 13.sp,
-                          fontWeight: FontWeight.w400,
-                          color: theme.colorScheme.onSurface
-                              .withValues(alpha: 0.6),
-                        ),
+            child: Text(
+              title,
+              key: const ValueKey('settings-tile-title'),
+              style: theme.textTheme.titleMedium?.copyWith(
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.w700,
+                    color:
+                        titleColor ?? theme.colorScheme.onSurface,
+                  ) ??
+                  TextStyle(
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.w700,
+                    color:
+                        titleColor ?? theme.colorScheme.onSurface,
                   ),
-                ],
-              ],
             ),
           ),
           ..._trailingGapAndWidget(context, theme),
@@ -271,18 +231,76 @@ class SettingsListTile extends StatelessWidget {
 
     return Column(
       mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         tile,
+        if (hasSubtitle) ...[
+          const Divider(
+            key: ValueKey('settings-tile-divider-mid'),
+            height: 1,
+            thickness: 1,
+          ),
+          Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: context.spacing.lg.w,
+              vertical: context.spacing.sm.h,
+            ),
+            child: Text(
+              subtitle!,
+              key: const ValueKey('settings-tile-subtitle'),
+              style: theme.textTheme.bodyMedium?.copyWith(
+                    fontSize: 13.sp,
+                    fontWeight: FontWeight.w400,
+                    color: theme.colorScheme.onSurface
+                        .withValues(alpha: 0.6),
+                  ) ??
+                  TextStyle(
+                    fontSize: 13.sp,
+                    fontWeight: FontWeight.w400,
+                    color: theme.colorScheme.onSurface
+                        .withValues(alpha: 0.6),
+                  ),
+            ),
+          ),
+        ],
         if (showDivider)
           Divider(
             key: const ValueKey('settings-tile-divider'),
             height: 1.h,
             thickness: 1.h,
-            indent: context.spacing.lg.w,
-            endIndent: context.spacing.lg.w,
+            indent: context.spacing.md.w,
+            endIndent: context.spacing.md.w,
             color: theme.colorScheme.outlineVariant,
           ),
       ],
+    );
+  }
+
+  /// يبني أيقونة البداية: داخل مربع ملوّن عند تمرير
+  /// [leadingBackgroundColor]، وعارية بدونه (كما في التصميم المرجعي).
+  Widget _buildLeading(BuildContext context, ThemeData theme) {
+    final Widget icon = IconTheme(
+      data: IconThemeData(
+        color:
+            leadingForegroundColor ?? theme.colorScheme.primary,
+        size: 22.sp,
+      ),
+      child: leading!,
+    );
+
+    if (leadingBackgroundColor == null) return Center(child: icon);
+
+    return Container(
+      width: 40.w,
+      height: 40.h,
+      decoration: BoxDecoration(
+        color: leadingBackgroundColor,
+        borderRadius: BorderRadius.circular(context.radius.lg.r),
+      ),
+      child: Padding(
+        padding: EdgeInsets.all(8.w),
+        child: Center(child: icon),
+      ),
     );
   }
 

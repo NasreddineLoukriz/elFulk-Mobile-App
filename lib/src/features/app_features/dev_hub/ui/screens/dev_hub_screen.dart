@@ -418,16 +418,28 @@ class _SettingsListTilePreviewState extends State<_SettingsListTilePreview> {
                         'بإعدادات الحماية.'
                     : 'التنبيهات متوقفة. فعّلها لتصلك إشعارات فورية عند '
                         'أي محاولة عبث بالحماية.',
-                leading: const Icon(Icons.warning_amber_rounded),
-                leadingBackgroundColor:
-                    theme.colorScheme.error.withValues(alpha: 0.12),
-                leadingForegroundColor: theme.colorScheme.error,
-                titleColor: theme.colorScheme.error,
+                // شارة دائرية وردية بداخلها "!" حمراء كما في التصميم
+                // (بلا حاوية مربعة).
+                leading: Container(
+                  width: 20.w,
+                  height: 20.h,
+                  decoration: BoxDecoration(
+                    color: theme.colorScheme.error
+                        .withValues(alpha: 0.35),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Center(
+                    child: Icon(
+                      Icons.priority_high_rounded,
+                      size: 14.sp,
+                      color: theme.colorScheme.error,
+                    ),
+                  ),
+                ),
                 trailing: SettingsTileTrailing.switch_(
                   value: _alertsEnabled,
                   onChanged: (bool value) =>
                       setState(() => _alertsEnabled = value),
-                  activeTrackColor: Colors.green,
                 ),
                 onTap: () => _snack(context, 'alerts row tapped'),
               ),
