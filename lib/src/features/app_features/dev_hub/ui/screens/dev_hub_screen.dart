@@ -7,7 +7,14 @@ import 'package:go_router/go_router.dart';
 import 'package:elfulk/src/core/config/routing/routes.dart';
 import 'package:elfulk/src/core/helpers/helpers.dart';
 import 'package:elfulk/src/core/theme/logic/cubit/theme_cubit.dart';
+import 'package:elfulk/src/core/widgets/app_badge.dart';
 import 'package:elfulk/src/core/widgets/app_confirmation_dialog.dart';
+import 'package:elfulk/src/core/widgets/app_error_card.dart';
+import 'package:elfulk/src/core/widgets/app_filter_chip.dart';
+import 'package:elfulk/src/core/widgets/app_loading_view.dart';
+import 'package:elfulk/src/core/widgets/empty_state.dart';
+import 'package:elfulk/src/core/widgets/parent_bottom_nav.dart';
+import 'package:elfulk/src/core/widgets/section_header.dart';
 import 'package:elfulk/src/core/widgets/helpers/show_app_confirmation_dialog.dart';
 import 'package:elfulk/src/core/widgets/settings_list_tile.dart';
 
@@ -32,6 +39,8 @@ class DevHubScreen extends StatelessWidget {
             const _ConfirmationDialogPreview(),
             SizedBox(height: context.spacing.lg.h),
             const _SettingsListTilePreview(),
+            SizedBox(height: context.spacing.lg.h),
+            const _FoundationPreview(),
             SizedBox(height: context.spacing.lg.h),
             ..._buildSections(context, theme),
           ],
@@ -493,6 +502,138 @@ class _SettingsListTilePreviewState extends State<_SettingsListTilePreview> {
                   theme.colorScheme.onSurface.withValues(alpha: 0.6),
             ),
       ),
+    );
+  }
+
+  void _snack(BuildContext context, String text) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(text)),
+    );
+  }
+}
+
+/// Dev-only preview of the P0 foundation widgets.
+///
+/// One section: live [ParentBottomNav], [SectionHeader] (plain + with
+/// action), selectable [AppFilterChip]s, [AppBadge] variants, plus the
+/// [EmptyState] / [AppErrorCard] / [AppLoadingView] states. Interactive
+/// parts report via [SnackBar].
+class _FoundationPreview extends StatefulWidget {
+  const _FoundationPreview();
+
+  @override
+  State<_FoundationPreview> createState() => _FoundationPreviewState();
+}
+
+class _FoundationPreviewState extends State<_FoundationPreview> {
+  int _navIndex = 3;
+  String _selectedChip = 'الكل';
+
+  static const List<String> _chips = <String>['الكل', 'التنبيهات', 'الوقت'];
+
+  @override
+  Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text(
+          'Foundation (preview)',
+          style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.w800,
+            color: theme.colorScheme.primary,
+          ),
+        ),
+        SizedBox(height: context.spacing.sm.h),
+        Material(
+          color: theme.cardTheme.color,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(context.radius.x3l.r),
+            side: BorderSide(
+              color: theme.colorScheme.outlineVariant.withValues(alpha: 0.4),
+            ),
+          ),
+          child: ParentBottomNav(
+            currentIndex: _navIndex,
+            onTap: (int index) {
+              setState(() => _navIndex = index);
+              _snack(context, 'nav tapped: $index');
+            },
+          ),
+        ),
+        SizedBox(height: context.spacing.sm.h),
+        Material(
+          color: theme.cardTheme.color,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(context.radius.x3l.r),
+            side: BorderSide(
+              color: theme.colorScheme.outlineVariant.withValues(alpha: 0.4),
+            ),
+          ),
+          child: Padding(
+            padding: EdgeInsets.symmetric(vertical: context.spacing.md.h),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                const SectionHeader(title: 'كل الإشعارات'),
+                SizedBox(height: context.spacing.sm.h),
+                SectionHeader(
+                  title: 'تخصيص الإشعارات',
+                  action: TextButton(
+                    onPressed: () => _snack(context, 'header action tapped'),
+                    child: const Text('عرض الكل'),
+                  ),
+                ),
+                SizedBox(height: context.spacing.sm.h),
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: context.spacing.md.w,
+                  ),
+                  child: Row(
+                    children: <Widget>[
+                      for (final String chip in _chips) ...[
+                        AppFilterChip(
+                          label: chip,
+                          selected: _selectedChip == chip,
+                          onSelected: () {
+                            setState(() => _selectedChip = chip);
+                            _snack(context, 'chip: $chip');
+                          },
+                        ),
+                        SizedBox(width: context.spacing.sm.w),
+                      ],
+                      const AppBadge(label: '01'),
+                      SizedBox(width: context.spacing.sm.w),
+                      AppBadge(
+                        label: '16:00',
+                        color: theme.colorScheme.error,
+                      ),
+                      SizedBox(width: context.spacing.sm.w),
+                      const AppBadge(
+                        label: 'جديد',
+                        color: Colors.green,
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(height: context.spacing.sm.h),
+                const EmptyState(
+                  icon: Icons.notifications_none,
+                  title: 'لا توجد إشعارات',
+                  message: 'ستظهر هنا عند وصول جديد.',
+                ),
+                AppErrorCard(
+                  message: 'تعذر تحميل البيانات.',
+                  onRetry: () => _snack(context, 'retry tapped'),
+                ),
+                const AppLoadingView(),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 
