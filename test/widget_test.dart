@@ -6,6 +6,7 @@ import 'package:elfulk/src/core/widgets/app_confirmation_dialog.dart';
 import 'package:elfulk/src/core/widgets/custom_pin_keypad.dart';
 import 'package:elfulk/src/core/widgets/helpers/show_app_confirmation_dialog.dart';
 import 'package:elfulk/src/core/widgets/pin_display_row.dart';
+import 'package:elfulk/src/core/widgets/settings_list_tile.dart';
 import 'package:elfulk/src/features/app_features/auth/ui/screens/otp_verification_screen.dart';
 
 void main() {
@@ -165,6 +166,116 @@ void main() {
       );
       await tester.pumpAndSettle();
       expect(find.byType(AppConfirmationDialog), findsNothing);
+    },
+  );
+
+  testWidgets(
+    'settings list tile variants render subtitle, switch, tap',
+    (WidgetTester tester) async {
+      bool switchValue = true;
+      bool tapped = false;
+
+      await tester.pumpWidget(
+        ScreenUtilInit(
+          designSize: const Size(390, 844),
+          minTextAdapt: true,
+          builder: (context, child) => MaterialApp(
+            home: Scaffold(
+              body: StatefulBuilder(
+                builder: (context, setState) => Column(
+                  children: [
+                    SettingsListTile(
+                      title: 'إشعارات التنبيهات الحرجة.',
+                      subtitle: 'تنبيهك فورًا عند أي محاولة لتجاوز القيود.',
+                      leading: const Icon(Icons.warning_amber_rounded),
+                      trailing: SettingsTileTrailing.switch_(
+                        value: switchValue,
+                        onChanged: (bool v) =>
+                            setState(() => switchValue = v),
+                      ),
+                      onTap: () => tapped = true,
+                    ),
+                    const SettingsListTile(
+                      title: 'تغيير اللغة',
+                      trailing: SettingsTileTrailing.chevron(),
+                    ),
+                    const SettingsListTile(
+                      title: 'اللغة',
+                      trailing: SettingsTileTrailing.value('العربية'),
+                      showDivider: false,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      // Titles, description, trailing controls and dividers render:
+      // one full-bleed mid divider under the described row, two inset
+      // bottom dividers.
+      expect(find.text('إشعارات التنبيهات الحرجة.'), findsOneWidget);
+      expect(find.text('تنبيهك فورًا عند أي محاولة لتجاوز القيود.'),
+          findsOneWidget);
+      expect(find.byKey(const ValueKey('settings-tile-switch')),
+          findsOneWidget);
+      expect(find.byKey(const ValueKey('settings-tile-chevron')),
+          findsOneWidget);
+      expect(find.text('العربية'), findsOneWidget);
+      expect(find.byKey(const ValueKey('settings-tile-divider-mid')),
+          findsOneWidget);
+      expect(find.byKey(const ValueKey('settings-tile-divider')),
+          findsNWidgets(2));
+
+      // Tapping the description does NOT fire onTap (outside InkWell).
+      await tester.tap(find.text('تنبيهك فورًا عند أي محاولة لتجاوز القيود.'));
+      await tester.pump();
+      expect(tapped, isFalse);
+
+      // Toggling the switch flips the parent-owned value.
+      await tester.tap(find.byKey(const ValueKey('settings-tile-switch')));
+      await tester.pumpAndSettle();
+      expect(switchValue, isFalse);
+      expect(
+        tester
+            .widget<Switch>(
+                find.byKey(const ValueKey('settings-tile-switch')))
+            .value,
+        isFalse,
+      );
+
+      // Tapping the title row fires onTap.
+      await tester.tap(find.text('إشعارات التنبيهات الحرجة.'));
+      await tester.pump();
+      expect(tapped, isTrue);
+    },
+  );
+
+  testWidgets(
+    'settings tile renders its own card background',
+    (WidgetTester tester) async {
+      await tester.pumpWidget(
+        ScreenUtilInit(
+          designSize: const Size(390, 844),
+          minTextAdapt: true,
+          builder: (context, child) => const MaterialApp(
+            home: Scaffold(
+              body: SettingsListTile(
+                title: 't',
+                backgroundColor: Colors.red,
+                showDivider: false,
+              ),
+            ),
+          ),
+        ),
+      );
+
+      final bool hasRedCard =
+          tester.widgetList<Material>(find.byType(Material)).any(
+                (Material m) => m.color == Colors.red,
+              );
+      expect(hasRedCard, isTrue);
     },
   );
 }

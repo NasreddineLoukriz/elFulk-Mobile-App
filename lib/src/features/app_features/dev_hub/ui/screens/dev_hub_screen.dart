@@ -9,6 +9,7 @@ import 'package:elfulk/src/core/helpers/helpers.dart';
 import 'package:elfulk/src/core/theme/logic/cubit/theme_cubit.dart';
 import 'package:elfulk/src/core/widgets/app_confirmation_dialog.dart';
 import 'package:elfulk/src/core/widgets/helpers/show_app_confirmation_dialog.dart';
+import 'package:elfulk/src/core/widgets/settings_list_tile.dart';
 
 class DevHubScreen extends StatelessWidget {
   const DevHubScreen({super.key});
@@ -29,6 +30,8 @@ class DevHubScreen extends StatelessWidget {
             _buildHeader(context, theme),
             SizedBox(height: context.spacing.lg.h),
             const _ConfirmationDialogPreview(),
+            SizedBox(height: context.spacing.lg.h),
+            const _SettingsListTilePreview(),
             SizedBox(height: context.spacing.lg.h),
             ..._buildSections(context, theme),
           ],
@@ -356,6 +359,144 @@ class _ConfirmationDialogPreview extends StatelessWidget {
       false => 'Cancelled (false)',
       null => 'Dismissed (null)',
     };
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(text)),
+    );
+  }
+}
+/// Dev-only preview of the reusable [SettingsListTile].
+///
+/// A mini settings page mirroring the reference design: section headers
+/// (plain text — a future `SettingsSectionHeader` widget is out of scope)
+/// plus one self-carded tile per section entry. Covers the switch with
+/// dynamic description, chevron and value variants. Parent-owned state
+/// and taps report via [SnackBar].
+class _SettingsListTilePreview extends StatefulWidget {
+  const _SettingsListTilePreview();
+
+  @override
+  State<_SettingsListTilePreview> createState() =>
+      _SettingsListTilePreviewState();
+}
+
+class _SettingsListTilePreviewState extends State<_SettingsListTilePreview> {
+  bool _alertsEnabled = true;
+  String _language = 'العربية';
+
+  @override
+  Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            'Settings List Tile (preview)',
+            style: theme.textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.w800,
+              color: theme.colorScheme.primary,
+            ),
+          ),
+          SizedBox(height: context.spacing.sm.h),
+          _sectionHeader(context, theme, 'كل الإشعارات'),
+          SizedBox(height: context.spacing.sm.h),
+          SettingsListTile(
+            title: 'أرغب في تلقي الإشعارات.',
+            leading: Icon(
+              Icons.notifications_outlined,
+              color: theme.colorScheme.primary,
+            ),
+            trailing: SettingsTileTrailing.switch_(
+              value: _alertsEnabled,
+              onChanged: (bool value) =>
+                  setState(() => _alertsEnabled = value),
+            ),
+            showDivider: false,
+            onTap: () => _snack(context, 'all notifications tapped'),
+          ),
+          SizedBox(height: context.spacing.md.h),
+          _sectionHeader(context, theme, 'تخصيص الإشعارات'),
+          SizedBox(height: context.spacing.sm.h),
+          SettingsListTile(
+            title: 'إشعارات التنبيهات الحرجة.',
+            // وصف اختياري يشرح فائدة التفعيل/الإلغاء ويتبدل مع الحالة.
+            subtitle: _alertsEnabled
+                ? 'تنبيهك فورًا عند أي محاولة لتجاوز القيود أو العبث '
+                    'بإعدادات الحماية.'
+                : 'التنبيهات متوقفة. فعّلها لتصلك إشعارات فورية عند '
+                    'أي محاولة عبث بالحماية.',
+            // شارة دائرية وردية بداخلها "!" حمراء كما في التصميم
+            // (بلا حاوية مربعة).
+            leading: Container(
+              width: 20.w,
+              height: 20.h,
+              decoration: BoxDecoration(
+                color:
+                    theme.colorScheme.error.withValues(alpha: 0.35),
+                shape: BoxShape.circle,
+              ),
+              child: Center(
+                child: Icon(
+                  Icons.priority_high_rounded,
+                  size: 14.sp,
+                  color: theme.colorScheme.error,
+                ),
+              ),
+            ),
+            trailing: SettingsTileTrailing.switch_(
+              value: _alertsEnabled,
+              onChanged: (bool value) =>
+                  setState(() => _alertsEnabled = value),
+            ),
+            showDivider: false,
+            onTap: () => _snack(context, 'alerts row tapped'),
+          ),
+          SizedBox(height: context.spacing.sm.h),
+
+          SettingsListTile(title:   "اهلا بك في تطبيقنا", leading: Icon(Icons.info_outline, color: theme.colorScheme.primary,), trailing: const SettingsTileTrailing.chevron(), showDivider: false, onTap: () => _snack(context, 'info row tapped'),),
+          SizedBox(height: context.spacing.sm.h),
+          SettingsListTile(
+            title: 'اللغة',
+            leading: Icon(
+              Icons.translate_outlined,
+              color: theme.colorScheme.primary,
+            ),
+            trailing: SettingsTileTrailing.value(_language),
+            showDivider: false,
+            onTap: () => setState(
+              () => _language =
+                  _language == 'العربية' ? 'English' : 'العربية',
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _sectionHeader(BuildContext context, ThemeData theme, String text) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: context.spacing.md.w),
+      child: Text(
+        text,
+        style: theme.textTheme.bodyMedium?.copyWith(
+              fontSize: 13.sp,
+              fontWeight: FontWeight.w400,
+              color:
+                  theme.colorScheme.onSurface.withValues(alpha: 0.6),
+            ) ??
+            TextStyle(
+              fontSize: 13.sp,
+              fontWeight: FontWeight.w400,
+              color:
+                  theme.colorScheme.onSurface.withValues(alpha: 0.6),
+            ),
+      ),
+    );
+  }
+
+  void _snack(BuildContext context, String text) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(text)),
     );
