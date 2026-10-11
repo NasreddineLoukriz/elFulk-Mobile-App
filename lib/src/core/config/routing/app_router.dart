@@ -22,6 +22,7 @@ import 'package:elfulk/src/features/parent_features/parent_requests/ui/screens/p
 import 'package:elfulk/src/features/app_features/onboarding/logic/cubit/onboarding_cubit.dart';
 import 'package:elfulk/src/features/app_features/onboarding/ui/screens/onboarding_screen.dart';
 import 'package:elfulk/src/features/app_features/dev_hub/ui/screens/dev_hub_screen.dart';
+import 'package:elfulk/src/core/widgets/parent_shell_scaffold.dart';
 import '../../../features/app_features/auth/ui/screens/otp_verification_screen.dart';
 import 'package:elfulk/src/core/config/app_environment.dart';
 import 'package:elfulk/src/core/helpers/helpers.dart';
@@ -64,15 +65,83 @@ class AppRouter {
             ),
           ),
         ),
-        GoRoute(
-          path: Routes.homeScreen,
-          pageBuilder: (BuildContext context, GoRouterState state) =>
-              MaterialPage<void>(
-                child: BlocProvider<HomeCubit>(
-                  create: (_) => getIt<HomeCubit>()..loadOverview(),
-                  child: const HomeScreen(),
+        // P0 parent shell — TEMP branch mapping until P1/P3 replace the
+        // placeholder screens with the real tab destinations:
+        // account→parent_home, control→child_home, activity→requests,
+        // home→home. Branch order matches ParentBottomNav.items.
+        StatefulShellRoute.indexedStack(
+          builder: (
+            BuildContext context,
+            GoRouterState state,
+            StatefulNavigationShell navigationShell,
+          ) {
+            return ParentShellScaffold(navigationShell: navigationShell);
+          },
+          branches: <StatefulShellBranch>[
+            StatefulShellBranch(
+              routes: <RouteBase>[
+                GoRoute(
+                  path: Routes.parentHomeScreen,
+                  pageBuilder: (BuildContext context, GoRouterState state) =>
+                      MaterialPage<void>(
+                        child: BlocProvider<ParentHomeCubit>(
+                          create: (_) =>
+                              getIt<ParentHomeCubit>()..loadOverview(),
+                          child: const ParentHomeScreen(),
+                        ),
+                      ),
                 ),
-              ),
+              ],
+            ),
+            StatefulShellBranch(
+              // TODO(P3): replace with the real control-center screen.
+              routes: <RouteBase>[
+                GoRoute(
+                  path: Routes.childHomeScreen,
+                  pageBuilder: (BuildContext context, GoRouterState state) =>
+                      MaterialPage<void>(
+                        child: BlocProvider<ChildHomeCubit>(
+                          create: (_) =>
+                              getIt<ChildHomeCubit>()..loadOverview(),
+                          child: const ChildHomeScreen(),
+                        ),
+                      ),
+                ),
+              ],
+            ),
+            StatefulShellBranch(
+              routes: <RouteBase>[
+                GoRoute(
+                  path: Routes.parentRequestsScreen,
+                  pageBuilder: (BuildContext context, GoRouterState state) =>
+                      MaterialPage<void>(
+                        child: BlocProvider<ParentRequestsBloc>(
+                          create: (_) =>
+                              getIt<ParentRequestsBloc>()
+                                ..add(
+                                  const ParentRequestsEvent.loadData(),
+                                ),
+                          child: const ParentRequestsScreen(),
+                        ),
+                      ),
+                ),
+              ],
+            ),
+            StatefulShellBranch(
+              routes: <RouteBase>[
+                GoRoute(
+                  path: Routes.homeScreen,
+                  pageBuilder: (BuildContext context, GoRouterState state) =>
+                      MaterialPage<void>(
+                        child: BlocProvider<HomeCubit>(
+                          create: (_) => getIt<HomeCubit>()..loadOverview(),
+                          child: const HomeScreen(),
+                        ),
+                      ),
+                ),
+              ],
+            ),
+          ],
         ),
         GoRoute(
           path: Routes.loginScreen,
@@ -108,38 +177,6 @@ class AppRouter {
           path: Routes.addNewChildScreen,
           pageBuilder: (BuildContext context, GoRouterState state) =>
               const MaterialPage<void>(child: AddNewChildScreen()),
-        ),
-        GoRoute(
-          path: Routes.parentHomeScreen,
-          pageBuilder: (BuildContext context, GoRouterState state) =>
-              MaterialPage<void>(
-                child: BlocProvider<ParentHomeCubit>(
-                  create: (_) => getIt<ParentHomeCubit>()..loadOverview(),
-                  child: const ParentHomeScreen(),
-                ),
-              ),
-        ),
-        GoRoute(
-          path: Routes.parentRequestsScreen,
-          pageBuilder: (BuildContext context, GoRouterState state) =>
-              MaterialPage<void>(
-                child: BlocProvider<ParentRequestsBloc>(
-                  create: (_) =>
-                      getIt<ParentRequestsBloc>()
-                        ..add(const ParentRequestsEvent.loadData()),
-                  child: const ParentRequestsScreen(),
-                ),
-              ),
-        ),
-        GoRoute(
-          path: Routes.childHomeScreen,
-          pageBuilder: (BuildContext context, GoRouterState state) =>
-              MaterialPage<void>(
-                child: BlocProvider<ChildHomeCubit>(
-                  create: (_) => getIt<ChildHomeCubit>()..loadOverview(),
-                  child: const ChildHomeScreen(),
-                ),
-              ),
         ),
         GoRoute(
           path: Routes.architectureScreen,
