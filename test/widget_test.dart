@@ -251,4 +251,31 @@ void main() {
       expect(tapped, isTrue);
     },
   );
+
+  testWidgets(
+    'settings tile renders its own card background',
+    (WidgetTester tester) async {
+      await tester.pumpWidget(
+        ScreenUtilInit(
+          designSize: const Size(390, 844),
+          minTextAdapt: true,
+          builder: (context, child) => const MaterialApp(
+            home: Scaffold(
+              body: SettingsListTile(
+                title: 't',
+                backgroundColor: Colors.red,
+                showDivider: false,
+              ),
+            ),
+          ),
+        ),
+      );
+
+      final bool hasRedCard =
+          tester.widgetList<Material>(find.byType(Material)).any(
+                (Material m) => m.color == Colors.red,
+              );
+      expect(hasRedCard, isTrue);
+    },
+  );
 }

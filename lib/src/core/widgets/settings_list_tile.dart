@@ -84,16 +84,21 @@ class _ValueTrailing extends SettingsTileTrailing {
 
 /// صف إعدادات قابل لإعادة الاستخدام ومدفوع بالبارامترات بالكامل.
 ///
+/// ترسم البلاطة بطاقتها الخاصة (خلفية + زاوية مستديرة) فلا يحتاج مكان
+/// الاستدعاء لتغليفها بأي حاوية — وتتعطّل البطاقة بتمرير
+/// [backgroundColor] شفافاً مع [borderRadius] صفرياً عند تجميع صفوف
+/// في بطاقة واحدة كبيرة.
+///
 /// يغطي هذا الـ widget كل نسخ صفوف الإعدادات دون تكرار الكود:
 /// عنوان وأيقونة بداية وعنصر نهائي ([SettingsTileTrailing]) في صف
-/// تفاعلي، يليه فاصل ثم كتلة وصفية ثابتة اختيارية ([subtitle]) تحت
-/// الفاصل — لا أزرار تحت الفاصل أبداً — ثم فاصل سفلي اختياري.
-/// النسخة التحذيرية (عنوان ملوّن + أيقونة تحذير) تتحقق بالبارامترات
-/// فقط (`titleColor` و`leading`) دون widget مخصص.
+/// تفاعلي، يليه فاصل بعرض كامل ثم كتلة وصفية ثابتة اختيارية
+/// ([subtitle]) تحت الفاصل — لا أزرار تحت الفاصل أبداً — ثم فاصل
+/// سفلي اختياري. النسخة التحذيرية (عنوان ملوّن + أيقونة تحذير)
+/// تتحقق بالبارامترات فقط (`titleColor` و`leading`) دون widget مخصص.
 ///
-/// التخطيط: حاوية بحشوة أفقية ورأسية من التوكنز وحد أدنى للارتفاع
-/// (`48.h`) تضم `Row` (أيقونة البداية ← العنوان المتمدّد ← العنصر
-/// النهائي). عند `onTap` غير فارغ يُغلَّف الصف وحده بـ `InkWell`
+/// التخطيط داخل البطاقة: حاوية بحشوة أفقية ورأسية من التوكنز وحد أدنى
+/// للارتفاع (`48.h`) تضم `Row` (أيقونة البداية ← العنوان المتمدّد ←
+/// العنصر النهائي). عند `onTap` غير فارغ يُغلَّف الصف وحده بـ `InkWell`
 /// (الكتلة الوصفية خارج منطقة الضغط دائماً)، وإلا يكون الصف
 /// غير تفاعلي.
 ///
@@ -157,10 +162,28 @@ class SettingsListTile extends StatelessWidget {
   /// الافتراضي: [SettingsTileTrailing.none].
   final SettingsTileTrailing trailing;
 
+  /// لون خلفية بطاقة البلاطة.
+  ///
+  /// الافتراضي: لون البطاقة من الثيم. مرّر شفافاً مع [borderRadius]
+  /// صفرياً لتعطيل البطاقة عند تجميع صفوف في حاوية خارجية.
+  final Color? backgroundColor;
+
+  /// نصف قطر زوايا بطاقة البلاطة.
+  ///
+  /// الافتراضي: `AppRadius.xxl` كما في التصميم المرجعي.
+  final double? borderRadius;
+
+  /// حد بطاقة البلاطة.
+  ///
+  /// الافتراضي: بلا حد (التباين مع خلفية الصفحة يكفي كما في التصميم).
+  final BorderSide? borderSide;
+
   /// إظهار الفاصل السفلي (بإزاحة أفقية) في نهاية البلاطة.
   ///
-  /// الافتراضي: `true`. (فاصل الصف الأوسط بعرض كامل ويظهر فقط مع
-  /// وجود [subtitle]).
+  /// الافتراضي: `true`. يُستخدم عند تكديس بلاطات بلا بطاقات داخل
+  /// حاوية واحدة؛ أما مع البطاقة الذاتية (الوضع المرجعي) فمرّر
+  /// `false` إذ تُغلق البطاقة نفسها. (فاصل الصف الأوسط بعرض كامل
+  /// ويظهر فقط مع وجود [subtitle]).
   final bool showDivider;
 
   /// تُستدعى عند ضغط صف العنوان فقط (الكتلة الوصفية خارج منطقة
@@ -176,6 +199,9 @@ class SettingsListTile extends StatelessWidget {
     this.leadingForegroundColor,
     this.titleColor,
     this.trailing = const SettingsTileTrailing.none(),
+    this.backgroundColor,
+    this.borderRadius,
+    this.borderSide,
     this.showDivider = true,
     this.onTap,
   });
@@ -190,7 +216,7 @@ class SettingsListTile extends StatelessWidget {
         minHeight: 48.h,
       ),
       padding: EdgeInsets.symmetric(
-        horizontal: context.spacing.lg.w,
+        horizontal: context.spacing.md.w,
         vertical: context.spacing.sm.h,
       ),
       child: Row(
@@ -229,10 +255,21 @@ class SettingsListTile extends StatelessWidget {
             child: content,
           );
 
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
+    // البطاقة الذاتية: خلفية وزاوية مستديرة مع قصّ المحتوى عليها
+    // (بما فيه تموّج InkWell والفواصل بعرض كامل).
+    return Material(
+      color: backgroundColor ?? theme.cardTheme.color,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(
+          borderRadius ?? context.radius.xxl.r,
+        ),
+        side: borderSide ?? BorderSide.none,
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
         tile,
         if (hasSubtitle) ...[
           const Divider(
@@ -242,7 +279,7 @@ class SettingsListTile extends StatelessWidget {
           ),
           Padding(
             padding: EdgeInsets.symmetric(
-              horizontal: context.spacing.lg.w,
+              horizontal: context.spacing.md.w,
               vertical: context.spacing.sm.h,
             ),
             child: Text(
@@ -272,7 +309,8 @@ class SettingsListTile extends StatelessWidget {
             endIndent: context.spacing.md.w,
             color: theme.colorScheme.outlineVariant,
           ),
-      ],
+        ],
+      ),
     );
   }
 

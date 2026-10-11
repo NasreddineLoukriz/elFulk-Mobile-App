@@ -364,13 +364,13 @@ class _ConfirmationDialogPreview extends StatelessWidget {
     );
   }
 }
-
 /// Dev-only preview of the reusable [SettingsListTile].
 ///
-/// Three variants in one card: a destructive red row with subtitle and a
-/// green switch (reference copy from the design mockup), a title-only
-/// chevron row, and a value row that toggles its text on tap. The switch
-/// state lives here (parent-owned state) and taps report via [SnackBar].
+/// A mini settings page mirroring the reference design: section headers
+/// (plain text — a future `SettingsSectionHeader` widget is out of scope)
+/// plus one self-carded tile per section entry. Covers the switch with
+/// dynamic description, chevron and value variants. Parent-owned state
+/// and taps report via [SnackBar].
 class _SettingsListTilePreview extends StatefulWidget {
   const _SettingsListTilePreview();
 
@@ -394,75 +394,112 @@ class _SettingsListTilePreviewState extends State<_SettingsListTilePreview> {
         children: <Widget>[
           Text(
             'Settings List Tile (preview)',
-          style: theme.textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.w800,
-            color: theme.colorScheme.primary,
-          ),
-        ),
-        SizedBox(height: context.spacing.sm.h),
-        Material(
-          color: theme.cardTheme.color,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(context.radius.x3l.r),
-            side: BorderSide(
-              color: theme.colorScheme.outlineVariant.withValues(alpha: 0.4),
+            style: theme.textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.w800,
+              color: theme.colorScheme.primary,
             ),
           ),
-          child: Column(
-            children: <Widget>[
-              SettingsListTile(
-                title: 'إشعارات التنبيهات الحرجة.',
-                // وصف اختياري يشرح فائدة التفعيل/الإلغاء ويتبدل مع الحالة.
-                subtitle: _alertsEnabled
-                    ? 'تنبيهك فورًا عند أي محاولة لتجاوز القيود أو العبث '
-                        'بإعدادات الحماية.'
-                    : 'التنبيهات متوقفة. فعّلها لتصلك إشعارات فورية عند '
-                        'أي محاولة عبث بالحماية.',
-                // شارة دائرية وردية بداخلها "!" حمراء كما في التصميم
-                // (بلا حاوية مربعة).
-                leading: Container(
-                  width: 20.w,
-                  height: 20.h,
-                  decoration: BoxDecoration(
-                    color: theme.colorScheme.error
-                        .withValues(alpha: 0.35),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Center(
-                    child: Icon(
-                      Icons.priority_high_rounded,
-                      size: 14.sp,
-                      color: theme.colorScheme.error,
-                    ),
-                  ),
-                ),
-                trailing: SettingsTileTrailing.switch_(
-                  value: _alertsEnabled,
-                  onChanged: (bool value) =>
-                      setState(() => _alertsEnabled = value),
-                ),
-                onTap: () => _snack(context, 'alerts row tapped'),
-              ),
-              SettingsListTile(
-                title: 'تغيير اللغة',
-                leading: const Icon(Icons.language_outlined),
-                trailing: const SettingsTileTrailing.chevron(),
-                onTap: () => _snack(context, 'language row tapped'),
-              ),
-              SettingsListTile(
-                title: 'اللغة',
-                leading: const Icon(Icons.translate_outlined),
-                trailing: SettingsTileTrailing.value(_language),
-                showDivider: false,
-                onTap: () => setState(
-                  () => _language =
-                      _language == 'العربية' ? 'English' : 'العربية',
-                ),
-              ),
-            ],
+          SizedBox(height: context.spacing.sm.h),
+          _sectionHeader(context, theme, 'كل الإشعارات'),
+          SizedBox(height: context.spacing.sm.h),
+          SettingsListTile(
+            title: 'أرغب في تلقي الإشعارات.',
+            leading: Icon(
+              Icons.notifications_outlined,
+              color: theme.colorScheme.primary,
+            ),
+            trailing: SettingsTileTrailing.switch_(
+              value: _alertsEnabled,
+              onChanged: (bool value) =>
+                  setState(() => _alertsEnabled = value),
+            ),
+            showDivider: false,
+            onTap: () => _snack(context, 'all notifications tapped'),
           ),
-        ),
-      ],
+          SizedBox(height: context.spacing.md.h),
+          _sectionHeader(context, theme, 'تخصيص الإشعارات'),
+          SizedBox(height: context.spacing.sm.h),
+          SettingsListTile(
+            title: 'إشعارات التنبيهات الحرجة.',
+            // وصف اختياري يشرح فائدة التفعيل/الإلغاء ويتبدل مع الحالة.
+            subtitle: _alertsEnabled
+                ? 'تنبيهك فورًا عند أي محاولة لتجاوز القيود أو العبث '
+                    'بإعدادات الحماية.'
+                : 'التنبيهات متوقفة. فعّلها لتصلك إشعارات فورية عند '
+                    'أي محاولة عبث بالحماية.',
+            // شارة دائرية وردية بداخلها "!" حمراء كما في التصميم
+            // (بلا حاوية مربعة).
+            leading: Container(
+              width: 20.w,
+              height: 20.h,
+              decoration: BoxDecoration(
+                color:
+                    theme.colorScheme.error.withValues(alpha: 0.35),
+                shape: BoxShape.circle,
+              ),
+              child: Center(
+                child: Icon(
+                  Icons.priority_high_rounded,
+                  size: 14.sp,
+                  color: theme.colorScheme.error,
+                ),
+              ),
+            ),
+            trailing: SettingsTileTrailing.switch_(
+              value: _alertsEnabled,
+              onChanged: (bool value) =>
+                  setState(() => _alertsEnabled = value),
+            ),
+            showDivider: false,
+            onTap: () => _snack(context, 'alerts row tapped'),
+          ),
+          SizedBox(height: context.spacing.sm.h),
+          SettingsListTile(
+            title: 'تغيير اللغة',
+            leading: Icon(
+              Icons.language_outlined,
+              color: theme.colorScheme.primary,
+            ),
+            trailing: const SettingsTileTrailing.chevron(),
+            showDivider: false,
+            onTap: () => _snack(context, 'language row tapped'),
+          ),
+          SizedBox(height: context.spacing.sm.h),
+          SettingsListTile(
+            title: 'اللغة',
+            leading: Icon(
+              Icons.translate_outlined,
+              color: theme.colorScheme.primary,
+            ),
+            trailing: SettingsTileTrailing.value(_language),
+            showDivider: false,
+            onTap: () => setState(
+              () => _language =
+                  _language == 'العربية' ? 'English' : 'العربية',
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _sectionHeader(BuildContext context, ThemeData theme, String text) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: context.spacing.md.w),
+      child: Text(
+        text,
+        style: theme.textTheme.bodyMedium?.copyWith(
+              fontSize: 13.sp,
+              fontWeight: FontWeight.w400,
+              color:
+                  theme.colorScheme.onSurface.withValues(alpha: 0.6),
+            ) ??
+            TextStyle(
+              fontSize: 13.sp,
+              fontWeight: FontWeight.w400,
+              color:
+                  theme.colorScheme.onSurface.withValues(alpha: 0.6),
+            ),
       ),
     );
   }
