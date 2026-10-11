@@ -9,6 +9,7 @@ import 'package:elfulk/src/core/helpers/helpers.dart';
 import 'package:elfulk/src/core/theme/logic/cubit/theme_cubit.dart';
 import 'package:elfulk/src/core/widgets/app_confirmation_dialog.dart';
 import 'package:elfulk/src/core/widgets/helpers/show_app_confirmation_dialog.dart';
+import 'package:elfulk/src/core/widgets/settings_list_tile.dart';
 
 class DevHubScreen extends StatelessWidget {
   const DevHubScreen({super.key});
@@ -29,6 +30,8 @@ class DevHubScreen extends StatelessWidget {
             _buildHeader(context, theme),
             SizedBox(height: context.spacing.lg.h),
             const _ConfirmationDialogPreview(),
+            SizedBox(height: context.spacing.lg.h),
+            const _SettingsListTilePreview(),
             SizedBox(height: context.spacing.lg.h),
             ..._buildSections(context, theme),
           ],
@@ -356,6 +359,97 @@ class _ConfirmationDialogPreview extends StatelessWidget {
       false => 'Cancelled (false)',
       null => 'Dismissed (null)',
     };
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(text)),
+    );
+  }
+}
+
+/// Dev-only preview of the reusable [SettingsListTile].
+///
+/// Three variants in one card: a destructive red row with subtitle and a
+/// green switch (reference copy from the design mockup), a title-only
+/// chevron row, and a value row that toggles its text on tap. The switch
+/// state lives here (parent-owned state) and taps report via [SnackBar].
+class _SettingsListTilePreview extends StatefulWidget {
+  const _SettingsListTilePreview();
+
+  @override
+  State<_SettingsListTilePreview> createState() =>
+      _SettingsListTilePreviewState();
+}
+
+class _SettingsListTilePreviewState extends State<_SettingsListTilePreview> {
+  bool _alertsEnabled = true;
+  String _language = 'العربية';
+
+  @override
+  Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text(
+          'Settings List Tile (preview)',
+          style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.w800,
+            color: theme.colorScheme.primary,
+          ),
+        ),
+        SizedBox(height: context.spacing.sm.h),
+        Material(
+          color: theme.cardTheme.color,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(context.radius.x3l.r),
+            side: BorderSide(
+              color: theme.colorScheme.outlineVariant.withValues(alpha: 0.4),
+            ),
+          ),
+          child: Column(
+            children: <Widget>[
+              SettingsListTile(
+                title: 'إشعارات التنبيهات الحرجة.',
+                subtitle:
+                    'تنبيهك فورًا عند أي محاولة لتجاوز القيود أو العبث '
+                    'بإعدادات الحماية.',
+                leading: const Icon(Icons.warning_amber_rounded),
+                leadingBackgroundColor:
+                    theme.colorScheme.error.withValues(alpha: 0.12),
+                leadingForegroundColor: theme.colorScheme.error,
+                titleColor: theme.colorScheme.error,
+                trailing: SettingsTileTrailing.switch_(
+                  value: _alertsEnabled,
+                  onChanged: (bool value) =>
+                      setState(() => _alertsEnabled = value),
+                  activeTrackColor: Colors.green,
+                ),
+                onTap: () => _snack(context, 'alerts row tapped'),
+              ),
+              SettingsListTile(
+                title: 'تغيير اللغة',
+                leading: const Icon(Icons.language_outlined),
+                trailing: const SettingsTileTrailing.chevron(),
+                onTap: () => _snack(context, 'language row tapped'),
+              ),
+              SettingsListTile(
+                title: 'اللغة',
+                leading: const Icon(Icons.translate_outlined),
+                trailing: SettingsTileTrailing.value(_language),
+                showDivider: false,
+                onTap: () => setState(
+                  () => _language =
+                      _language == 'العربية' ? 'English' : 'العربية',
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  void _snack(BuildContext context, String text) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(text)),
     );
