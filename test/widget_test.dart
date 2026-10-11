@@ -1,11 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 
+import 'package:elfulk/src/core/widgets/app_badge.dart';
 import 'package:elfulk/src/core/widgets/app_confirmation_dialog.dart';
+import 'package:elfulk/src/core/widgets/app_error_card.dart';
+import 'package:elfulk/src/core/widgets/app_filter_chip.dart';
+import 'package:elfulk/src/core/widgets/app_loading_view.dart';
 import 'package:elfulk/src/core/widgets/custom_pin_keypad.dart';
+import 'package:elfulk/src/core/widgets/empty_state.dart';
 import 'package:elfulk/src/core/widgets/helpers/show_app_confirmation_dialog.dart';
+import 'package:elfulk/src/core/widgets/parent_bottom_nav.dart';
+import 'package:elfulk/src/core/widgets/parent_shell_scaffold.dart';
 import 'package:elfulk/src/core/widgets/pin_display_row.dart';
+import 'package:elfulk/src/core/widgets/section_header.dart';
 import 'package:elfulk/src/core/widgets/settings_list_tile.dart';
 import 'package:elfulk/src/features/app_features/auth/ui/screens/otp_verification_screen.dart';
 
@@ -276,6 +285,151 @@ void main() {
                 (Material m) => m.color == Colors.red,
               );
       expect(hasRedCard, isTrue);
+    },
+  );
+
+  testWidgets(
+    'P0 foundation widgets render and interact',
+    (WidgetTester tester) async {
+      int tappedNav = -1;
+      bool chipTapped = false;
+      bool retried = false;
+
+      await tester.pumpWidget(
+        ScreenUtilInit(
+          designSize: const Size(390, 844),
+          minTextAdapt: true,
+          builder: (context, child) => MaterialApp(
+            home: Scaffold(
+              body: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    ParentBottomNav(
+                      currentIndex: 0,
+                      onTap: (int i) => tappedNav = i,
+                    ),
+                    const SectionHeader(title: 'كل الإشعارات'),
+                    AppFilterChip(
+                      label: 'الكل',
+                      selected: false,
+                      onSelected: () => chipTapped = true,
+                    ),
+                    const AppBadge(label: '01'),
+                    const EmptyState(
+                      icon: Icons.notifications_none,
+                      title: 'لا توجد إشعارات',
+                      message: 'ستظهر هنا عند وصول جديد.',
+                    ),
+                    AppErrorCard(
+                      message: 'تعذر التحميل.',
+                      onRetry: () => retried = true,
+                    ),
+                    const AppLoadingView(),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      expect(find.text('حسابي'), findsOneWidget);
+      expect(find.text('مركز التحكم'), findsOneWidget);
+      expect(find.text('النشاط'), findsOneWidget);
+      expect(find.text('الرئيسية'), findsOneWidget);
+      expect(find.text('كل الإشعارات'), findsOneWidget);
+      expect(find.text('الكل'), findsOneWidget);
+      expect(find.text('01'), findsOneWidget);
+      expect(find.text('لا توجد إشعارات'), findsOneWidget);
+      expect(find.text('تعذر التحميل.'), findsOneWidget);
+      expect(find.byType(CircularProgressIndicator), findsOneWidget);
+
+      await tester.tap(find.text('النشاط'));
+      await tester.pump();
+      expect(tappedNav, 2);
+
+      await tester.tap(find.text('الكل'));
+      await tester.pump();
+      expect(chipTapped, isTrue);
+
+      await tester.ensureVisible(find.text('إعادة المحاولة'));
+      await tester.tap(find.text('إعادة المحاولة'));
+      await tester.pump();
+      expect(retried, isTrue);
+    },
+  );
+
+  testWidgets(
+    'parent shell switches branches and preserves state',
+    (WidgetTester tester) async {
+      Widget branch(String name, {bool withField = false}) {
+        return Scaffold(
+          body: Center(
+            child: withField
+                ? TextField(key: ValueKey('shell-field-$name'))
+                : Text('branch-$name'),
+          ),
+        );
+      }
+
+      final GoRouter router = GoRouter(
+        initialLocation: '/a',
+        routes: [
+          StatefulShellRoute.indexedStack(
+            builder: (context, state, shell) =>
+                ParentShellScaffold(navigationShell: shell),
+            branches: [
+              StatefulShellBranch(
+                routes: [
+                  GoRoute(path: '/a', builder: (c, s) => branch('a', withField: true)),
+                ],
+              ),
+              StatefulShellBranch(
+                routes: [
+                  GoRoute(path: '/b', builder: (c, s) => branch('b')),
+                ],
+              ),
+              StatefulShellBranch(
+                routes: [
+                  GoRoute(path: '/c', builder: (c, s) => branch('c')),
+                ],
+              ),
+              StatefulShellBranch(
+                routes: [
+                  GoRoute(path: '/d', builder: (c, s) => branch('d')),
+                ],
+              ),
+            ],
+          ),
+        ],
+      );
+
+      await tester.pumpWidget(
+        ScreenUtilInit(
+          designSize: const Size(390, 844),
+          minTextAdapt: true,
+          builder: (context, child) =>
+              MaterialApp.router(routerConfig: router),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(const ValueKey('shell-field-a')), findsOneWidget);
+      expect(find.byType(ParentBottomNav), findsOneWidget);
+
+      await tester.enterText(
+          find.byKey(const ValueKey('shell-field-a')), 'hello');
+      await tester.pump();
+
+      await tester.tap(find.text('النشاط'));
+      await tester.pumpAndSettle();
+      expect(find.text('branch-c'), findsOneWidget);
+
+      await tester.tap(find.text('حسابي'));
+      await tester.pumpAndSettle();
+      // State preserved: the text entered in branch A is still displayed.
+      expect(find.text('hello'), findsOneWidget);
+      expect(find.byKey(const ValueKey('shell-field-a')), findsOneWidget);
     },
   );
 }
