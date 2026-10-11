@@ -454,16 +454,8 @@ class _SettingsListTilePreviewState extends State<_SettingsListTilePreview> {
             onTap: () => _snack(context, 'alerts row tapped'),
           ),
           SizedBox(height: context.spacing.sm.h),
-          SettingsListTile(
-            title: 'تغيير اللغة',
-            leading: Icon(
-              Icons.language_outlined,
-              color: theme.colorScheme.primary,
-            ),
-            trailing: const SettingsTileTrailing.chevron(),
-            showDivider: false,
-            onTap: () => _snack(context, 'language row tapped'),
-          ),
+
+          SettingsListTile(title:   "اهلا بك في تطبيقنا", leading: Icon(Icons.info_outline, color: theme.colorScheme.primary,), trailing: const SettingsTileTrailing.chevron(), showDivider: false, onTap: () => _snack(context, 'info row tapped'),),
           SizedBox(height: context.spacing.sm.h),
           SettingsListTile(
             title: 'اللغة',
