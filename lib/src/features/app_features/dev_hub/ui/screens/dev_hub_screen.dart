@@ -412,9 +412,12 @@ class _SettingsListTilePreviewState extends State<_SettingsListTilePreview> {
             children: <Widget>[
               SettingsListTile(
                 title: 'إشعارات التنبيهات الحرجة.',
-                subtitle:
-                    'تنبيهك فورًا عند أي محاولة لتجاوز القيود أو العبث '
-                    'بإعدادات الحماية.',
+                // وصف اختياري يشرح فائدة التفعيل/الإلغاء ويتبدل مع الحالة.
+                subtitle: _alertsEnabled
+                    ? 'تنبيهك فورًا عند أي محاولة لتجاوز القيود أو العبث '
+                        'بإعدادات الحماية.'
+                    : 'التنبيهات متوقفة. فعّلها لتصلك إشعارات فورية عند '
+                        'أي محاولة عبث بالحماية.',
                 leading: const Icon(Icons.warning_amber_rounded),
                 leadingBackgroundColor:
                     theme.colorScheme.error.withValues(alpha: 0.12),
