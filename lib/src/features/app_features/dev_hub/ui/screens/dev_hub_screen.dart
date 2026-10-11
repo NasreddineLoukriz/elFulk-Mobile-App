@@ -387,11 +387,13 @@ class _SettingsListTilePreviewState extends State<_SettingsListTilePreview> {
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Text(
-          'Settings List Tile (preview)',
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            'Settings List Tile (preview)',
           style: theme.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.w800,
             color: theme.colorScheme.primary,
@@ -446,6 +448,7 @@ class _SettingsListTilePreviewState extends State<_SettingsListTilePreview> {
           ),
         ),
       ],
+      ),
     );
   }
 
