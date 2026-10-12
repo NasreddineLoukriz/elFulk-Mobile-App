@@ -3,9 +3,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 /// شريط التنقل السفلي لتطبيق الأب (4 تبويبات حسب التصميم المرجعي).
 ///
-/// الترتيب منطقياً: حسابي ← مركز التحكم ← النشاط ← الرئيسية، فيُعرض من
-/// اليمين إلى اليسار تلقائياً في اتجاه RTL. اللون النشط من
-/// `colorScheme.primary` والباقي خافت. يُستخدم داخل
+/// الترتيب منطقياً من اليمين (البداية في RTL): الرئيسية ← النشاط ←
+/// مركز التحكم ← حسابي، فيظهر زر الرئيسية يميناً كما في التصميم.
+/// اللون النشط من `colorScheme.primary` والباقي خافت. يُستخدم داخل
 /// [ParentShellScaffold] (لاحقاً: `KidBottomNav` منفصل للطفل بثلاثة
 /// تبويبات في P4).
 class ParentBottomNav extends StatelessWidget {
@@ -21,14 +21,14 @@ class ParentBottomNav extends StatelessWidget {
     required this.onTap,
   });
 
-  /// التبويبات الأربعة بالترتيب المنطقي (حسابي أولاً).
+  /// التبويبات الأربعة بالترتيب المنطقي (الرئيسية أولاً = يميناً في RTL).
   static const List<({String label, IconData icon})> items =
       <({String label, IconData icon})>[
-    (label: 'حسابي', icon: Icons.person_outline),
-    (label: 'مركز التحكم', icon: Icons.dashboard_outlined),
-    (label: 'النشاط', icon: Icons.bar_chart_outlined),
-    (label: 'الرئيسية', icon: Icons.home_outlined),
-  ];
+        (label: 'الرئيسية', icon: Icons.home_outlined),
+        (label: 'النشاط', icon: Icons.bar_chart_outlined),
+        (label: 'مركز التحكم', icon: Icons.dashboard_outlined),
+        (label: 'حسابي', icon: Icons.person_outline),
+      ];
 
   @override
   Widget build(BuildContext context) {
@@ -41,16 +41,12 @@ class ParentBottomNav extends StatelessWidget {
       type: BottomNavigationBarType.fixed,
       backgroundColor: theme.colorScheme.surface,
       selectedItemColor: theme.colorScheme.primary,
-      unselectedItemColor:
-          theme.colorScheme.onSurface.withValues(alpha: 0.6),
+      unselectedItemColor: theme.colorScheme.onSurface.withValues(alpha: 0.6),
       selectedFontSize: 12.sp,
       unselectedFontSize: 12.sp,
       items: <BottomNavigationBarItem>[
         for (final item in items)
-          BottomNavigationBarItem(
-            icon: Icon(item.icon),
-            label: item.label,
-          ),
+          BottomNavigationBarItem(icon: Icon(item.icon), label: item.label),
       ],
     );
   }

@@ -71,8 +71,8 @@ class AppRouter {
         ),
         // P0 parent shell — TEMP branch mapping until P1/P3 replace the
         // placeholder screens with the real tab destinations:
-        // account→parent_home, control→child_home, activity→requests,
-        // home→home. Branch order matches ParentBottomNav.items.
+        // home→home, activity→requests, control→child_home, account→parent.
+        // Branch order matches ParentBottomNav.items.
         StatefulShellRoute.indexedStack(
           builder:
               (
@@ -86,12 +86,21 @@ class AppRouter {
             StatefulShellBranch(
               routes: <RouteBase>[
                 GoRoute(
-                  path: Routes.parentHomeScreen,
+                  path: Routes.homeScreen,
                   pageBuilder: (BuildContext context, GoRouterState state) =>
                       MaterialPage<void>(
-                        child: BlocProvider<HomeDashboardCubit>(
-                          create: (_) => getIt<HomeDashboardCubit>()..load(),
-                          child: const ParentHomeScreen(),
+                        child: MultiBlocProvider(
+                          providers: [
+                            BlocProvider<HomeDashboardCubit>(
+                              create: (_) =>
+                                  getIt<HomeDashboardCubit>()..load(),
+                            ),
+                            BlocProvider<NotificationsCubit>(
+                              create: (_) =>
+                                  getIt<NotificationsCubit>()..load(),
+                            ),
+                          ],
+                          child: const HomeScreen(),
                         ),
                       ),
                 ),
@@ -132,21 +141,12 @@ class AppRouter {
             StatefulShellBranch(
               routes: <RouteBase>[
                 GoRoute(
-                  path: Routes.homeScreen,
+                  path: Routes.parentHomeScreen,
                   pageBuilder: (BuildContext context, GoRouterState state) =>
                       MaterialPage<void>(
-                        child: MultiBlocProvider(
-                          providers: [
-                            BlocProvider<HomeDashboardCubit>(
-                              create: (_) =>
-                                  getIt<HomeDashboardCubit>()..load(),
-                            ),
-                            BlocProvider<NotificationsCubit>(
-                              create: (_) =>
-                                  getIt<NotificationsCubit>()..load(),
-                            ),
-                          ],
-                          child: const HomeScreen(),
+                        child: BlocProvider<HomeDashboardCubit>(
+                          create: (_) => getIt<HomeDashboardCubit>()..load(),
+                          child: const ParentHomeScreen(),
                         ),
                       ),
                 ),

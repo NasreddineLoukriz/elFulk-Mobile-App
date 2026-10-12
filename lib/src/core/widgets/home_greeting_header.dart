@@ -63,6 +63,34 @@ class HomeGreetingHeader extends StatelessWidget {
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    title,
+                    key: const ValueKey('home-header-title'),
+                    textAlign: TextAlign.end,
+                    style: TextStyle(
+                      fontSize: 18.sp,
+                      fontWeight: FontWeight.w800,
+                      color: theme.colorScheme.onSurface,
+                    ),
+                  ),
+                  SizedBox(height: 2.h),
+                  Text(
+                    subtitle,
+                    textAlign: TextAlign.end,
+                    style: TextStyle(
+                      fontSize: 13.sp,
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(width: context.spacing.md.w),
             GestureDetector(
               key: const ValueKey('home-header-bell'),
               onTap: onNotifications,
@@ -95,34 +123,6 @@ class HomeGreetingHeader extends StatelessWidget {
                         ),
                       ),
                     ),
-                ],
-              ),
-            ),
-            SizedBox(width: context.spacing.md.w),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    title,
-                    key: const ValueKey('home-header-title'),
-                    textAlign: TextAlign.end,
-                    style: TextStyle(
-                      fontSize: 18.sp,
-                      fontWeight: FontWeight.w800,
-                      color: theme.colorScheme.onSurface,
-                    ),
-                  ),
-                  SizedBox(height: 2.h),
-                  Text(
-                    subtitle,
-                    textAlign: TextAlign.end,
-                    style: TextStyle(
-                      fontSize: 13.sp,
-                      color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-                    ),
-                  ),
                 ],
               ),
             ),

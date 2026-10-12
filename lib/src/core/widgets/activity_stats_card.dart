@@ -14,10 +14,14 @@ class ActivityCategory {
   /// نص النسبة المعروض (مثال: `'60% من الوقت'`).
   final String percentLabel;
 
+  /// أيقونة الفئة فوق التسمية (null = بلا أيقونة).
+  final IconData? icon;
+
   const ActivityCategory({
     required this.label,
     required this.fraction,
     required this.percentLabel,
+    this.icon,
   });
 }
 
@@ -185,6 +189,14 @@ class ActivityStatsCard extends StatelessWidget {
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
+                          if (categories[i].icon != null) ...[
+                            Icon(
+                              categories[i].icon,
+                              size: 20.sp,
+                              color: theme.colorScheme.primary,
+                            ),
+                            SizedBox(height: 2.h),
+                          ],
                           Text(
                             categories[i].label,
                             style: TextStyle(
@@ -218,27 +230,57 @@ class ActivityStatsCard extends StatelessWidget {
               ),
             ],
             SizedBox(height: context.spacing.md.h),
-            SizedBox(
-              height: 42.h,
-              child: ElevatedButton(
-                key: const ValueKey('activity-stats-action'),
-                onPressed: onAction,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: theme.colorScheme.primary,
-                  foregroundColor: theme.colorScheme.onPrimary,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(context.radius.xxl.r),
-                  ),
-                  elevation: 0,
-                ),
-                child: Text(
-                  actionLabel,
-                  style: TextStyle(
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
+            _ActionButton(onAction: onAction, actionLabel: actionLabel),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// زر التقرير: نص متمركز مع شيفرون أمامي ملاصق (كما في التصميم).
+class _ActionButton extends StatelessWidget {
+  final VoidCallback? onAction;
+  final String actionLabel;
+
+  const _ActionButton({required this.onAction, required this.actionLabel});
+
+  @override
+  Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+    final bool isRtl = Directionality.of(context) == TextDirection.rtl;
+
+    return SizedBox(
+      height: 42.h,
+      child: ElevatedButton(
+        key: const ValueKey('activity-stats-action'),
+        onPressed: onAction,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: theme.colorScheme.primary,
+          foregroundColor: theme.colorScheme.onPrimary,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(context.radius.xxl.r),
+          ),
+          elevation: 0,
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Flexible(
+              child: Text(
+                actionLabel,
+                textAlign: TextAlign.center,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w700),
               ),
+            ),
+            SizedBox(width: context.spacing.sm.w),
+            // ملاحظة: الاتجاه مثبّت على LTR حتى لا ينعكس
+            // الشيفرون تلقائياً داخل RTL.
+            Icon(
+              isRtl ? Icons.chevron_left_rounded : Icons.chevron_right_rounded,
+              size: 18.sp,
+              textDirection: TextDirection.ltr,
             ),
           ],
         ),

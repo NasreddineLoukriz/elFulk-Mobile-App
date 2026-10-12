@@ -339,9 +339,9 @@ void main() {
     expect(find.text('تعذر التحميل.'), findsOneWidget);
     expect(find.byType(CircularProgressIndicator), findsOneWidget);
 
-    await tester.tap(find.text('النشاط'));
-    await tester.pump();
-    expect(tappedNav, 2);
+      await tester.tap(find.text('النشاط'));
+      await tester.pump();
+      expect(tappedNav, 1);
 
     await tester.tap(find.text('الكل'));
     await tester.pump();
@@ -413,12 +413,12 @@ void main() {
     );
     await tester.pump();
 
-    await tester.tap(find.text('النشاط'));
-    await tester.pumpAndSettle();
-    expect(find.text('branch-c'), findsOneWidget);
+      await tester.tap(find.text('مركز التحكم'));
+      await tester.pumpAndSettle();
+      expect(find.text('branch-c'), findsOneWidget);
 
-    await tester.tap(find.text('حسابي'));
-    await tester.pumpAndSettle();
+      await tester.tap(find.text('الرئيسية'));
+      await tester.pumpAndSettle();
     // State preserved: the text entered in branch A is still displayed.
     expect(find.text('hello'), findsOneWidget);
     expect(find.byKey(const ValueKey('shell-field-a')), findsOneWidget);

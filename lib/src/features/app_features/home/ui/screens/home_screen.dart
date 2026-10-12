@@ -146,6 +146,18 @@ class _DashboardTab extends StatelessWidget {
 
   const _DashboardTab({required this.dashboard});
 
+  /// أيقونة فئة النشاط حسب اسمها (بيانات dummy مؤقتة حتى يرسل
+  /// الخادم مفاتيح الأيقونات في Phase 2).
+  static IconData _categoryIcon(String label) {
+    if (label.contains('الفيديو')) {
+      return Icons.play_circle_outline_rounded;
+    }
+    if (label.contains('القصص')) {
+      return Icons.menu_book_outlined;
+    }
+    return Icons.sports_esports_outlined;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -199,6 +211,7 @@ class _DashboardTab extends StatelessWidget {
                 label: c.label,
                 fraction: c.fraction,
                 percentLabel: c.percentLabel,
+                icon: _categoryIcon(c.label),
               ),
           ],
           actionLabel: dashboard.reportActionLabel,

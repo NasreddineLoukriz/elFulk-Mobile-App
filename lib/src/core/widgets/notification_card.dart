@@ -333,8 +333,9 @@ class _CardButton extends StatelessWidget {
             if (showChevron)
               // ملاحظة: الاتجاه مثبّت على LTR حتى لا ينعكس الشيفرون
               // تلقائياً (matchTextDirection=true) داخل RTL.
+              // الإزاحة 12 تطابق التصميم (بعيداً عن الحافة).
               PositionedDirectional(
-                end: 0,
+                end: 12.w,
                 child: Icon(
                   isRtl
                       ? Icons.chevron_left_rounded

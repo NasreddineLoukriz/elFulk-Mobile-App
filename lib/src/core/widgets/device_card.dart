@@ -97,7 +97,7 @@ class DeviceCard extends StatelessWidget {
     Widget smallButton({
       required IconData icon,
       required VoidCallback? onPressed,
-      required Color background,
+      required Color border,
       required Color foreground,
       required String keyValue,
     }) {
@@ -105,16 +105,15 @@ class DeviceCard extends StatelessWidget {
       return Expanded(
         child: SizedBox(
           height: 38.h,
-          child: ElevatedButton(
+          child: OutlinedButton(
             key: ValueKey<String>(keyValue),
             onPressed: onPressed,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: background,
+            style: OutlinedButton.styleFrom(
               foregroundColor: foreground,
+              side: BorderSide(color: border, width: 1.5),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(context.radius.lg.r),
               ),
-              elevation: 0,
               padding: EdgeInsets.zero,
             ),
             child: Icon(icon, size: 20.sp),
@@ -136,6 +135,22 @@ class DeviceCard extends StatelessWidget {
           children: [
             Row(
               children: [
+                Container(
+                  width: 40.w,
+                  height: 40.h,
+                  decoration: BoxDecoration(
+                    color: theme.colorScheme.surfaceContainerHighest,
+                    borderRadius: BorderRadius.circular(context.radius.lg.r),
+                  ),
+                  child: Center(
+                    child: Icon(
+                      Icons.smartphone_outlined,
+                      size: 22.sp,
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ),
+                SizedBox(width: context.spacing.sm.w),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
@@ -159,12 +174,6 @@ class DeviceCard extends StatelessWidget {
                     ],
                   ),
                 ),
-                SizedBox(width: context.spacing.sm.w),
-                Icon(
-                  Icons.smartphone_outlined,
-                  size: 28.sp,
-                  color: theme.colorScheme.primary,
-                ),
               ],
             ),
             SizedBox(height: context.spacing.sm.h),
@@ -185,7 +194,7 @@ class DeviceCard extends StatelessWidget {
                 smallButton(
                   icon: Icons.lock_outline_rounded,
                   onPressed: onLock,
-                  background: theme.colorScheme.error.withValues(alpha: 0.12),
+                  border: theme.colorScheme.error,
                   foreground: theme.colorScheme.error,
                   keyValue: 'device-card-lock',
                 ),
@@ -193,7 +202,7 @@ class DeviceCard extends StatelessWidget {
                 smallButton(
                   icon: Icons.pause_rounded,
                   onPressed: onPause,
-                  background: theme.colorScheme.surfaceContainerHighest,
+                  border: theme.colorScheme.outlineVariant,
                   foreground: theme.colorScheme.onSurface,
                   keyValue: 'device-card-pause',
                 ),
@@ -201,7 +210,7 @@ class DeviceCard extends StatelessWidget {
                 smallButton(
                   icon: Icons.edit_outlined,
                   onPressed: onEdit,
-                  background: theme.colorScheme.surfaceContainerHighest,
+                  border: theme.colorScheme.outlineVariant,
                   foreground: theme.colorScheme.onSurface,
                   keyValue: 'device-card-edit',
                 ),

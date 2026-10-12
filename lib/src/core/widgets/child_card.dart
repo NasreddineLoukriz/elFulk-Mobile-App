@@ -88,16 +88,12 @@ class ChildCard extends StatelessWidget {
           children: [
             Row(
               children: [
-                if (onMenu != null)
-                  GestureDetector(
-                    key: const ValueKey('child-card-menu'),
-                    onTap: onMenu,
-                    child: Icon(
-                      Icons.more_vert_rounded,
-                      size: 20.sp,
-                      color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
-                    ),
-                  ),
+                SizedBox(
+                  width: 40.w,
+                  height: 40.h,
+                  child: avatar ?? _DefaultAvatar(name: name),
+                ),
+                SizedBox(width: context.spacing.sm.w),
                 Expanded(
                   child: Text(
                     name,
@@ -116,12 +112,18 @@ class ChildCard extends StatelessWidget {
                         ),
                   ),
                 ),
-                SizedBox(width: context.spacing.sm.w),
-                SizedBox(
-                  width: 40.w,
-                  height: 40.h,
-                  child: avatar ?? _DefaultAvatar(name: name),
-                ),
+                if (onMenu != null) ...[
+                  SizedBox(width: context.spacing.sm.w),
+                  GestureDetector(
+                    key: const ValueKey('child-card-menu'),
+                    onTap: onMenu,
+                    child: Icon(
+                      Icons.more_vert_rounded,
+                      size: 20.sp,
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+                    ),
+                  ),
+                ],
               ],
             ),
             SizedBox(height: 4.h),

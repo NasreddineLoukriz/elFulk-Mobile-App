@@ -21,6 +21,12 @@ class LibraryContentRow extends StatelessWidget {
   /// شارة فوق المصغرة (مثال: `'15:12'` أو `'4 من 12 فصل'`).
   final String? badge;
 
+  /// عرض المصغرة (افتراضياً `72`).
+  final double thumbnailWidth;
+
+  /// ارتفاع المصغرة (افتراضياً `72` — مرّ قيماً أطول لمصغرات القصص).
+  final double thumbnailHeight;
+
   /// يُستدعى عند ضغط الصف.
   final VoidCallback? onTap;
 
@@ -33,6 +39,8 @@ class LibraryContentRow extends StatelessWidget {
     required this.title,
     this.tags = const <String>[],
     this.badge,
+    this.thumbnailWidth = 72,
+    this.thumbnailHeight = 72,
     this.onTap,
     this.onMenu,
   });
@@ -50,19 +58,46 @@ class LibraryContentRow extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (onMenu != null)
-              GestureDetector(
-                key: const ValueKey('library-content-menu'),
-                onTap: onMenu,
-                child: Padding(
-                  padding: EdgeInsets.only(top: 2.h),
-                  child: Icon(
-                    Icons.more_vert_rounded,
-                    size: 20.sp,
-                    color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+            Stack(
+              children: [
+                Container(
+                  width: thumbnailWidth.w,
+                  height: thumbnailHeight.h,
+                  decoration: BoxDecoration(
+                    color: theme.colorScheme.surfaceContainerHighest,
+                    borderRadius: BorderRadius.circular(context.radius.lg.r),
                   ),
+                  clipBehavior: Clip.antiAlias,
+                  child: thumbnail,
                 ),
-              ),
+                if (badge != null)
+                  PositionedDirectional(
+                    bottom: 4.h,
+                    end: 4.w,
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 6.w,
+                        vertical: 2.h,
+                      ),
+                      decoration: BoxDecoration(
+                        color: theme.colorScheme.onSurface.withValues(
+                          alpha: 0.75,
+                        ),
+                        borderRadius: BorderRadius.circular(6.r),
+                      ),
+                      child: Text(
+                        badge!,
+                        style: TextStyle(
+                          fontSize: 10.sp,
+                          fontWeight: FontWeight.w700,
+                          color: theme.colorScheme.surface,
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+            SizedBox(width: context.spacing.sm.w),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
@@ -115,46 +150,21 @@ class LibraryContentRow extends StatelessWidget {
                 ],
               ),
             ),
-            SizedBox(width: context.spacing.sm.w),
-            Stack(
-              children: [
-                Container(
-                  width: 72.w,
-                  height: 72.h,
-                  decoration: BoxDecoration(
-                    color: theme.colorScheme.surfaceContainerHighest,
-                    borderRadius: BorderRadius.circular(context.radius.lg.r),
+            if (onMenu != null) ...[
+              SizedBox(width: context.spacing.sm.w),
+              GestureDetector(
+                key: const ValueKey('library-content-menu'),
+                onTap: onMenu,
+                child: Padding(
+                  padding: EdgeInsets.only(top: 2.h),
+                  child: Icon(
+                    Icons.more_vert_rounded,
+                    size: 20.sp,
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
                   ),
-                  clipBehavior: Clip.antiAlias,
-                  child: thumbnail,
                 ),
-                if (badge != null)
-                  PositionedDirectional(
-                    bottom: 4.h,
-                    end: 4.w,
-                    child: Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 6.w,
-                        vertical: 2.h,
-                      ),
-                      decoration: BoxDecoration(
-                        color: theme.colorScheme.onSurface.withValues(
-                          alpha: 0.75,
-                        ),
-                        borderRadius: BorderRadius.circular(6.r),
-                      ),
-                      child: Text(
-                        badge!,
-                        style: TextStyle(
-                          fontSize: 10.sp,
-                          fontWeight: FontWeight.w700,
-                          color: theme.colorScheme.surface,
-                        ),
-                      ),
-                    ),
-                  ),
-              ],
-            ),
+              ),
+            ],
           ],
         ),
       ),
@@ -191,6 +201,7 @@ class LibrarySection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
+    final bool isRtl = Directionality.of(context) == TextDirection.rtl;
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -233,7 +244,15 @@ class LibrarySection extends StatelessWidget {
           ],
         ),
         SizedBox(height: context.spacing.sm.h),
-        for (final LibraryContentRow row in rows) row,
+        for (int i = 0; i < rows.length; i++) ...[
+          rows[i],
+          if (i < rows.length - 1)
+            Divider(
+              height: 1.h,
+              thickness: 1.h,
+              color: theme.colorScheme.outlineVariant,
+            ),
+        ],
         if (actionLabel != null) ...[
           SizedBox(height: context.spacing.sm.h),
           SizedBox(
@@ -249,9 +268,29 @@ class LibrarySection extends StatelessWidget {
                 ),
                 elevation: 0,
               ),
-              child: Text(
-                actionLabel!,
-                style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w700),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Flexible(
+                    child: Text(
+                      actionLabel!,
+                      textAlign: TextAlign.center,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                          fontSize: 14.sp, fontWeight: FontWeight.w700),
+                    ),
+                  ),
+                  SizedBox(width: context.spacing.sm.w),
+                  // ملاحظة: الاتجاه مثبّت على LTR حتى لا ينعكس
+                  // الشيفرون تلقائياً داخل RTL.
+                  Icon(
+                    isRtl
+                        ? Icons.chevron_left_rounded
+                        : Icons.chevron_right_rounded,
+                    size: 18.sp,
+                    textDirection: TextDirection.ltr,
+                  ),
+                ],
               ),
             ),
           ),
