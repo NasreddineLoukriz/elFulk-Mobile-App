@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -16,6 +17,12 @@ import 'package:elfulk/src/core/widgets/parent_shell_scaffold.dart';
 import 'package:elfulk/src/core/widgets/pin_display_row.dart';
 import 'package:elfulk/src/core/widgets/section_header.dart';
 import 'package:elfulk/src/core/widgets/settings_list_tile.dart';
+import 'package:elfulk/src/features/app_features/home/data/repos/home_dashboard_repository.dart';
+import 'package:elfulk/src/features/app_features/home/logic/dashboard_cubit/home_dashboard_cubit.dart';
+import 'package:elfulk/src/features/app_features/home/ui/screens/home_screen.dart';
+import 'package:elfulk/src/features/app_features/notifications/data/repos/notifications_repository.dart';
+import 'package:elfulk/src/features/app_features/notifications/logic/cubit/notifications_cubit.dart';
+import 'package:elfulk/src/features/app_features/notifications/ui/screens/notifications_screen.dart';
 import 'package:elfulk/src/features/app_features/auth/ui/screens/otp_verification_screen.dart';
 
 void main() {
@@ -61,375 +68,452 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('otp-keypad-clear')));
     await tester.pump();
 
-    expect(
-      tester.widget<PinDisplayRow>(find.byType(PinDisplayRow)).value,
-      '',
-    );
+    expect(tester.widget<PinDisplayRow>(find.byType(PinDisplayRow)).value, '');
   });
 
-  testWidgets(
-    'confirmation dialog opens, slide commits, cancel dismisses',
-    (WidgetTester tester) async {
-      const AppConfirmationConfig config = AppConfirmationConfig(
-        title: 'هل انت متأكد من حذف الحساب الشخصي ؟',
-        message: 'body',
-        icon: Icon(Icons.delete),
-        primaryActionType: AppConfirmationPrimaryActionType.destructive,
-        primaryActionLabel: 'حذف حسابي',
-        secondaryActionLabel: 'إلغاء',
-      );
+  testWidgets('confirmation dialog opens, slide commits, cancel dismisses', (
+    WidgetTester tester,
+  ) async {
+    const AppConfirmationConfig config = AppConfirmationConfig(
+      title: 'هل انت متأكد من حذف الحساب الشخصي ؟',
+      message: 'body',
+      icon: Icon(Icons.delete),
+      primaryActionType: AppConfirmationPrimaryActionType.destructive,
+      primaryActionLabel: 'حذف حسابي',
+      secondaryActionLabel: 'إلغاء',
+    );
 
-      await tester.pumpWidget(
-        ScreenUtilInit(
-          designSize: const Size(390, 844),
-          minTextAdapt: true,
-          builder: (context, child) => MaterialApp(
-            home: Builder(
-              builder: (context) => Scaffold(
-                body: TextButton(
-                  onPressed: () => showAppConfirmationDialog(
-                    context: context,
-                    config: config,
+    await tester.pumpWidget(
+      ScreenUtilInit(
+        designSize: const Size(390, 844),
+        minTextAdapt: true,
+        builder: (context, child) => MaterialApp(
+          home: Builder(
+            builder: (context) => Scaffold(
+              body: TextButton(
+                onPressed: () =>
+                    showAppConfirmationDialog(context: context, config: config),
+                child: const Text('open-dialog'),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    // Opens with both buttons.
+    await tester.tap(find.text('open-dialog'));
+    await tester.pumpAndSettle();
+    expect(find.byType(AppConfirmationDialog), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('slide-to-confirm-thumb')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('app-confirmation-secondary')),
+      findsOneWidget,
+    );
+
+    // Full slide commits and closes the dialog.
+    await tester.drag(
+      find.byKey(const ValueKey('slide-to-confirm-thumb')),
+      const Offset(500, 0),
+    );
+    await tester.pumpAndSettle();
+    expect(find.byType(AppConfirmationDialog), findsNothing);
+
+    // Cancel dismisses the dialog.
+    await tester.tap(find.text('open-dialog'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('app-confirmation-secondary')));
+    await tester.pumpAndSettle();
+    expect(find.byType(AppConfirmationDialog), findsNothing);
+  });
+
+  testWidgets('forced rtl slide commits right-to-left under ltr ambient', (
+    WidgetTester tester,
+  ) async {
+    const AppConfirmationConfig config = AppConfirmationConfig(
+      title: 't',
+      message: 'm',
+      icon: Icon(Icons.delete),
+      primaryActionType: AppConfirmationPrimaryActionType.destructive,
+      primaryActionLabel: 'label',
+      secondaryActionLabel: 'cancel',
+      slideTextDirection: TextDirection.rtl,
+    );
+
+    await tester.pumpWidget(
+      ScreenUtilInit(
+        designSize: const Size(390, 844),
+        minTextAdapt: true,
+        builder: (context, child) => MaterialApp(
+          home: Builder(
+            builder: (context) => Scaffold(
+              body: TextButton(
+                onPressed: () =>
+                    showAppConfirmationDialog(context: context, config: config),
+                child: const Text('open-dialog'),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    await tester.tap(find.text('open-dialog'));
+    await tester.pumpAndSettle();
+    expect(find.byType(AppConfirmationDialog), findsOneWidget);
+
+    // Right-to-left drag commits and closes the dialog.
+    await tester.drag(
+      find.byKey(const ValueKey('slide-to-confirm-thumb')),
+      const Offset(-500, 0),
+    );
+    await tester.pumpAndSettle();
+    expect(find.byType(AppConfirmationDialog), findsNothing);
+  });
+
+  testWidgets('settings list tile variants render subtitle, switch, tap', (
+    WidgetTester tester,
+  ) async {
+    bool switchValue = true;
+    bool tapped = false;
+
+    await tester.pumpWidget(
+      ScreenUtilInit(
+        designSize: const Size(390, 844),
+        minTextAdapt: true,
+        builder: (context, child) => MaterialApp(
+          home: Scaffold(
+            body: StatefulBuilder(
+              builder: (context, setState) => Column(
+                children: [
+                  SettingsListTile(
+                    title: 'إشعارات التنبيهات الحرجة.',
+                    subtitle: 'تنبيهك فورًا عند أي محاولة لتجاوز القيود.',
+                    leading: const Icon(Icons.warning_amber_rounded),
+                    trailing: SettingsTileTrailing.switch_(
+                      value: switchValue,
+                      onChanged: (bool v) => setState(() => switchValue = v),
+                    ),
+                    onTap: () => tapped = true,
                   ),
-                  child: const Text('open-dialog'),
-                ),
-              ),
-            ),
-          ),
-        ),
-      );
-
-      // Opens with both buttons.
-      await tester.tap(find.text('open-dialog'));
-      await tester.pumpAndSettle();
-      expect(find.byType(AppConfirmationDialog), findsOneWidget);
-      expect(
-        find.byKey(const ValueKey('slide-to-confirm-thumb')),
-        findsOneWidget,
-      );
-      expect(
-        find.byKey(const ValueKey('app-confirmation-secondary')),
-        findsOneWidget,
-      );
-
-      // Full slide commits and closes the dialog.
-      await tester.drag(
-        find.byKey(const ValueKey('slide-to-confirm-thumb')),
-        const Offset(500, 0),
-      );
-      await tester.pumpAndSettle();
-      expect(find.byType(AppConfirmationDialog), findsNothing);
-
-      // Cancel dismisses the dialog.
-      await tester.tap(find.text('open-dialog'));
-      await tester.pumpAndSettle();
-      await tester.tap(
-        find.byKey(const ValueKey('app-confirmation-secondary')),
-      );
-      await tester.pumpAndSettle();
-      expect(find.byType(AppConfirmationDialog), findsNothing);
-    },
-  );
-
-  testWidgets(
-    'forced rtl slide commits right-to-left under ltr ambient',
-    (WidgetTester tester) async {
-      const AppConfirmationConfig config = AppConfirmationConfig(
-        title: 't',
-        message: 'm',
-        icon: Icon(Icons.delete),
-        primaryActionType: AppConfirmationPrimaryActionType.destructive,
-        primaryActionLabel: 'label',
-        secondaryActionLabel: 'cancel',
-        slideTextDirection: TextDirection.rtl,
-      );
-
-      await tester.pumpWidget(
-        ScreenUtilInit(
-          designSize: const Size(390, 844),
-          minTextAdapt: true,
-          builder: (context, child) => MaterialApp(
-            home: Builder(
-              builder: (context) => Scaffold(
-                body: TextButton(
-                  onPressed: () => showAppConfirmationDialog(
-                    context: context,
-                    config: config,
+                  const SettingsListTile(
+                    title: 'تغيير اللغة',
+                    trailing: SettingsTileTrailing.chevron(),
                   ),
-                  child: const Text('open-dialog'),
+                  const SettingsListTile(
+                    title: 'اللغة',
+                    trailing: SettingsTileTrailing.value('العربية'),
+                    showDivider: false,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    // Titles, description, trailing controls and dividers render:
+    // one full-bleed mid divider under the described row, two inset
+    // bottom dividers.
+    expect(find.text('إشعارات التنبيهات الحرجة.'), findsOneWidget);
+    expect(
+      find.text('تنبيهك فورًا عند أي محاولة لتجاوز القيود.'),
+      findsOneWidget,
+    );
+    expect(find.byKey(const ValueKey('settings-tile-switch')), findsOneWidget);
+    expect(find.byKey(const ValueKey('settings-tile-chevron')), findsOneWidget);
+    expect(find.text('العربية'), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('settings-tile-divider-mid')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('settings-tile-divider')),
+      findsNWidgets(2),
+    );
+
+    // Tapping the description does NOT fire onTap (outside InkWell).
+    await tester.tap(find.text('تنبيهك فورًا عند أي محاولة لتجاوز القيود.'));
+    await tester.pump();
+    expect(tapped, isFalse);
+
+    // Toggling the switch flips the parent-owned value.
+    await tester.tap(find.byKey(const ValueKey('settings-tile-switch')));
+    await tester.pumpAndSettle();
+    expect(switchValue, isFalse);
+    expect(
+      tester
+          .widget<Switch>(find.byKey(const ValueKey('settings-tile-switch')))
+          .value,
+      isFalse,
+    );
+
+    // Tapping the title row fires onTap.
+    await tester.tap(find.text('إشعارات التنبيهات الحرجة.'));
+    await tester.pump();
+    expect(tapped, isTrue);
+  });
+
+  testWidgets('settings tile renders its own card background', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      ScreenUtilInit(
+        designSize: const Size(390, 844),
+        minTextAdapt: true,
+        builder: (context, child) => const MaterialApp(
+          home: Scaffold(
+            body: SettingsListTile(
+              title: 't',
+              backgroundColor: Colors.red,
+              showDivider: false,
+            ),
+          ),
+        ),
+      ),
+    );
+
+    final bool hasRedCard = tester
+        .widgetList<Material>(find.byType(Material))
+        .any((Material m) => m.color == Colors.red);
+    expect(hasRedCard, isTrue);
+  });
+
+  testWidgets('P0 foundation widgets render and interact', (
+    WidgetTester tester,
+  ) async {
+    int tappedNav = -1;
+    bool chipTapped = false;
+    bool retried = false;
+
+    await tester.pumpWidget(
+      ScreenUtilInit(
+        designSize: const Size(390, 844),
+        minTextAdapt: true,
+        builder: (context, child) => MaterialApp(
+          home: Scaffold(
+            body: SingleChildScrollView(
+              child: Column(
+                children: [
+                  ParentBottomNav(
+                    currentIndex: 0,
+                    onTap: (int i) => tappedNav = i,
+                  ),
+                  const SectionHeader(title: 'كل الإشعارات'),
+                  AppFilterChip(
+                    label: 'الكل',
+                    selected: false,
+                    onSelected: () => chipTapped = true,
+                  ),
+                  const AppBadge(label: '01'),
+                  const EmptyState(
+                    icon: Icons.notifications_none,
+                    title: 'لا توجد إشعارات',
+                    message: 'ستظهر هنا عند وصول جديد.',
+                  ),
+                  AppErrorCard(
+                    message: 'تعذر التحميل.',
+                    onRetry: () => retried = true,
+                  ),
+                  const AppLoadingView(),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    expect(find.text('حسابي'), findsOneWidget);
+    expect(find.text('مركز التحكم'), findsOneWidget);
+    expect(find.text('النشاط'), findsOneWidget);
+    expect(find.text('الرئيسية'), findsOneWidget);
+    expect(find.text('كل الإشعارات'), findsOneWidget);
+    expect(find.text('الكل'), findsOneWidget);
+    expect(find.text('01'), findsOneWidget);
+    expect(find.text('لا توجد إشعارات'), findsOneWidget);
+    expect(find.text('تعذر التحميل.'), findsOneWidget);
+    expect(find.byType(CircularProgressIndicator), findsOneWidget);
+
+    await tester.tap(find.text('النشاط'));
+    await tester.pump();
+    expect(tappedNav, 2);
+
+    await tester.tap(find.text('الكل'));
+    await tester.pump();
+    expect(chipTapped, isTrue);
+
+    await tester.ensureVisible(find.text('إعادة المحاولة'));
+    await tester.tap(find.text('إعادة المحاولة'));
+    await tester.pump();
+    expect(retried, isTrue);
+  });
+
+  testWidgets('parent shell switches branches and preserves state', (
+    WidgetTester tester,
+  ) async {
+    Widget branch(String name, {bool withField = false}) {
+      return Scaffold(
+        body: Center(
+          child: withField
+              ? TextField(key: ValueKey('shell-field-$name'))
+              : Text('branch-$name'),
+        ),
+      );
+    }
+
+    final GoRouter router = GoRouter(
+      initialLocation: '/a',
+      routes: [
+        StatefulShellRoute.indexedStack(
+          builder: (context, state, shell) =>
+              ParentShellScaffold(navigationShell: shell),
+          branches: [
+            StatefulShellBranch(
+              routes: [
+                GoRoute(
+                  path: '/a',
+                  builder: (c, s) => branch('a', withField: true),
                 ),
-              ),
+              ],
             ),
-          ),
+            StatefulShellBranch(
+              routes: [GoRoute(path: '/b', builder: (c, s) => branch('b'))],
+            ),
+            StatefulShellBranch(
+              routes: [GoRoute(path: '/c', builder: (c, s) => branch('c'))],
+            ),
+            StatefulShellBranch(
+              routes: [GoRoute(path: '/d', builder: (c, s) => branch('d'))],
+            ),
+          ],
         ),
-      );
+      ],
+    );
 
-      await tester.tap(find.text('open-dialog'));
-      await tester.pumpAndSettle();
-      expect(find.byType(AppConfirmationDialog), findsOneWidget);
+    await tester.pumpWidget(
+      ScreenUtilInit(
+        designSize: const Size(390, 844),
+        minTextAdapt: true,
+        builder: (context, child) => MaterialApp.router(routerConfig: router),
+      ),
+    );
+    await tester.pumpAndSettle();
 
-      // Right-to-left drag commits and closes the dialog.
-      await tester.drag(
-        find.byKey(const ValueKey('slide-to-confirm-thumb')),
-        const Offset(-500, 0),
-      );
-      await tester.pumpAndSettle();
-      expect(find.byType(AppConfirmationDialog), findsNothing);
-    },
-  );
+    expect(find.byKey(const ValueKey('shell-field-a')), findsOneWidget);
+    expect(find.byType(ParentBottomNav), findsOneWidget);
 
-  testWidgets(
-    'settings list tile variants render subtitle, switch, tap',
-    (WidgetTester tester) async {
-      bool switchValue = true;
-      bool tapped = false;
+    await tester.enterText(
+      find.byKey(const ValueKey('shell-field-a')),
+      'hello',
+    );
+    await tester.pump();
 
-      await tester.pumpWidget(
-        ScreenUtilInit(
-          designSize: const Size(390, 844),
-          minTextAdapt: true,
-          builder: (context, child) => MaterialApp(
-            home: Scaffold(
-              body: StatefulBuilder(
-                builder: (context, setState) => Column(
-                  children: [
-                    SettingsListTile(
-                      title: 'إشعارات التنبيهات الحرجة.',
-                      subtitle: 'تنبيهك فورًا عند أي محاولة لتجاوز القيود.',
-                      leading: const Icon(Icons.warning_amber_rounded),
-                      trailing: SettingsTileTrailing.switch_(
-                        value: switchValue,
-                        onChanged: (bool v) =>
-                            setState(() => switchValue = v),
-                      ),
-                      onTap: () => tapped = true,
-                    ),
-                    const SettingsListTile(
-                      title: 'تغيير اللغة',
-                      trailing: SettingsTileTrailing.chevron(),
-                    ),
-                    const SettingsListTile(
-                      title: 'اللغة',
-                      trailing: SettingsTileTrailing.value('العربية'),
-                      showDivider: false,
-                    ),
-                  ],
+    await tester.tap(find.text('النشاط'));
+    await tester.pumpAndSettle();
+    expect(find.text('branch-c'), findsOneWidget);
+
+    await tester.tap(find.text('حسابي'));
+    await tester.pumpAndSettle();
+    // State preserved: the text entered in branch A is still displayed.
+    expect(find.text('hello'), findsOneWidget);
+    expect(find.byKey(const ValueKey('shell-field-a')), findsOneWidget);
+  });
+
+  testWidgets('home dashboard renders tabs, upsell and children', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      ScreenUtilInit(
+        designSize: const Size(390, 844),
+        minTextAdapt: true,
+        builder: (context, child) => MaterialApp(
+          home: Scaffold(
+            body: MultiBlocProvider(
+              providers: [
+                BlocProvider<HomeDashboardCubit>(
+                  create: (_) =>
+                      HomeDashboardCubit(const HomeDashboardRepository())
+                        ..load(),
                 ),
-              ),
-            ),
-          ),
-        ),
-      );
-
-      // Titles, description, trailing controls and dividers render:
-      // one full-bleed mid divider under the described row, two inset
-      // bottom dividers.
-      expect(find.text('إشعارات التنبيهات الحرجة.'), findsOneWidget);
-      expect(find.text('تنبيهك فورًا عند أي محاولة لتجاوز القيود.'),
-          findsOneWidget);
-      expect(find.byKey(const ValueKey('settings-tile-switch')),
-          findsOneWidget);
-      expect(find.byKey(const ValueKey('settings-tile-chevron')),
-          findsOneWidget);
-      expect(find.text('العربية'), findsOneWidget);
-      expect(find.byKey(const ValueKey('settings-tile-divider-mid')),
-          findsOneWidget);
-      expect(find.byKey(const ValueKey('settings-tile-divider')),
-          findsNWidgets(2));
-
-      // Tapping the description does NOT fire onTap (outside InkWell).
-      await tester.tap(find.text('تنبيهك فورًا عند أي محاولة لتجاوز القيود.'));
-      await tester.pump();
-      expect(tapped, isFalse);
-
-      // Toggling the switch flips the parent-owned value.
-      await tester.tap(find.byKey(const ValueKey('settings-tile-switch')));
-      await tester.pumpAndSettle();
-      expect(switchValue, isFalse);
-      expect(
-        tester
-            .widget<Switch>(
-                find.byKey(const ValueKey('settings-tile-switch')))
-            .value,
-        isFalse,
-      );
-
-      // Tapping the title row fires onTap.
-      await tester.tap(find.text('إشعارات التنبيهات الحرجة.'));
-      await tester.pump();
-      expect(tapped, isTrue);
-    },
-  );
-
-  testWidgets(
-    'settings tile renders its own card background',
-    (WidgetTester tester) async {
-      await tester.pumpWidget(
-        ScreenUtilInit(
-          designSize: const Size(390, 844),
-          minTextAdapt: true,
-          builder: (context, child) => const MaterialApp(
-            home: Scaffold(
-              body: SettingsListTile(
-                title: 't',
-                backgroundColor: Colors.red,
-                showDivider: false,
-              ),
-            ),
-          ),
-        ),
-      );
-
-      final bool hasRedCard =
-          tester.widgetList<Material>(find.byType(Material)).any(
-                (Material m) => m.color == Colors.red,
-              );
-      expect(hasRedCard, isTrue);
-    },
-  );
-
-  testWidgets(
-    'P0 foundation widgets render and interact',
-    (WidgetTester tester) async {
-      int tappedNav = -1;
-      bool chipTapped = false;
-      bool retried = false;
-
-      await tester.pumpWidget(
-        ScreenUtilInit(
-          designSize: const Size(390, 844),
-          minTextAdapt: true,
-          builder: (context, child) => MaterialApp(
-            home: Scaffold(
-              body: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    ParentBottomNav(
-                      currentIndex: 0,
-                      onTap: (int i) => tappedNav = i,
-                    ),
-                    const SectionHeader(title: 'كل الإشعارات'),
-                    AppFilterChip(
-                      label: 'الكل',
-                      selected: false,
-                      onSelected: () => chipTapped = true,
-                    ),
-                    const AppBadge(label: '01'),
-                    const EmptyState(
-                      icon: Icons.notifications_none,
-                      title: 'لا توجد إشعارات',
-                      message: 'ستظهر هنا عند وصول جديد.',
-                    ),
-                    AppErrorCard(
-                      message: 'تعذر التحميل.',
-                      onRetry: () => retried = true,
-                    ),
-                    const AppLoadingView(),
-                  ],
+                BlocProvider<NotificationsCubit>(
+                  create: (_) =>
+                      NotificationsCubit(const NotificationsRepository())
+                        ..load(),
                 ),
-              ),
+              ],
+              child: const HomeScreen(),
             ),
           ),
         ),
-      );
+      ),
+    );
+    await tester.pumpAndSettle();
 
-      expect(find.text('حسابي'), findsOneWidget);
-      expect(find.text('مركز التحكم'), findsOneWidget);
-      expect(find.text('النشاط'), findsOneWidget);
-      expect(find.text('الرئيسية'), findsOneWidget);
-      expect(find.text('كل الإشعارات'), findsOneWidget);
-      expect(find.text('الكل'), findsOneWidget);
-      expect(find.text('01'), findsOneWidget);
-      expect(find.text('لا توجد إشعارات'), findsOneWidget);
-      expect(find.text('تعذر التحميل.'), findsOneWidget);
-      expect(find.byType(CircularProgressIndicator), findsOneWidget);
+    // Phone upsell dialog shows once per session.
+    expect(find.byType(AppConfirmationDialog), findsOneWidget);
+    await tester.tap(find.byKey(const ValueKey('app-confirmation-secondary')));
+    await tester.pumpAndSettle();
+    expect(find.byType(AppConfirmationDialog), findsNothing);
 
-      await tester.tap(find.text('النشاط'));
-      await tester.pump();
-      expect(tappedNav, 2);
+    // Dashboard tab: greeting, children, activity, library, device.
+    expect(find.text('طاب يومك اسم المستخدم 👋'), findsOneWidget);
+    expect(find.text('أنس مالك'), findsWidgets);
+    expect(find.text('بعض بيانات النشاط داخل المنصة بأطفالك'), findsOneWidget);
 
-      await tester.tap(find.text('الكل'));
-      await tester.pump();
-      expect(chipTapped, isTrue);
+    // Alerts tab shows notification cards.
+    await tester.tap(find.text('الاشعارات'));
+    await tester.pumpAndSettle();
+    expect(find.text('تجاوز الحد الصحي الموصى به'), findsOneWidget);
 
-      await tester.ensureVisible(find.text('إعادة المحاولة'));
-      await tester.tap(find.text('إعادة المحاولة'));
-      await tester.pump();
-      expect(retried, isTrue);
-    },
-  );
+    // Children tab shows cards plus the dashed add card.
+    await tester.tap(find.text('اطفالي'));
+    await tester.pumpAndSettle();
+    expect(find.text('ليلى مالك'), findsOneWidget);
+    expect(find.byKey(const ValueKey('add-child-dashed-card')), findsOneWidget);
+  });
 
-  testWidgets(
-    'parent shell switches branches and preserves state',
-    (WidgetTester tester) async {
-      Widget branch(String name, {bool withField = false}) {
-        return Scaffold(
-          body: Center(
-            child: withField
-                ? TextField(key: ValueKey('shell-field-$name'))
-                : Text('branch-$name'),
+  testWidgets('notifications screen filters and dismisses', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      ScreenUtilInit(
+        designSize: const Size(390, 844),
+        minTextAdapt: true,
+        builder: (context, child) => MaterialApp(
+          home: Scaffold(
+            body: BlocProvider<NotificationsCubit>(
+              create: (_) =>
+                  NotificationsCubit(const NotificationsRepository())..load(),
+              child: const NotificationsScreen(),
+            ),
           ),
-        );
-      }
-
-      final GoRouter router = GoRouter(
-        initialLocation: '/a',
-        routes: [
-          StatefulShellRoute.indexedStack(
-            builder: (context, state, shell) =>
-                ParentShellScaffold(navigationShell: shell),
-            branches: [
-              StatefulShellBranch(
-                routes: [
-                  GoRoute(path: '/a', builder: (c, s) => branch('a', withField: true)),
-                ],
-              ),
-              StatefulShellBranch(
-                routes: [
-                  GoRoute(path: '/b', builder: (c, s) => branch('b')),
-                ],
-              ),
-              StatefulShellBranch(
-                routes: [
-                  GoRoute(path: '/c', builder: (c, s) => branch('c')),
-                ],
-              ),
-              StatefulShellBranch(
-                routes: [
-                  GoRoute(path: '/d', builder: (c, s) => branch('d')),
-                ],
-              ),
-            ],
-          ),
-        ],
-      );
-
-      await tester.pumpWidget(
-        ScreenUtilInit(
-          designSize: const Size(390, 844),
-          minTextAdapt: true,
-          builder: (context, child) =>
-              MaterialApp.router(routerConfig: router),
         ),
-      );
-      await tester.pumpAndSettle();
+      ),
+    );
+    await tester.pumpAndSettle();
 
-      expect(find.byKey(const ValueKey('shell-field-a')), findsOneWidget);
-      expect(find.byType(ParentBottomNav), findsOneWidget);
+    expect(find.text('الإشعارات'), findsOneWidget);
+    expect(find.text('تجاوز الحد الصحي الموصى به'), findsOneWidget);
 
-      await tester.enterText(
-          find.byKey(const ValueKey('shell-field-a')), 'hello');
-      await tester.pump();
+    // Filter to time category only.
+    await tester.tap(find.widgetWithText(AppFilterChip, 'الوقت'));
+    await tester.pumpAndSettle();
+    expect(find.text('الاستخدام بعد وقت النوم'), findsOneWidget);
+    expect(find.text('تجاوز الحد الصحي الموصى به'), findsNothing);
 
-      await tester.tap(find.text('النشاط'));
-      await tester.pumpAndSettle();
-      expect(find.text('branch-c'), findsOneWidget);
-
-      await tester.tap(find.text('حسابي'));
-      await tester.pumpAndSettle();
-      // State preserved: the text entered in branch A is still displayed.
-      expect(find.text('hello'), findsOneWidget);
-      expect(find.byKey(const ValueKey('shell-field-a')), findsOneWidget);
-    },
-  );
+    // Back to all, then dismiss the first card by its X button.
+    await tester.tap(find.text('كل الإشعارات'));
+    await tester.pumpAndSettle();
+    expect(find.text('تجاوز الحد الصحي الموصى به'), findsOneWidget);
+    await tester.tap(find.byKey(const ValueKey('notification-dismiss')).first);
+    await tester.pumpAndSettle();
+    expect(find.text('تجاوز الحد الصحي الموصى به'), findsNothing);
+    // Other cards stay.
+    expect(find.text('الاستخدام بعد وقت النوم'), findsOneWidget);
+  });
 }

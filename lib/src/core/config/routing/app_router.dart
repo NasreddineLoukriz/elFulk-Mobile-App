@@ -9,13 +9,11 @@ import 'package:elfulk/src/features/app_features/auth/ui/screens/register_screen
 import 'package:elfulk/src/features/app_features/auth/ui/screens/forget_password_screen.dart';
 import 'package:elfulk/src/features/app_features/architecture/logic/cubit/architecture_cubit.dart';
 import 'package:elfulk/src/features/app_features/architecture/ui/screens/architecture_overview_screen.dart';
-import 'package:elfulk/src/features/app_features/home/logic/cubit/home_cubit.dart';
 import 'package:elfulk/src/features/app_features/home/ui/screens/home_screen.dart';
 import 'package:elfulk/src/features/parent_features/add_child/ui/screens/add_child_screen.dart';
 import 'package:elfulk/src/features/parent_features/add_child/ui/screens/Add_new_child_screen.dart';
 import 'package:elfulk/src/features/child_features/child_home/logic/cubit/child_home_cubit.dart';
 import 'package:elfulk/src/features/child_features/child_home/ui/screens/child_home_screen.dart';
-import 'package:elfulk/src/features/parent_features/parent_home/logic/cubit/parent_home_cubit.dart';
 import 'package:elfulk/src/features/parent_features/parent_home/ui/screens/parent_home_screen.dart';
 import 'package:elfulk/src/features/parent_features/parent_requests/logic/bloc/parent_requests_bloc.dart';
 import 'package:elfulk/src/features/parent_features/parent_requests/ui/screens/parent_requests_screen.dart';
@@ -23,9 +21,15 @@ import 'package:elfulk/src/features/app_features/onboarding/logic/cubit/onboardi
 import 'package:elfulk/src/features/app_features/onboarding/ui/screens/onboarding_screen.dart';
 import 'package:elfulk/src/features/app_features/dev_hub/ui/screens/dev_hub_screen.dart';
 import 'package:elfulk/src/core/widgets/parent_shell_scaffold.dart';
+import 'package:elfulk/src/features/app_features/home/logic/dashboard_cubit/home_dashboard_cubit.dart';
+import 'package:elfulk/src/features/app_features/notifications/logic/cubit/notifications_cubit.dart';
+import 'package:elfulk/src/features/app_features/notifications/ui/screens/notifications_screen.dart';
+
 import '../../../features/app_features/auth/ui/screens/otp_verification_screen.dart';
+
 import 'package:elfulk/src/core/config/app_environment.dart';
 import 'package:elfulk/src/core/helpers/helpers.dart';
+
 import 'routes.dart';
 
 class AppRouter {
@@ -70,13 +74,14 @@ class AppRouter {
         // account→parent_home, control→child_home, activity→requests,
         // home→home. Branch order matches ParentBottomNav.items.
         StatefulShellRoute.indexedStack(
-          builder: (
-            BuildContext context,
-            GoRouterState state,
-            StatefulNavigationShell navigationShell,
-          ) {
-            return ParentShellScaffold(navigationShell: navigationShell);
-          },
+          builder:
+              (
+                BuildContext context,
+                GoRouterState state,
+                StatefulNavigationShell navigationShell,
+              ) {
+                return ParentShellScaffold(navigationShell: navigationShell);
+              },
           branches: <StatefulShellBranch>[
             StatefulShellBranch(
               routes: <RouteBase>[
@@ -84,9 +89,8 @@ class AppRouter {
                   path: Routes.parentHomeScreen,
                   pageBuilder: (BuildContext context, GoRouterState state) =>
                       MaterialPage<void>(
-                        child: BlocProvider<ParentHomeCubit>(
-                          create: (_) =>
-                              getIt<ParentHomeCubit>()..loadOverview(),
+                        child: BlocProvider<HomeDashboardCubit>(
+                          create: (_) => getIt<HomeDashboardCubit>()..load(),
                           child: const ParentHomeScreen(),
                         ),
                       ),
@@ -118,9 +122,7 @@ class AppRouter {
                         child: BlocProvider<ParentRequestsBloc>(
                           create: (_) =>
                               getIt<ParentRequestsBloc>()
-                                ..add(
-                                  const ParentRequestsEvent.loadData(),
-                                ),
+                                ..add(const ParentRequestsEvent.loadData()),
                           child: const ParentRequestsScreen(),
                         ),
                       ),
@@ -133,8 +135,17 @@ class AppRouter {
                   path: Routes.homeScreen,
                   pageBuilder: (BuildContext context, GoRouterState state) =>
                       MaterialPage<void>(
-                        child: BlocProvider<HomeCubit>(
-                          create: (_) => getIt<HomeCubit>()..loadOverview(),
+                        child: MultiBlocProvider(
+                          providers: [
+                            BlocProvider<HomeDashboardCubit>(
+                              create: (_) =>
+                                  getIt<HomeDashboardCubit>()..load(),
+                            ),
+                            BlocProvider<NotificationsCubit>(
+                              create: (_) =>
+                                  getIt<NotificationsCubit>()..load(),
+                            ),
+                          ],
                           child: const HomeScreen(),
                         ),
                       ),
@@ -142,6 +153,16 @@ class AppRouter {
               ],
             ),
           ],
+        ),
+        GoRoute(
+          path: Routes.notificationsScreen,
+          pageBuilder: (BuildContext context, GoRouterState state) =>
+              MaterialPage<void>(
+                child: BlocProvider<NotificationsCubit>(
+                  create: (_) => getIt<NotificationsCubit>()..load(),
+                  child: const NotificationsScreen(),
+                ),
+              ),
         ),
         GoRoute(
           path: Routes.loginScreen,
