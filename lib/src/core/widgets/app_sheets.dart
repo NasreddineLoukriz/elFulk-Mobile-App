@@ -260,6 +260,11 @@ class _PinEntryBodyState extends State<_PinEntryBody> {
 /// يعرض ستارة إدخال رقم الهاتف (حقل + حفظ).
 ///
 /// تُرجع الرقم المدخل عند الحفظ، أو `null` عند الإغلاق.
+///
+/// ملاحظة أمان دورة حياة: الـ controller تملكه الستارة نفسها
+/// ([_AddPhoneSheetBody]) لا هذه الدالة — إعدامه خارجياً بعد pop
+/// يُفكك EditableText أثناء أنيميشن الخروج ويُسقط assertion
+/// `_dependents.isEmpty` في نسخ debug.
 Future<String?> showAddPhoneSheet({
   required BuildContext context,
   required String title,
@@ -267,44 +272,77 @@ Future<String?> showAddPhoneSheet({
   required String saveLabel,
   required Widget prefixIcon,
 }) {
-  final TextEditingController controller = TextEditingController();
-
   return showAppBottomSheet<String>(
     context: context,
-    builder: (BuildContext sheetContext) {
-      return Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          SheetTitle(text: title),
-          SizedBox(height: context.spacing.lg.h),
-          TextField(
-            controller: controller,
-            keyboardType: TextInputType.phone,
-            textDirection: TextDirection.ltr,
-            textAlign: TextAlign.end,
-            decoration: InputDecoration(
-              hintText: hint,
-              prefixIcon: prefixIcon,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(context.radius.xl.r),
-              ),
-            ),
-          ),
-          SizedBox(height: context.spacing.lg.h),
-          PrimaryButton(
-            text: saveLabel,
-            icon: SvgPicture.asset(
-              'assets/icons/verify.svg',
-              width: 20.w,
-              height: 20.h,
-            ),
-            onPressed: () => Navigator.of(sheetContext).pop(controller.text),
-          ),
-        ],
-      );
-    },
-  ).whenComplete(() {
-    controller.dispose();
+    builder: (BuildContext sheetContext) => _AddPhoneSheetBody(
+      title: title,
+      hint: hint,
+      saveLabel: saveLabel,
+      prefixIcon: prefixIcon,
+    ),
+  );
+}
+
+/// جسم ستارة الهاتف — يملك الـ controller الخاص به.
+class _AddPhoneSheetBody extends StatefulWidget {
+  final String title;
+  final String hint;
+  final String saveLabel;
+  final Widget prefixIcon;
+
+  const _AddPhoneSheetBody({
+    required this.title,
+    required this.hint,
+    required this.saveLabel,
+    required this.prefixIcon,
   });
+
+  @override
+  State<_AddPhoneSheetBody> createState() => _AddPhoneSheetBodyState();
+}
+
+class _AddPhoneSheetBodyState extends State<_AddPhoneSheetBody> {
+  late final TextEditingController _controller = TextEditingController();
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        SheetTitle(text: widget.title),
+        SizedBox(height: context.spacing.lg.h),
+        TextField(
+          controller: _controller,
+          keyboardType: TextInputType.phone,
+          textDirection: TextDirection.ltr,
+          textAlign: TextAlign.end,
+          decoration: InputDecoration(
+            hintText: widget.hint,
+            prefixIcon: widget.prefixIcon,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(context.radius.xl.r),
+            ),
+          ),
+        ),
+        SizedBox(height: context.spacing.lg.h),
+        PrimaryButton(
+          text: widget.saveLabel,
+          icon: SvgPicture.asset(
+            'assets/icons/verify.svg',
+            width: 20.w,
+            height: 20.h,
+          ),
+          onPressed: () =>
+              Navigator.of(context).pop(_controller.text),
+        ),
+      ],
+    );
+  }
 }

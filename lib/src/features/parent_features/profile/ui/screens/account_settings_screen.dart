@@ -134,53 +134,18 @@ class AccountSettingsScreen extends StatelessWidget {
   }
 
   /// تحقق كلمة مرور الحساب (لوحة نظام) قبل إعادة التعيين.
+  ///
+  /// ملاحظة أمان دورة حياة: الـ controller تملكه الستارة نفسها
+  /// ([_VerifyPasswordSheetBody]) — إعدامه خارجياً بعد pop يُسقط
+  /// assertion `_dependents.isEmpty` في نسخ debug.
   Future<void> _verifyPasswordFlow(BuildContext context) async {
-    final TextEditingController controller = TextEditingController();
-    try {
-      final bool? ok = await showAppBottomSheet<bool>(
-        context: context,
-        builder: (BuildContext sheetContext) => Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const SheetTitle(text: 'نسيت رمز القفل الابوي'),
-            SizedBox(height: context.spacing.md.h),
-            CustomTextField(
-              hintText: 'قم بإدخال كلمة المرور الخاص بالحساب',
-              prefixIcon: SvgPicture.asset('assets/icons/lock.svg'),
-              isPassword: true,
-              controller: controller,
-            ),
-            SizedBox(height: context.spacing.lg.h),
-            SizedBox(
-              height: 42.h,
-              child: ElevatedButton(
-                onPressed: () => Navigator.of(sheetContext).pop(
-                  controller.text.isNotEmpty,
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor:
-                      Theme.of(sheetContext).colorScheme.primary,
-                  foregroundColor:
-                      Theme.of(sheetContext).colorScheme.onPrimary,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(
-                      context.radius.xxl.r,
-                    ),
-                  ),
-                  elevation: 0,
-                ),
-                child: const Text('التالي'),
-              ),
-            ),
-          ],
-        ),
-      );
-      if (ok == true && context.mounted) {
-        _changePinFlow(context);
-      }
-    } finally {
-      controller.dispose();
+    final bool? ok = await showAppBottomSheet<bool>(
+      context: context,
+      builder: (BuildContext sheetContext) =>
+          const _VerifyPasswordSheetBody(),
+    );
+    if (ok == true && context.mounted) {
+      _changePinFlow(context);
     }
   }
 
@@ -244,6 +209,66 @@ class _GroupCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: children,
       ),
+    );
+  }
+}
+
+/// جسم ستارة تحقق كلمة المرور — يملك الـ controller الخاص به.
+class _VerifyPasswordSheetBody extends StatefulWidget {
+  const _VerifyPasswordSheetBody();
+
+  @override
+  State<_VerifyPasswordSheetBody> createState() =>
+      _VerifyPasswordSheetBodyState();
+}
+
+class _VerifyPasswordSheetBodyState
+    extends State<_VerifyPasswordSheetBody> {
+  late final TextEditingController _controller = TextEditingController();
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        const SheetTitle(text: 'نسيت رمز القفل الابوي'),
+        SizedBox(height: context.spacing.md.h),
+        CustomTextField(
+          hintText: 'قم بإدخال كلمة المرور الخاص بالحساب',
+          prefixIcon: SvgPicture.asset('assets/icons/lock.svg'),
+          isPassword: true,
+          controller: _controller,
+        ),
+        SizedBox(height: context.spacing.lg.h),
+        SizedBox(
+          height: 42.h,
+          child: ElevatedButton(
+            onPressed: () => Navigator.of(context).pop(
+              _controller.text.isNotEmpty,
+            ),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: theme.colorScheme.primary,
+              foregroundColor: theme.colorScheme.onPrimary,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(
+                  context.radius.xxl.r,
+                ),
+              ),
+              elevation: 0,
+            ),
+            child: const Text('التالي'),
+          ),
+        ),
+      ],
     );
   }
 }

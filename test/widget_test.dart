@@ -837,4 +837,113 @@ void main() {
       await tester.pumpAndSettle();
     },
   );
+
+  testWidgets(
+    'device rename sheet saves without lifecycle crash',
+    (WidgetTester tester) async {
+      // انحدار: controller خارجي + dispose بعد pop كان يُسقط
+      // assertion `_dependents.isEmpty` — الستارة تملكه الآن.
+      await tester.pumpWidget(
+        ScreenUtilInit(
+          designSize: const Size(390, 844),
+          minTextAdapt: true,
+          builder: (context, child) => const MaterialApp(
+            home: Scaffold(body: LinkedDevicesScreen()),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(
+        find.byKey(const ValueKey('device-card-edit')).first,
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('تعديل اسم الجهاز'), findsOneWidget);
+
+      await tester.enterText(find.byType(TextField), 'جهاز غرفة المعيشة');
+      await tester.tap(find.text('حفظ'));
+      await tester.pumpAndSettle();
+      expect(find.text('جهاز غرفة المعيشة'), findsOneWidget);
+    },
+  );
+
+  testWidgets(
+    'add phone sheet saves without lifecycle crash',
+    (WidgetTester tester) async {
+      String? saved;
+
+      await tester.pumpWidget(
+        ScreenUtilInit(
+          designSize: const Size(390, 844),
+          minTextAdapt: true,
+          builder: (context, child) => MaterialApp(
+            home: Scaffold(
+              body: Builder(
+                builder: (context) => TextButton(
+                  onPressed: () async {
+                    saved = await showAddPhoneSheet(
+                      context: context,
+                      title: 'هل ترغب في اضافة رقم هاتفك',
+                      hint: 'رقم الهاتف',
+                      saveLabel: 'حفظ التعديلات',
+                      prefixIcon: const Icon(Icons.phone_outlined),
+                    );
+                  },
+                  child: const Text('open-phone'),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.text('open-phone'));
+      await tester.pumpAndSettle();
+
+      await tester.enterText(find.byType(TextField), '0555555555');
+      await tester.tap(find.text('حفظ التعديلات'));
+      await tester.pumpAndSettle();
+      expect(saved, '0555555555');
+    },
+  );
+
+  testWidgets(
+    'verify password sheet completes without lifecycle crash',
+    (WidgetTester tester) async {
+      await tester.pumpWidget(
+        ScreenUtilInit(
+          designSize: const Size(390, 844),
+          minTextAdapt: true,
+          builder: (context, child) => const MaterialApp(
+            home: Scaffold(body: AccountSettingsScreen()),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // تغيير رمز القفل ← نسيت الرمز ← ستارة تحقق كلمة المرور.
+      await tester.ensureVisible(find.text('تغيير رمز القفل الأبوي'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('تغيير رمز القفل الأبوي'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('هل نسيت رمز المرور؟ إعادة تعيين'));
+      await tester.pumpAndSettle();
+      expect(find.text('نسيت رمز القفل الابوي'), findsOneWidget);
+
+      await tester.enterText(find.byType(TextField), 'Secret123');
+      await tester.tap(find.text('التالي'));
+      await tester.pumpAndSettle();
+      // بعد التحقق تظهر ستارة إدخال الرمز الحالي أولاً.
+      expect(find.text('أدخل رمز القفل الحالي'), findsOneWidget);
+
+      for (final String digit in ['1', '2', '3', '4', '5']) {
+        await tester.tap(find.byKey(ValueKey('otp-keypad-$digit')));
+        await tester.pump();
+      }
+      await tester.tap(find.text('التالي'));
+      await tester.pumpAndSettle();
+      // ثم ستارة إدخال الرمز الجديد.
+      expect(find.text('إعادة تعيين رمز القفل الأبوي'), findsOneWidget);
+    },
+  );
 }

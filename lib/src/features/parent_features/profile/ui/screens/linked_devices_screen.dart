@@ -118,80 +118,108 @@ class _LinkedDevicesScreenState extends State<LinkedDevicesScreen> {
   }
 
   /// إعادة التسمية: ستارة حقل + حفظ يحدّث الاسم فعلياً.
+  ///
+  /// ملاحظة أمان دورة حياة: الـ controller تملكه الستارة نفسها
+  /// ([_RenameSheetBody]) لا هذه الدالة — إعدامه خارجياً بعد pop
+  /// يُفكك EditableText أثناء أنيميشن الخروج ويُسقط assertion
+  /// `_dependents.isEmpty` في نسخ debug.
   Future<void> _rename(BuildContext context, int index) async {
-    final TextEditingController controller =
-        TextEditingController(text: _devices[index].name);
-    try {
-      final String? name = await showModalBottomSheet<String>(
-        context: context,
-        isScrollControlled: true,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(
-            top: Radius.circular(context.radius.x3l.r),
-          ),
+    final String? name = await showModalBottomSheet<String>(
+      context: context,
+      isScrollControlled: true,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(context.radius.x3l.r),
         ),
-        builder: (BuildContext sheetContext) => Padding(
-          padding: EdgeInsets.only(
-            left: context.spacing.lg.w,
-            right: context.spacing.lg.w,
-            top: context.spacing.lg.h,
-            bottom: MediaQuery.of(sheetContext).viewInsets.bottom +
-                context.spacing.lg.h,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Text(
-                'تعديل اسم الجهاز',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.w800,
-                ),
-              ),
-              SizedBox(height: context.spacing.md.h),
-              TextField(
-                controller: controller,
-                textAlign: TextAlign.end,
-                decoration: const InputDecoration(
-                  hintText: 'اسم الجهاز',
-                ),
-              ),
-              SizedBox(height: context.spacing.md.h),
-              SizedBox(
-                height: 42.h,
-                child: ElevatedButton(
-                  onPressed: () => Navigator.of(sheetContext)
-                      .pop(controller.text.trim()),
-                  style: ElevatedButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(
-                        context.radius.xxl.r,
-                      ),
-                    ),
-                    elevation: 0,
-                  ),
-                  child: const Text('حفظ'),
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
-      if (name != null && name.isNotEmpty && context.mounted) {
-        setState(() {
-          final LinkedDevice device = _devices[index];
-          _devices[index] = LinkedDevice(
-            name: name,
-            user: device.user,
-            status: device.status,
-            paused: device.paused,
-          );
-        });
-      }
-    } finally {
-      controller.dispose();
+      ),
+      builder: (BuildContext sheetContext) => _RenameSheetBody(
+        initialName: _devices[index].name,
+      ),
+    );
+    if (name != null && name.isNotEmpty && context.mounted) {
+      setState(() {
+        final LinkedDevice device = _devices[index];
+        _devices[index] = LinkedDevice(
+          name: name,
+          user: device.user,
+          status: device.status,
+          paused: device.paused,
+        );
+      });
     }
+  }
+}
+
+/// جسم ستارة إعادة التسمية — يملك الـ controller الخاص به
+/// (يُنشأ في `initState` ويُعدم في `dispose` بالترتيب الصحيح).
+class _RenameSheetBody extends StatefulWidget {
+  final String initialName;
+
+  const _RenameSheetBody({required this.initialName});
+
+  @override
+  State<_RenameSheetBody> createState() => _RenameSheetBodyState();
+}
+
+class _RenameSheetBodyState extends State<_RenameSheetBody> {
+  late final TextEditingController _controller =
+      TextEditingController(text: widget.initialName);
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.only(
+        left: context.spacing.lg.w,
+        right: context.spacing.lg.w,
+        top: context.spacing.lg.h,
+        bottom: MediaQuery.of(context).viewInsets.bottom +
+            context.spacing.lg.h,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            'تعديل اسم الجهاز',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 16.sp,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+          SizedBox(height: context.spacing.md.h),
+          TextField(
+            controller: _controller,
+            textAlign: TextAlign.end,
+            decoration: const InputDecoration(
+              hintText: 'اسم الجهاز',
+            ),
+          ),
+          SizedBox(height: context.spacing.md.h),
+          SizedBox(
+            height: 42.h,
+            child: ElevatedButton(
+              onPressed: () => Navigator.of(context)
+                  .pop(_controller.text.trim()),
+              style: ElevatedButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(
+                    context.radius.xxl.r,
+                  ),
+                ),
+                elevation: 0,
+              ),
+              child: const Text('حفظ'),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
