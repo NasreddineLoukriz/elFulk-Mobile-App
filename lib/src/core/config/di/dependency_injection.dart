@@ -9,8 +9,12 @@ import 'package:elfulk/src/core/networking/helper/dio_factory.dart';
 import 'package:elfulk/src/core/networking/parent/parent_api_service.dart';
 import 'package:elfulk/src/features/app_features/architecture/data/repos/architecture_repository.dart';
 import 'package:elfulk/src/features/app_features/architecture/logic/cubit/architecture_cubit.dart';
+import 'package:elfulk/src/features/app_features/home/data/repos/home_dashboard_repository.dart';
 import 'package:elfulk/src/features/app_features/home/data/repos/home_repository.dart';
 import 'package:elfulk/src/features/app_features/home/logic/cubit/home_cubit.dart';
+import 'package:elfulk/src/features/app_features/home/logic/dashboard_cubit/home_dashboard_cubit.dart';
+import 'package:elfulk/src/features/app_features/notifications/data/repos/notifications_repository.dart';
+import 'package:elfulk/src/features/app_features/notifications/logic/cubit/notifications_cubit.dart';
 import 'package:elfulk/src/features/child_features/child_home/data/repos/child_home_repository.dart';
 import 'package:elfulk/src/features/child_features/child_home/logic/cubit/child_home_cubit.dart';
 import 'package:elfulk/src/features/parent_features/parent_home/data/repos/parent_home_repository.dart';
@@ -58,6 +62,12 @@ Future<void> setupGetIt(AppEnvironment environment) async {
   );
 
   getIt.registerFactory<HomeCubit>(() => HomeCubit(getIt<HomeRepository>()));
+  getIt.registerFactory<HomeDashboardCubit>(
+    () => HomeDashboardCubit(const HomeDashboardRepository()),
+  );
+  getIt.registerFactory<NotificationsCubit>(
+    () => NotificationsCubit(const NotificationsRepository()),
+  );
   getIt.registerFactory<ParentHomeCubit>(
     () => ParentHomeCubit(getIt<ParentHomeRepository>()),
   );

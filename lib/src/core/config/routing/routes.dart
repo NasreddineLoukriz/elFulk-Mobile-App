@@ -30,6 +30,7 @@ class Routes {
   static const String childHomeScreen = '/child';
   static const String architectureScreen = '/architecture';
   static const String devHubScreen = '/dev-hub';
+  static const String notificationsScreen = '/notifications';
 
   /// Auto-discoverable catalog of all app routes used by the dev hub.
   ///
@@ -104,6 +105,12 @@ class Routes {
       path: architectureScreen,
       label: 'Architecture Overview',
       category: RouteCategory.screen,
+    ),
+    RouteCatalogItem(
+      path: notificationsScreen,
+      label: 'Notifications',
+      category: RouteCategory.screen,
+      description: 'Parent notifications: filters, groups and actions.',
     ),
   ];
 }
