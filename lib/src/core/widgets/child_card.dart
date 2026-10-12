@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:elfulk/src/core/helpers/helpers.dart';
+import 'package:elfulk/src/core/widgets/stat_cell.dart';
 
 /// إحصائية واحدة في صف إحصائيات بطاقة الطفل (مثال: العمر / `08 سنوات`).
 class ChildStat {
@@ -153,19 +154,25 @@ class ChildCard extends StatelessWidget {
             ),
             if (stats.isNotEmpty) ...[
               SizedBox(height: context.spacing.sm.h),
-              Row(
-                children: [
-                  for (int i = 0; i < stats.length; i++) ...[
-                    Expanded(child: _StatCell(stat: stats[i])),
-                    if (i < stats.length - 1)
-                      Container(
-                        width: 1.w,
-                        height: 32.h,
-                        color: theme.colorScheme.outlineVariant,
-                      ),
-                  ],
+            Row(
+              children: [
+                for (int i = 0; i < stats.length; i++) ...[
+                  Expanded(
+                    child: StatCell(
+                      label: stats[i].label,
+                      value: stats[i].value,
+                      valueColor: stats[i].valueColor,
+                    ),
+                  ),
+                  if (i < stats.length - 1)
+                    Container(
+                      width: 1.w,
+                      height: 32.h,
+                      color: theme.colorScheme.outlineVariant,
+                    ),
                 ],
-              ),
+              ],
+            ),
             ],
             SizedBox(height: context.spacing.md.h),
             SizedBox(
@@ -212,41 +219,6 @@ class ChildCard extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
-}
-
-/// خلية إحصائية واحدة (تسمية خافتة فوق قيمة ملوّنة).
-class _StatCell extends StatelessWidget {
-  final ChildStat stat;
-
-  const _StatCell({required this.stat});
-
-  @override
-  Widget build(BuildContext context) {
-    final ThemeData theme = Theme.of(context);
-
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text(
-          stat.label,
-          style: TextStyle(
-            fontSize: 12.sp,
-            fontWeight: FontWeight.w400,
-            color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-          ),
-        ),
-        SizedBox(height: 2.h),
-        Text(
-          stat.value,
-          style: TextStyle(
-            fontSize: 14.sp,
-            fontWeight: FontWeight.w700,
-            color: stat.valueColor ?? theme.colorScheme.onSurface,
-          ),
-        ),
-      ],
     );
   }
 }

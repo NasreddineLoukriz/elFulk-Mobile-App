@@ -3,8 +3,19 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:elfulk/src/core/widgets/app_badge.dart';
+import 'package:elfulk/src/core/theme/logic/cubit/theme_cubit.dart';
+import 'package:elfulk/src/core/widgets/app_sheets.dart';
+import 'package:elfulk/src/features/parent_features/profile/ui/screens/account_settings_screen.dart';
+import 'package:elfulk/src/features/parent_features/profile/ui/screens/appearance_screen.dart';
+import 'package:elfulk/src/features/parent_features/profile/ui/screens/change_password_screen.dart';
+import 'package:elfulk/src/features/parent_features/profile/ui/screens/contact_us_screen.dart';
+import 'package:elfulk/src/features/parent_features/profile/ui/screens/edit_personal_info_screen.dart';
+import 'package:elfulk/src/features/parent_features/profile/ui/screens/language_screen.dart';
+import 'package:elfulk/src/features/parent_features/profile/ui/screens/linked_devices_screen.dart';
+import 'package:elfulk/src/features/parent_features/profile/ui/screens/profile_screen.dart';
 import 'package:elfulk/src/core/widgets/app_confirmation_dialog.dart';
 import 'package:elfulk/src/core/widgets/app_error_card.dart';
 import 'package:elfulk/src/core/widgets/app_filter_chip.dart';
@@ -516,4 +527,423 @@ void main() {
     // Other cards stay.
     expect(find.text('الاستخدام بعد وقت النوم'), findsOneWidget);
   });
+
+  testWidgets(
+    'profile renders header and navigates to kids',
+    (WidgetTester tester) async {
+      final GoRouter router = GoRouter(
+        initialLocation: '/',
+        routes: [
+          GoRoute(
+            path: '/',
+            builder: (context, state) => const ProfileScreen(),
+          ),
+          GoRoute(
+            path: '/parent/kids',
+            builder: (context, state) => const Text('kids-stub'),
+          ),
+        ],
+      );
+
+      await tester.pumpWidget(
+        ScreenUtilInit(
+          designSize: const Size(390, 844),
+          minTextAdapt: true,
+          builder: (context, child) =>
+              MaterialApp.router(routerConfig: router),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('الحساب الشخصي'), findsOneWidget);
+      expect(find.text('اسم المستخدم'), findsOneWidget);
+      expect(find.text('example123@gmail.com'), findsOneWidget);
+
+      await tester.ensureVisible(find.text('أطفالي'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('أطفالي'));
+      await tester.pumpAndSettle();
+      expect(find.text('kids-stub'), findsOneWidget);
+    },
+  );
+
+  testWidgets(
+    'pin entry sheet returns the typed code',
+    (WidgetTester tester) async {
+      String? pinResult;
+
+      await tester.pumpWidget(
+        ScreenUtilInit(
+          designSize: const Size(390, 844),
+          minTextAdapt: true,
+          builder: (context, child) => MaterialApp(
+            home: Scaffold(
+              body: Builder(
+                builder: (context) => TextButton(
+                  onPressed: () async {
+                    pinResult = await showPinEntrySheet(
+                      context: context,
+                      title: 'أدخل الرمز',
+                      confirmLabel: 'التالي',
+                    );
+                  },
+                  child: const Text('open-pin'),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.text('open-pin'));
+      await tester.pumpAndSettle();
+
+      for (final String digit in ['1', '2', '3', '4', '5']) {
+        await tester.tap(find.byKey(ValueKey('otp-keypad-$digit')));
+        await tester.pump();
+      }
+      await tester.tap(find.text('التالي'));
+      await tester.pumpAndSettle();
+      expect(pinResult, '12345');
+    },
+  );
+
+  testWidgets(
+    'delete account chains two slide dialogs then confirms',
+    (WidgetTester tester) async {
+      await tester.pumpWidget(
+        ScreenUtilInit(
+          designSize: const Size(390, 844),
+          minTextAdapt: true,
+          builder: (context, child) => const MaterialApp(
+            home: Scaffold(body: AccountSettingsScreen()),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('حذف الحساب'));
+      await tester.pumpAndSettle();
+      expect(find.byType(AppConfirmationDialog), findsOneWidget);
+
+      // The tall dialog may need scrolling to reveal the thumb.
+      await tester.ensureVisible(
+        find.byKey(const ValueKey('slide-to-confirm-thumb')),
+      );
+      await tester.pumpAndSettle();
+      await tester.drag(
+        find.byKey(const ValueKey('slide-to-confirm-thumb')),
+        const Offset(-500, 0),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('تحذير نهائي قبل الحذف'), findsOneWidget);
+
+      // The tall dialog may need scrolling to reveal the thumb.
+      await tester.ensureVisible(
+        find.byKey(const ValueKey('slide-to-confirm-thumb')),
+      );
+      await tester.pumpAndSettle();
+      await tester.drag(
+        find.byKey(const ValueKey('slide-to-confirm-thumb')),
+        const Offset(-500, 0),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('تم إرسال طلب حذف الحساب.'), findsOneWidget);
+    },
+  );
+
+  testWidgets(
+    'contact form validates then shows success state',
+    (WidgetTester tester) async {
+      await tester.pumpWidget(
+        ScreenUtilInit(
+          designSize: const Size(390, 844),
+          minTextAdapt: true,
+          builder: (context, child) => const MaterialApp(
+            home: Scaffold(body: ContactUsScreen()),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('إرسال'));
+      await tester.pump();
+      expect(find.text('إرسال'), findsOneWidget);
+
+      await tester.enterText(find.byType(TextField).at(0), 'أحمد');
+      await tester.enterText(
+          find.byType(TextField).at(1), 'ahmed@elfulk.app');
+      await tester.enterText(find.byType(TextField).at(2), 'مرحباً بالفريق.');
+      await tester.tap(find.byKey(const ValueKey('check-row')));
+      await tester.pump();
+      await tester.tap(find.text('إرسال'));
+      await tester.pump();
+      expect(find.text('تم الإرسال بنجاح ✓'), findsOneWidget);
+    },
+  );
+
+  testWidgets(
+    'linked devices pause toggles status and lock opens dialog',
+    (WidgetTester tester) async {
+      await tester.pumpWidget(
+        ScreenUtilInit(
+          designSize: const Size(390, 844),
+          minTextAdapt: true,
+          builder: (context, child) => const MaterialApp(
+            home: Scaffold(body: LinkedDevicesScreen()),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('نشط حاليا'), findsNWidgets(2));
+      await tester.tap(
+        find.byKey(const ValueKey('device-card-pause')).first,
+      );
+      await tester.pump();
+      expect(find.text('موقوف مؤقتاً'), findsOneWidget);
+
+      await tester.tap(
+        find.byKey(const ValueKey('device-card-lock')).first,
+      );
+      await tester.pumpAndSettle();
+      expect(find.byType(AppConfirmationDialog), findsOneWidget);
+      await tester.tap(
+        find.byKey(const ValueKey('app-confirmation-secondary')),
+      );
+      await tester.pumpAndSettle();
+      expect(find.byType(AppConfirmationDialog), findsNothing);
+    },
+  );
+
+  testWidgets(
+    'appearance toggles the real theme cubit',
+    (WidgetTester tester) async {
+      SharedPreferences.setMockInitialValues({});
+      final ThemeCubit cubit = ThemeCubit();
+
+      await tester.pumpWidget(
+        ScreenUtilInit(
+          designSize: const Size(390, 844),
+          minTextAdapt: true,
+          builder: (context, child) => MaterialApp(
+            home: BlocProvider<ThemeCubit>.value(
+              value: cubit,
+              child: const Scaffold(body: AppearanceScreen()),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('داكن'));
+      await tester.pumpAndSettle();
+      expect(cubit.state.mode, ThemeMode.dark);
+    },
+  );
+
+  testWidgets(
+    'language selection persists to storage',
+    (WidgetTester tester) async {
+      SharedPreferences.setMockInitialValues({});
+
+      await tester.pumpWidget(
+        ScreenUtilInit(
+          designSize: const Size(390, 844),
+          minTextAdapt: true,
+          builder: (context, child) => const MaterialApp(
+            home: Scaffold(body: LanguageScreen()),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('English'));
+      await tester.pumpAndSettle();
+
+      final SharedPreferences prefs =
+          await SharedPreferences.getInstance();
+      expect(prefs.getString('locale'), 'en');
+    },
+  );
+
+  testWidgets(
+    'edit info validates then saves and pops',
+    (WidgetTester tester) async {
+      await tester.pumpWidget(
+        ScreenUtilInit(
+          designSize: const Size(390, 844),
+          minTextAdapt: true,
+          builder: (context, child) => const MaterialApp(
+            home: Scaffold(body: EditPersonalInfoScreen()),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('حفظ التعديلات'));
+      await tester.pump();
+      expect(find.text('حفظ التعديلات'), findsOneWidget);
+
+      await tester.enterText(find.byType(TextField).at(0), 'nasreddine');
+      await tester.enterText(find.byType(TextField).at(1), 'loukriz');
+      await tester.enterText(
+          find.byType(TextField).at(2), 'nas@elfulk.app');
+      await tester.enterText(find.byType(TextField).at(3), '0555555555');
+      await tester.ensureVisible(find.byKey(const ValueKey('check-row')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('check-row')));
+      await tester.pump();
+      await tester.ensureVisible(find.text('حفظ التعديلات'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('حفظ التعديلات'));
+      await tester.pumpAndSettle();
+      expect(find.text('تم حفظ البيانات بنجاح.'), findsOneWidget);
+      // Drain the feedback delay, then the screen pops.
+      await tester.pump(const Duration(seconds: 2));
+      await tester.pumpAndSettle();
+      expect(find.text('حفظ التعديلات'), findsNothing);
+    },
+  );
+
+  testWidgets(
+    'change password rejects mismatch then confirms match',
+    (WidgetTester tester) async {
+      await tester.pumpWidget(
+        ScreenUtilInit(
+          designSize: const Size(390, 844),
+          minTextAdapt: true,
+          builder: (context, child) => const MaterialApp(
+            home: Scaffold(body: ChangePasswordScreen()),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.enterText(find.byType(TextField).at(0), 'oldpass1');
+      await tester.enterText(find.byType(TextField).at(1), 'newpass1');
+      await tester.enterText(find.byType(TextField).at(2), 'different');
+      await tester.ensureVisible(find.text('حفظ التعديلات'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('حفظ التعديلات'));
+      await tester.pumpAndSettle();
+      expect(find.text('تم تغيير كلمة المرور بنجاح.'), findsNothing);
+
+      await tester.enterText(find.byType(TextField).at(2), 'newpass1');
+      await tester.tap(find.text('حفظ التعديلات'));
+      await tester.pumpAndSettle();
+      expect(find.text('تم تغيير كلمة المرور بنجاح.'), findsOneWidget);
+      await tester.pump(const Duration(seconds: 2));
+      await tester.pumpAndSettle();
+    },
+  );
+
+  testWidgets(
+    'device rename sheet saves without lifecycle crash',
+    (WidgetTester tester) async {
+      // انحدار: controller خارجي + dispose بعد pop كان يُسقط
+      // assertion `_dependents.isEmpty` — الستارة تملكه الآن.
+      await tester.pumpWidget(
+        ScreenUtilInit(
+          designSize: const Size(390, 844),
+          minTextAdapt: true,
+          builder: (context, child) => const MaterialApp(
+            home: Scaffold(body: LinkedDevicesScreen()),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(
+        find.byKey(const ValueKey('device-card-edit')).first,
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('تعديل اسم الجهاز'), findsOneWidget);
+
+      await tester.enterText(find.byType(TextField), 'جهاز غرفة المعيشة');
+      await tester.tap(find.text('حفظ'));
+      await tester.pumpAndSettle();
+      expect(find.text('جهاز غرفة المعيشة'), findsOneWidget);
+    },
+  );
+
+  testWidgets(
+    'add phone sheet saves without lifecycle crash',
+    (WidgetTester tester) async {
+      String? saved;
+
+      await tester.pumpWidget(
+        ScreenUtilInit(
+          designSize: const Size(390, 844),
+          minTextAdapt: true,
+          builder: (context, child) => MaterialApp(
+            home: Scaffold(
+              body: Builder(
+                builder: (context) => TextButton(
+                  onPressed: () async {
+                    saved = await showAddPhoneSheet(
+                      context: context,
+                      title: 'هل ترغب في اضافة رقم هاتفك',
+                      hint: 'رقم الهاتف',
+                      saveLabel: 'حفظ التعديلات',
+                      prefixIcon: const Icon(Icons.phone_outlined),
+                    );
+                  },
+                  child: const Text('open-phone'),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.text('open-phone'));
+      await tester.pumpAndSettle();
+
+      await tester.enterText(find.byType(TextField), '0555555555');
+      await tester.tap(find.text('حفظ التعديلات'));
+      await tester.pumpAndSettle();
+      expect(saved, '0555555555');
+    },
+  );
+
+  testWidgets(
+    'verify password sheet completes without lifecycle crash',
+    (WidgetTester tester) async {
+      await tester.pumpWidget(
+        ScreenUtilInit(
+          designSize: const Size(390, 844),
+          minTextAdapt: true,
+          builder: (context, child) => const MaterialApp(
+            home: Scaffold(body: AccountSettingsScreen()),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // تغيير رمز القفل ← نسيت الرمز ← ستارة تحقق كلمة المرور.
+      await tester.ensureVisible(find.text('تغيير رمز القفل الأبوي'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('تغيير رمز القفل الأبوي'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('هل نسيت رمز المرور؟ إعادة تعيين'));
+      await tester.pumpAndSettle();
+      expect(find.text('نسيت رمز القفل الابوي'), findsOneWidget);
+
+      await tester.enterText(find.byType(TextField), 'Secret123');
+      await tester.tap(find.text('التالي'));
+      await tester.pumpAndSettle();
+      // بعد التحقق تظهر ستارة إدخال الرمز الحالي أولاً.
+      expect(find.text('أدخل رمز القفل الحالي'), findsOneWidget);
+
+      for (final String digit in ['1', '2', '3', '4', '5']) {
+        await tester.tap(find.byKey(ValueKey('otp-keypad-$digit')));
+        await tester.pump();
+      }
+      await tester.tap(find.text('التالي'));
+      await tester.pumpAndSettle();
+      // ثم ستارة إدخال الرمز الجديد.
+      expect(find.text('إعادة تعيين رمز القفل الأبوي'), findsOneWidget);
+    },
+  );
 }

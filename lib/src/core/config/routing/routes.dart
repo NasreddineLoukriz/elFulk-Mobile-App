@@ -31,6 +31,19 @@ class Routes {
   static const String architectureScreen = '/architecture';
   static const String devHubScreen = '/dev-hub';
   static const String notificationsScreen = '/notifications';
+  static const String parentKidsScreen = '/parent/kids';
+  static const String appSettingsScreen = '/profile/settings';
+  static const String accountSettingsScreen = '/profile/account';
+  static const String editPersonalInfoScreen = '/profile/edit-info';
+  static const String changePasswordScreen = '/profile/change-password';
+  static const String contactUsScreen = '/profile/contact';
+  static const String helpScreen = '/profile/help';
+  static const String aboutScreen = '/profile/about';
+  static const String privacyScreen = '/profile/privacy';
+  static const String faqScreen = '/profile/faq';
+  static const String languageScreen = '/profile/language';
+  static const String appearanceScreen = '/profile/appearance';
+  static const String linkedDevicesScreen = '/profile/devices';
 
   /// Auto-discoverable catalog of all app routes used by the dev hub.
   ///
@@ -111,6 +124,71 @@ class Routes {
       label: 'Notifications',
       category: RouteCategory.screen,
       description: 'Parent notifications: filters, groups and actions.',
+    ),
+    RouteCatalogItem(
+      path: parentKidsScreen,
+      label: 'My Kids (children list)',
+      category: RouteCategory.screen,
+    ),
+    RouteCatalogItem(
+      path: appSettingsScreen,
+      label: 'App Settings',
+      category: RouteCategory.screen,
+    ),
+    RouteCatalogItem(
+      path: accountSettingsScreen,
+      label: 'Account Settings',
+      category: RouteCategory.screen,
+    ),
+    RouteCatalogItem(
+      path: editPersonalInfoScreen,
+      label: 'Edit Personal Info',
+      category: RouteCategory.screen,
+    ),
+    RouteCatalogItem(
+      path: changePasswordScreen,
+      label: 'Change Password',
+      category: RouteCategory.screen,
+    ),
+    RouteCatalogItem(
+      path: contactUsScreen,
+      label: 'Contact Us',
+      category: RouteCategory.screen,
+    ),
+    RouteCatalogItem(
+      path: helpScreen,
+      label: 'Help & Support',
+      category: RouteCategory.screen,
+    ),
+    RouteCatalogItem(
+      path: faqScreen,
+      label: 'FAQ',
+      category: RouteCategory.screen,
+    ),
+    RouteCatalogItem(
+      path: aboutScreen,
+      label: 'About Us',
+      category: RouteCategory.screen,
+    ),
+    RouteCatalogItem(
+      path: privacyScreen,
+      label: 'Privacy Policy',
+      category: RouteCategory.screen,
+    ),
+    RouteCatalogItem(
+      path: languageScreen,
+      label: 'Language',
+      category: RouteCategory.screen,
+    ),
+    RouteCatalogItem(
+      path: appearanceScreen,
+      label: 'Appearance',
+      category: RouteCategory.screen,
+    ),
+    RouteCatalogItem(
+      path: linkedDevicesScreen,
+      label: 'Linked Devices',
+      category: RouteCategory.screen,
     ),
   ];
 }

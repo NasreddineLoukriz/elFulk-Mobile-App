@@ -9,10 +9,12 @@ import 'package:elfulk/src/core/helpers/helpers.dart';
 import 'package:elfulk/src/core/theme/logic/cubit/theme_cubit.dart';
 import 'package:elfulk/src/core/widgets/app_badge.dart';
 import 'package:elfulk/src/core/widgets/app_confirmation_dialog.dart';
+import 'package:elfulk/src/core/widgets/app_dashed_divider.dart';
 import 'package:elfulk/src/core/widgets/app_error_card.dart';
 import 'package:elfulk/src/core/widgets/app_filter_chip.dart';
 import 'package:elfulk/src/core/widgets/app_loading_view.dart';
 import 'package:elfulk/src/core/widgets/activity_stats_card.dart';
+import 'package:elfulk/src/core/widgets/check_row.dart';
 import 'package:elfulk/src/core/widgets/child_card.dart';
 import 'package:elfulk/src/core/widgets/device_card.dart';
 import 'package:elfulk/src/core/widgets/empty_state.dart';
@@ -23,6 +25,8 @@ import 'package:elfulk/src/core/widgets/parent_bottom_nav.dart';
 import 'package:elfulk/src/core/widgets/section_header.dart';
 import 'package:elfulk/src/core/widgets/helpers/show_app_confirmation_dialog.dart';
 import 'package:elfulk/src/core/widgets/settings_list_tile.dart';
+import 'package:elfulk/src/core/widgets/stat_cell.dart';
+import 'package:elfulk/src/core/widgets/user_header_card.dart';
 
 class DevHubScreen extends StatelessWidget {
   const DevHubScreen({super.key});
@@ -49,6 +53,8 @@ class DevHubScreen extends StatelessWidget {
             const _FoundationPreview(),
             SizedBox(height: context.spacing.lg.h),
             const _P1Preview(),
+            SizedBox(height: context.spacing.lg.h),
+            const _P2Preview(),
             SizedBox(height: context.spacing.lg.h),
             ..._buildSections(context, theme),
           ],
@@ -806,6 +812,79 @@ class _P1PreviewState extends State<_P1Preview> {
   void _snack(BuildContext context, String text) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(text)),
+    );
+  }
+}
+
+/// Dev-only preview of the P2 profile widgets.
+///
+/// User header card, interactive check row and dashed divider samples.
+/// The 13 full P2 screens stay reachable through the route catalog
+/// below (Profile, App Settings, Account Settings, Edit Info, Change
+/// Password, Contact, Help + subpages, Devices).
+class _P2Preview extends StatefulWidget {
+  const _P2Preview();
+
+  @override
+  State<_P2Preview> createState() => _P2PreviewState();
+}
+
+class _P2PreviewState extends State<_P2Preview> {
+  bool _agreed = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            'P2 Profile (preview)',
+            style: theme.textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.w800,
+              color: theme.colorScheme.primary,
+            ),
+          ),
+          SizedBox(height: context.spacing.sm.h),
+          const UserHeaderCard(
+            name: 'اسم المستخدم',
+            email: 'example123@gmail.com',
+            stats: [
+              StatData(
+                  label: 'عدد الأطفال',
+                  value: '3 أطفال',
+                  valueColor: Color(0xFF2E8C84)),
+              StatData(
+                  label: 'الأجهزة المرتبطة',
+                  value: '3 أجهزة',
+                  valueColor: Color(0xFF2E8C84)),
+              StatData(
+                  label: 'التنبيهات المعلقة',
+                  value: '3 تنبيهات',
+                  valueColor: Color(0xFFF59E0B)),
+            ],
+          ),
+          SizedBox(height: context.spacing.sm.h),
+          CheckRow(
+            label: 'أوافق على شروط الاستخدام وسياسة الخصوصية.',
+            value: _agreed,
+            onChanged: (bool v) => setState(() => _agreed = v),
+          ),
+          SizedBox(height: context.spacing.sm.h),
+          const AppDashedDivider(),
+          SizedBox(height: context.spacing.sm.h),
+          const Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              StatCell(label: 'العمر', value: '08 سنوات'),
+              StatCell(label: 'الجنس', value: 'ذكر'),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }

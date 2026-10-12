@@ -24,6 +24,19 @@ import 'package:elfulk/src/core/widgets/parent_shell_scaffold.dart';
 import 'package:elfulk/src/features/app_features/home/logic/dashboard_cubit/home_dashboard_cubit.dart';
 import 'package:elfulk/src/features/app_features/notifications/logic/cubit/notifications_cubit.dart';
 import 'package:elfulk/src/features/app_features/notifications/ui/screens/notifications_screen.dart';
+import 'package:elfulk/src/features/parent_features/profile/data/help_content.dart';
+import 'package:elfulk/src/features/parent_features/profile/ui/screens/account_settings_screen.dart';
+import 'package:elfulk/src/features/parent_features/profile/ui/screens/app_settings_screen.dart';
+import 'package:elfulk/src/features/parent_features/profile/ui/screens/appearance_screen.dart';
+import 'package:elfulk/src/features/parent_features/profile/ui/screens/change_password_screen.dart';
+import 'package:elfulk/src/features/parent_features/profile/ui/screens/contact_us_screen.dart';
+import 'package:elfulk/src/features/parent_features/profile/ui/screens/edit_personal_info_screen.dart';
+import 'package:elfulk/src/features/parent_features/profile/ui/screens/faq_screen.dart';
+import 'package:elfulk/src/features/parent_features/profile/ui/screens/help_screen.dart';
+import 'package:elfulk/src/features/parent_features/profile/ui/screens/language_screen.dart';
+import 'package:elfulk/src/features/parent_features/profile/ui/screens/linked_devices_screen.dart';
+import 'package:elfulk/src/features/parent_features/profile/ui/screens/profile_screen.dart';
+import 'package:elfulk/src/features/parent_features/profile/ui/screens/static_info_screen.dart';
 
 import '../../../features/app_features/auth/ui/screens/otp_verification_screen.dart';
 
@@ -107,6 +120,22 @@ class AppRouter {
               ],
             ),
             StatefulShellBranch(
+              routes: <RouteBase>[
+                GoRoute(
+                  path: Routes.parentRequestsScreen,
+                  pageBuilder: (BuildContext context, GoRouterState state) =>
+                      MaterialPage<void>(
+                        child: BlocProvider<ParentRequestsBloc>(
+                          create: (_) =>
+                              getIt<ParentRequestsBloc>()
+                                ..add(const ParentRequestsEvent.loadData()),
+                          child: const ParentRequestsScreen(),
+                        ),
+                      ),
+                ),
+              ],
+            ),
+            StatefulShellBranch(
               // TODO(P3): replace with the real control-center screen.
               routes: <RouteBase>[
                 GoRoute(
@@ -125,30 +154,9 @@ class AppRouter {
             StatefulShellBranch(
               routes: <RouteBase>[
                 GoRoute(
-                  path: Routes.parentRequestsScreen,
-                  pageBuilder: (BuildContext context, GoRouterState state) =>
-                      MaterialPage<void>(
-                        child: BlocProvider<ParentRequestsBloc>(
-                          create: (_) =>
-                              getIt<ParentRequestsBloc>()
-                                ..add(const ParentRequestsEvent.loadData()),
-                          child: const ParentRequestsScreen(),
-                        ),
-                      ),
-                ),
-              ],
-            ),
-            StatefulShellBranch(
-              routes: <RouteBase>[
-                GoRoute(
                   path: Routes.parentHomeScreen,
                   pageBuilder: (BuildContext context, GoRouterState state) =>
-                      MaterialPage<void>(
-                        child: BlocProvider<HomeDashboardCubit>(
-                          create: (_) => getIt<HomeDashboardCubit>()..load(),
-                          child: const ParentHomeScreen(),
-                        ),
-                      ),
+                      const MaterialPage<void>(child: ProfileScreen()),
                 ),
               ],
             ),
@@ -163,6 +171,86 @@ class AppRouter {
                   child: const NotificationsScreen(),
                 ),
               ),
+        ),
+        GoRoute(
+          path: Routes.parentKidsScreen,
+          pageBuilder: (BuildContext context, GoRouterState state) =>
+              MaterialPage<void>(
+                child: BlocProvider<HomeDashboardCubit>(
+                  create: (_) => getIt<HomeDashboardCubit>()..load(),
+                  child: const ParentHomeScreen(),
+                ),
+              ),
+        ),
+        GoRoute(
+          path: Routes.appSettingsScreen,
+          pageBuilder: (BuildContext context, GoRouterState state) =>
+              const MaterialPage<void>(child: AppSettingsScreen()),
+        ),
+        GoRoute(
+          path: Routes.accountSettingsScreen,
+          pageBuilder: (BuildContext context, GoRouterState state) =>
+              const MaterialPage<void>(child: AccountSettingsScreen()),
+        ),
+        GoRoute(
+          path: Routes.editPersonalInfoScreen,
+          pageBuilder: (BuildContext context, GoRouterState state) =>
+              const MaterialPage<void>(child: EditPersonalInfoScreen()),
+        ),
+        GoRoute(
+          path: Routes.changePasswordScreen,
+          pageBuilder: (BuildContext context, GoRouterState state) =>
+              const MaterialPage<void>(child: ChangePasswordScreen()),
+        ),
+        GoRoute(
+          path: Routes.contactUsScreen,
+          pageBuilder: (BuildContext context, GoRouterState state) =>
+              const MaterialPage<void>(child: ContactUsScreen()),
+        ),
+        GoRoute(
+          path: Routes.helpScreen,
+          pageBuilder: (BuildContext context, GoRouterState state) =>
+              const MaterialPage<void>(child: HelpScreen()),
+        ),
+        GoRoute(
+          path: Routes.aboutScreen,
+          pageBuilder: (BuildContext context, GoRouterState state) =>
+              const MaterialPage<void>(
+                child: StaticInfoScreen(
+                  title: HelpContent.aboutTitle,
+                  body: HelpContent.aboutBody,
+                ),
+              ),
+        ),
+        GoRoute(
+          path: Routes.privacyScreen,
+          pageBuilder: (BuildContext context, GoRouterState state) =>
+              const MaterialPage<void>(
+                child: StaticInfoScreen(
+                  title: HelpContent.privacyTitle,
+                  body: HelpContent.privacyBody,
+                ),
+              ),
+        ),
+        GoRoute(
+          path: Routes.faqScreen,
+          pageBuilder: (BuildContext context, GoRouterState state) =>
+              const MaterialPage<void>(child: FaqScreen()),
+        ),
+        GoRoute(
+          path: Routes.languageScreen,
+          pageBuilder: (BuildContext context, GoRouterState state) =>
+              const MaterialPage<void>(child: LanguageScreen()),
+        ),
+        GoRoute(
+          path: Routes.appearanceScreen,
+          pageBuilder: (BuildContext context, GoRouterState state) =>
+              const MaterialPage<void>(child: AppearanceScreen()),
+        ),
+        GoRoute(
+          path: Routes.linkedDevicesScreen,
+          pageBuilder: (BuildContext context, GoRouterState state) =>
+              const MaterialPage<void>(child: LinkedDevicesScreen()),
         ),
         GoRoute(
           path: Routes.loginScreen,
