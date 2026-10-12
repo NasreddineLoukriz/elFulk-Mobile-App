@@ -10,6 +10,10 @@ import 'package:elfulk/src/core/theme/logic/cubit/theme_cubit.dart';
 import 'package:elfulk/src/core/widgets/app_badge.dart';
 import 'package:elfulk/src/core/widgets/app_confirmation_dialog.dart';
 import 'package:elfulk/src/core/widgets/app_dashed_divider.dart';
+import 'package:elfulk/src/core/widgets/category_chip.dart';
+import 'package:elfulk/src/core/widgets/content_card.dart';
+import 'package:elfulk/src/core/widgets/reader_widgets.dart';
+import 'package:elfulk/src/core/widgets/search_field.dart';
 import 'package:elfulk/src/core/widgets/app_error_card.dart';
 import 'package:elfulk/src/core/widgets/app_filter_chip.dart';
 import 'package:elfulk/src/core/widgets/app_loading_view.dart';
@@ -55,6 +59,8 @@ class DevHubScreen extends StatelessWidget {
             const _P1Preview(),
             SizedBox(height: context.spacing.lg.h),
             const _P2Preview(),
+            SizedBox(height: context.spacing.lg.h),
+            const _P3Preview(),
             SizedBox(height: context.spacing.lg.h),
             ..._buildSections(context, theme),
           ],
@@ -885,6 +891,95 @@ class _P2PreviewState extends State<_P2Preview> {
           ),
         ],
       ),
+    );
+  }
+}
+
+/// Dev-only preview of the P3 shared content kit.
+///
+/// ContentCard sample, SearchField, category chips and a working
+/// ReaderNav pager demo. Full P3 screens (control hubs, library,
+/// details, reader) stay reachable through the route catalog below.
+class _P3Preview extends StatefulWidget {
+  const _P3Preview();
+
+  @override
+  State<_P3Preview> createState() => _P3PreviewState();
+}
+
+class _P3PreviewState extends State<_P3Preview> {
+  int _page = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            'P3 Content kit (preview)',
+            style: theme.textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.w800,
+              color: theme.colorScheme.primary,
+            ),
+          ),
+          SizedBox(height: context.spacing.sm.h),
+          SearchField(
+            hint: 'هل تبحث عن شيء معين؟',
+            onChanged: (String v) {},
+          ),
+          SizedBox(height: context.spacing.sm.h),
+          ContentCard(
+            art: Container(
+              color:
+                  theme.colorScheme.primary.withValues(alpha: 0.15),
+              child: Center(
+                child: Icon(
+                  Icons.sports_esports_outlined,
+                  size: 56.sp,
+                  color: theme.colorScheme.primary,
+                ),
+              ),
+            ),
+            title: 'مستكشف الفضاء',
+            badges: const [
+              ContentBadge(
+                label: 'الفضاء والكون',
+                background: Color(0xFFFDD6D6),
+                foreground: Color(0xFFD32F2F),
+              ),
+              ContentBadge(
+                label: 'علوم وتجارب',
+                background: Color(0xFFFEEDC9),
+                foreground: Color(0xFFF59E0B),
+              ),
+            ],
+            actionLabel: 'الدخول الى اللعبة',
+            onAction: () => _snack(context, 'play tapped'),
+            onMenu: () => _snack(context, 'card menu tapped'),
+          ),
+          SizedBox(height: context.spacing.sm.h),
+          ReaderProgress(total: 10, read: 4 + _page),
+          SizedBox(height: context.spacing.sm.h),
+          ReaderNav(
+            prevLabel: 'الفصل السابقة',
+            nextLabel: 'الفصل التالية',
+            prevEnabled: _page > 0,
+            nextEnabled: _page < 2,
+            onPrev: () => setState(() => _page--),
+            onNext: () => setState(() => _page++),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _snack(BuildContext context, String text) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(text)),
     );
   }
 }

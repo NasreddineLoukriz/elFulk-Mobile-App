@@ -44,6 +44,13 @@ class Routes {
   static const String languageScreen = '/profile/language';
   static const String appearanceScreen = '/profile/appearance';
   static const String linkedDevicesScreen = '/profile/devices';
+  static const String controlCenterScreen = '/control';
+  static const String timeHubScreen = '/control/time';
+  static const String rulesHubScreen = '/control/rules';
+  static const String contentHubScreen = '/content';
+  static const String libraryScreen = '/content/library';
+  static const String detailsScreen = '/content/details';
+  static const String readerScreen = '/content/reader';
 
   /// Auto-discoverable catalog of all app routes used by the dev hub.
   ///
@@ -189,6 +196,46 @@ class Routes {
       path: linkedDevicesScreen,
       label: 'Linked Devices',
       category: RouteCategory.screen,
+    ),
+    RouteCatalogItem(
+      path: controlCenterScreen,
+      label: 'Control Center',
+      category: RouteCategory.screen,
+      description: 'Activities dashboard (control tab root).',
+    ),
+    RouteCatalogItem(
+      path: timeHubScreen,
+      label: 'Time Management',
+      category: RouteCategory.screen,
+    ),
+    RouteCatalogItem(
+      path: rulesHubScreen,
+      label: 'Rules Management',
+      category: RouteCategory.screen,
+    ),
+    RouteCatalogItem(
+      path: contentHubScreen,
+      label: 'Content Hub',
+      category: RouteCategory.screen,
+    ),
+    RouteCatalogItem(
+      path: libraryScreen,
+      label: 'Content Library (games)',
+      category: RouteCategory.screen,
+      description: 'Use ?type=games|stories|videos.',
+      queryParameters: <String, String>{'type': 'games'},
+    ),
+    RouteCatalogItem(
+      path: detailsScreen,
+      label: 'Content Details (sample)',
+      category: RouteCategory.screen,
+      queryParameters: <String, String>{'id': 'g1'},
+    ),
+    RouteCatalogItem(
+      path: readerScreen,
+      label: 'Story Reader (sample)',
+      category: RouteCategory.screen,
+      queryParameters: <String, String>{'id': 's1'},
     ),
   ];
 }
