@@ -24,6 +24,14 @@ import 'package:elfulk/src/core/widgets/parent_shell_scaffold.dart';
 import 'package:elfulk/src/features/app_features/home/logic/dashboard_cubit/home_dashboard_cubit.dart';
 import 'package:elfulk/src/features/app_features/notifications/logic/cubit/notifications_cubit.dart';
 import 'package:elfulk/src/features/app_features/notifications/ui/screens/notifications_screen.dart';
+import 'package:elfulk/src/features/parent_features/control_center/ui/screens/control_home_screen.dart';
+import 'package:elfulk/src/features/parent_features/control_center/ui/screens/rules_hub_screen.dart';
+import 'package:elfulk/src/features/parent_features/control_center/ui/screens/time_hub_screen.dart';
+import 'package:elfulk/src/features/parent_features/content/data/content_seed.dart';
+import 'package:elfulk/src/features/parent_features/content/ui/screens/content_hub_screen.dart';
+import 'package:elfulk/src/features/parent_features/content/ui/screens/details_screen.dart';
+import 'package:elfulk/src/features/parent_features/content/ui/screens/library_screen.dart';
+import 'package:elfulk/src/features/parent_features/content/ui/screens/reader_screen.dart';
 import 'package:elfulk/src/features/parent_features/profile/data/help_content.dart';
 import 'package:elfulk/src/features/parent_features/profile/ui/screens/account_settings_screen.dart';
 import 'package:elfulk/src/features/parent_features/profile/ui/screens/app_settings_screen.dart';
@@ -136,18 +144,11 @@ class AppRouter {
               ],
             ),
             StatefulShellBranch(
-              // TODO(P3): replace with the real control-center screen.
               routes: <RouteBase>[
                 GoRoute(
-                  path: Routes.childHomeScreen,
+                  path: Routes.controlCenterScreen,
                   pageBuilder: (BuildContext context, GoRouterState state) =>
-                      MaterialPage<void>(
-                        child: BlocProvider<ChildHomeCubit>(
-                          create: (_) =>
-                              getIt<ChildHomeCubit>()..loadOverview(),
-                          child: const ChildHomeScreen(),
-                        ),
-                      ),
+                      const MaterialPage<void>(child: ControlHomeScreen()),
                 ),
               ],
             ),
@@ -286,6 +287,58 @@ class AppRouter {
           path: Routes.addNewChildScreen,
           pageBuilder: (BuildContext context, GoRouterState state) =>
               const MaterialPage<void>(child: AddNewChildScreen()),
+        ),
+        GoRoute(
+          path: Routes.childHomeScreen,
+          pageBuilder: (BuildContext context, GoRouterState state) =>
+              MaterialPage<void>(
+                child: BlocProvider<ChildHomeCubit>(
+                  create: (_) => getIt<ChildHomeCubit>()..loadOverview(),
+                  child: const ChildHomeScreen(),
+                ),
+              ),
+        ),
+        GoRoute(
+          path: Routes.timeHubScreen,
+          pageBuilder: (BuildContext context, GoRouterState state) =>
+              const MaterialPage<void>(child: TimeHubScreen()),
+        ),
+        GoRoute(
+          path: Routes.rulesHubScreen,
+          pageBuilder: (BuildContext context, GoRouterState state) =>
+              const MaterialPage<void>(child: RulesHubScreen()),
+        ),
+        GoRoute(
+          path: Routes.contentHubScreen,
+          pageBuilder: (BuildContext context, GoRouterState state) =>
+              const MaterialPage<void>(child: ContentHubScreen()),
+        ),
+        GoRoute(
+          path: Routes.libraryScreen,
+          pageBuilder: (BuildContext context, GoRouterState state) {
+            final ContentType type = ContentSeed.parseType(
+              state.uri.queryParameters['type'],
+            );
+            return MaterialPage<void>(child: LibraryScreen(type: type));
+          },
+        ),
+        GoRoute(
+          path: Routes.detailsScreen,
+          pageBuilder: (BuildContext context, GoRouterState state) =>
+              MaterialPage<void>(
+                child: DetailsScreen(
+                  itemId: state.uri.queryParameters['id'] ?? '',
+                ),
+              ),
+        ),
+        GoRoute(
+          path: Routes.readerScreen,
+          pageBuilder: (BuildContext context, GoRouterState state) =>
+              MaterialPage<void>(
+                child: ReaderScreen(
+                  itemId: state.uri.queryParameters['id'] ?? '',
+                ),
+              ),
         ),
         GoRoute(
           path: Routes.architectureScreen,
