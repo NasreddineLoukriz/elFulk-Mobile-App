@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:elfulk/src/core/helpers/helpers.dart';
+import 'package:elfulk/src/core/widgets/app_dashed_divider.dart';
 
 /// عنصر التحكم النهائي (trailing) الذي يعرضه [SettingsListTile].
 ///
@@ -186,6 +187,10 @@ class SettingsListTile extends StatelessWidget {
   /// ويظهر فقط مع وجود [subtitle]).
   final bool showDivider;
 
+  /// جعل كل الفواصل (الأوسط والسفلي) منقطة كما في بطاقة قائمة
+  /// الحساب الشخصي. الافتراضي: `false` (خط متصل).
+  final bool dashedDivider;
+
   /// تُستدعى عند ضغط صف العنوان فقط (الكتلة الوصفية خارج منطقة
   /// الضغط). عند `null` يكون الصف غير تفاعلي (بلا `InkWell`).
   final VoidCallback? onTap;
@@ -203,6 +208,7 @@ class SettingsListTile extends StatelessWidget {
     this.borderRadius,
     this.borderSide,
     this.showDivider = true,
+    this.dashedDivider = false,
     this.onTap,
   });
 
@@ -272,11 +278,16 @@ class SettingsListTile extends StatelessWidget {
         children: [
         tile,
         if (hasSubtitle) ...[
-          const Divider(
-            key: ValueKey('settings-tile-divider-mid'),
-            height: 1,
-            thickness: 1,
-          ),
+          if (dashedDivider)
+            const AppDashedDivider(
+              key: ValueKey('settings-tile-divider-mid'),
+            )
+          else
+            const Divider(
+              key: ValueKey('settings-tile-divider-mid'),
+              height: 1,
+              thickness: 1,
+            ),
           Padding(
             padding: EdgeInsets.symmetric(
               horizontal: context.spacing.md.w,
@@ -301,14 +312,19 @@ class SettingsListTile extends StatelessWidget {
           ),
         ],
         if (showDivider)
-          Divider(
-            key: const ValueKey('settings-tile-divider'),
-            height: 1.h,
-            thickness: 1.h,
-            indent: context.spacing.md.w,
-            endIndent: context.spacing.md.w,
-            color: theme.colorScheme.outlineVariant,
-          ),
+          if (dashedDivider)
+            const AppDashedDivider(
+              key: ValueKey('settings-tile-divider'),
+            )
+          else
+            Divider(
+              key: const ValueKey('settings-tile-divider'),
+              height: 1.h,
+              thickness: 1.h,
+              indent: context.spacing.md.w,
+              endIndent: context.spacing.md.w,
+              color: theme.colorScheme.outlineVariant,
+            ),
         ],
       ),
     );

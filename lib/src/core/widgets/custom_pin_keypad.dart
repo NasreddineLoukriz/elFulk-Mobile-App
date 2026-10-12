@@ -31,13 +31,13 @@ class CustomPinKeypad extends StatelessWidget {
           Padding(
             padding: EdgeInsets.only(bottom: context.spacing.sm12.h),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: row
-                  .map(
-                    (digit) => _KeypadButton(
-                      key: ValueKey('otp-keypad-$digit'),
-                      value: digit,
-                      onPressed: () => onDigitPressed(digit),
+              children: [
+                for (int i = 0; i < row.length; i++) ...[
+                  Expanded(
+                    child: _KeypadButton(
+                      key: ValueKey('otp-keypad-${row[i]}'),
+                      value: row[i],
+                      onPressed: () => onDigitPressed(row[i]),
                       textStyle: theme.textTheme.titleMedium?.copyWith(
                             fontSize: 22.sp,
                             fontWeight: FontWeight.w600,
@@ -49,40 +49,50 @@ class CustomPinKeypad extends StatelessWidget {
                             color: theme.colorScheme.onSurface,
                           ),
                     ),
-                  )
-                  .toList(),
+                  ),
+                  if (i < row.length - 1)
+                    SizedBox(width: context.spacing.sm.w),
+                ],
+              ],
             ),
           ),
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            _KeypadButton(
-              key: const ValueKey('otp-keypad-delete'),
-              onPressed: onBackspacePressed,
-              icon: Icons.backspace_outlined,
-              flipIcon: true,
-              iconColor: theme.colorScheme.onSurface,
+            Expanded(
+              child: _KeypadButton(
+                key: const ValueKey('otp-keypad-delete'),
+                onPressed: onBackspacePressed,
+                icon: Icons.backspace_outlined,
+                flipIcon: true,
+                iconColor: theme.colorScheme.onSurface,
+              ),
             ),
-            _KeypadButton(
-              key: const ValueKey('otp-keypad-0'),
-              value: '0',
-              onPressed: () => onDigitPressed('0'),
-              textStyle: theme.textTheme.titleMedium?.copyWith(
-                    fontSize: 22.sp,
-                    fontWeight: FontWeight.w600,
-                    color: theme.colorScheme.onSurface,
-                  ) ??
-                  TextStyle(
-                    fontSize: 22.sp,
-                    fontWeight: FontWeight.w600,
-                    color: theme.colorScheme.onSurface,
-                  ),
+            SizedBox(width: context.spacing.sm.w),
+            Expanded(
+              child: _KeypadButton(
+                key: const ValueKey('otp-keypad-0'),
+                value: '0',
+                onPressed: () => onDigitPressed('0'),
+                textStyle: theme.textTheme.titleMedium?.copyWith(
+                      fontSize: 22.sp,
+                      fontWeight: FontWeight.w600,
+                      color: theme.colorScheme.onSurface,
+                    ) ??
+                    TextStyle(
+                      fontSize: 22.sp,
+                      fontWeight: FontWeight.w600,
+                      color: theme.colorScheme.onSurface,
+                    ),
+              ),
             ),
-            _KeypadButton(
-              key: const ValueKey('otp-keypad-clear'),
-              onPressed: onClearPressed,
-              icon: Icons.refresh,
-              iconColor: theme.colorScheme.onSurface,
+            SizedBox(width: context.spacing.sm.w),
+            Expanded(
+              child: _KeypadButton(
+                key: const ValueKey('otp-keypad-clear'),
+                onPressed: onClearPressed,
+                icon: Icons.refresh,
+                iconColor: theme.colorScheme.onSurface,
+              ),
             ),
           ],
         ),
@@ -127,7 +137,7 @@ class _KeypadButton extends StatelessWidget {
     return GestureDetector(
       onTap: onPressed,
       child: Container(
-        width: 100.w,
+        width: double.infinity,
         height: 42.h,
         decoration: BoxDecoration(
           color: theme.colorScheme.surfaceContainer,
