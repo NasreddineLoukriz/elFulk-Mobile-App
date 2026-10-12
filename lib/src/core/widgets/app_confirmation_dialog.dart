@@ -163,10 +163,7 @@ class AppConfirmationDialog extends StatelessWidget {
   /// كائن البارامترات الذي يقود كل عنصر مرئي ونصي.
   final AppConfirmationConfig config;
 
-  const AppConfirmationDialog({
-    super.key,
-    required this.config,
-  });
+  const AppConfirmationDialog({super.key, required this.config});
 
   @override
   Widget build(BuildContext context) {
@@ -175,18 +172,17 @@ class AppConfirmationDialog extends StatelessWidget {
     final bool isDestructive =
         config.primaryActionType ==
         AppConfirmationPrimaryActionType.destructive;
-    final Color primary = config.primaryActionColor ??
-        (isDestructive
-            ? theme.colorScheme.error
-            : theme.colorScheme.primary);
+    final Color primary =
+        config.primaryActionColor ??
+        (isDestructive ? theme.colorScheme.error : theme.colorScheme.primary);
     final Color secondary =
         config.secondaryActionColor ?? theme.colorScheme.onSurface;
     final Color secondaryBg =
         config.secondaryActionBackgroundColor ??
-            theme.colorScheme.surfaceContainerHighest;
+        theme.colorScheme.surfaceContainerHighest;
     final Color iconFg = config.iconColor ?? primary;
-    final Color iconBg = config.iconBackgroundColor ??
-        primary.withValues(alpha: 0.12);
+    final Color iconBg =
+        config.iconBackgroundColor ?? primary.withValues(alpha: 0.12);
 
     void handlePrimary() {
       config.onPrimaryAction?.call();
@@ -208,140 +204,134 @@ class AppConfirmationDialog extends StatelessWidget {
     return Dialog(
       backgroundColor: theme.colorScheme.surface,
       shape: RoundedRectangleBorder(
-        borderRadius:
-            BorderRadius.circular(context.radius.xl.r),
+        borderRadius: BorderRadius.circular(context.radius.xl.r),
       ),
-      insetPadding: EdgeInsets.symmetric(
-        horizontal: 40.w,
-        vertical: 24.h,
-      ),
-      child: Padding(
-        padding: EdgeInsets.symmetric(
-          horizontal: context.spacing.lg.w,
-          vertical: context.spacing.lg.h,
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-          Container(
-            width: 56.w,
-            height: 56.w,
-            decoration: BoxDecoration(
-              color: iconBg,
-              shape: BoxShape.circle,
-            ),
-            child: Center(
-              child: IconTheme(
-                data: IconThemeData(color: iconFg, size: 24.sp),
-                child: config.icon,
-              ),
-            ),
+      insetPadding: EdgeInsets.symmetric(horizontal: 40.w, vertical: 24.h),
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: context.spacing.lg.w,
+            vertical: context.spacing.lg.h,
           ),
-          SizedBox(height: context.spacing.sm.h),
-          Text(
-            config.title,
-            key: const ValueKey('app-confirmation-title'),
-            textAlign: TextAlign.center,
-            style: theme.textTheme.headlineSmall?.copyWith(
-                  fontSize: 20.sp,
-                  fontWeight: FontWeight.w700,
-                  color: theme.colorScheme.onSurface,
-                ) ??
-                TextStyle(
-                  fontSize: 20.sp,
-                  fontWeight: FontWeight.w700,
-                  color: theme.colorScheme.onSurface,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 56.w,
+                height: 56.w,
+                decoration: BoxDecoration(
+                  color: iconBg,
+                  shape: BoxShape.circle,
                 ),
-          ),
-          SizedBox(height: context.spacing.sm.h),
-          Text(
-            config.message,
-            key: const ValueKey('app-confirmation-message'),
-            textAlign: TextAlign.center,
-            style: theme.textTheme.bodyMedium?.copyWith(
-                  fontSize: 14.sp,
-                  fontWeight: FontWeight.w400,
-                  color: theme.colorScheme.onSurface
-                      .withValues(alpha: 0.6),
-                ) ??
-                TextStyle(
-                  fontSize: 14.sp,
-                  fontWeight: FontWeight.w400,
-                  color: theme.colorScheme.onSurface
-                      .withValues(alpha: 0.6),
-                ),
-          ),
-          SizedBox(height: context.spacing.lg.h),
-          if (isDestructive)
-            SlideToConfirmButton(
-              label: config.primaryActionLabel,
-              progressColor: primary,
-              textDirection: config.slideTextDirection,
-              thumbIcon: config.thumbIcon,
-              hintIcon: config.hintIcon,
-              onConfirmed: handlePrimary,
-            )
-          else
-            SizedBox(
-              width: double.infinity,
-              height: 42.h,
-              child: ElevatedButton(
-                key: const ValueKey(
-                    'app-confirmation-primary-normal'),
-                onPressed: handlePrimary,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: primary,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(
-                      context.radius.xxl.r,
-                    ),
-                  ),
-                  elevation: 0,
-                ),
-                child: Text(
-                  config.primaryActionLabel,
-                  style: theme.textTheme.titleMedium?.copyWith(
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.w600,
-                      ) ??
-                      TextStyle(
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.w600,
-                      ),
-                ),
-              ),
-            ),
-          SizedBox(height: context.spacing.sm.h),
-          SizedBox(
-            width: double.infinity,
-            height: 42.h,
-            child: ElevatedButton(
-              key: const ValueKey('app-confirmation-secondary'),
-              onPressed: handleSecondary,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: secondaryBg,
-                foregroundColor: secondary,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(
-                    context.radius.xxl.r,
+                child: Center(
+                  child: IconTheme(
+                    data: IconThemeData(color: iconFg, size: 24.sp),
+                    child: config.icon,
                   ),
                 ),
-                elevation: 0,
               ),
-              child: Text(
-                config.secondaryActionLabel,
-                style: theme.textTheme.titleMedium?.copyWith(
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.w600,
+              SizedBox(height: context.spacing.sm.h),
+              Text(
+                config.title,
+                key: const ValueKey('app-confirmation-title'),
+                textAlign: TextAlign.center,
+                style:
+                    theme.textTheme.headlineSmall?.copyWith(
+                      fontSize: 20.sp,
+                      fontWeight: FontWeight.w700,
+                      color: theme.colorScheme.onSurface,
                     ) ??
                     TextStyle(
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.w600,
+                      fontSize: 20.sp,
+                      fontWeight: FontWeight.w700,
+                      color: theme.colorScheme.onSurface,
                     ),
               ),
-            ),
+              SizedBox(height: context.spacing.sm.h),
+              Text(
+                config.message,
+                key: const ValueKey('app-confirmation-message'),
+                textAlign: TextAlign.center,
+                style:
+                    theme.textTheme.bodyMedium?.copyWith(
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w400,
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                    ) ??
+                    TextStyle(
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w400,
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                    ),
+              ),
+              SizedBox(height: context.spacing.lg.h),
+              if (isDestructive)
+                SlideToConfirmButton(
+                  label: config.primaryActionLabel,
+                  progressColor: primary,
+                  textDirection: config.slideTextDirection,
+                  thumbIcon: config.thumbIcon,
+                  hintIcon: config.hintIcon,
+                  onConfirmed: handlePrimary,
+                )
+              else
+                SizedBox(
+                  width: double.infinity,
+                  height: 42.h,
+                  child: ElevatedButton(
+                    key: const ValueKey('app-confirmation-primary-normal'),
+                    onPressed: handlePrimary,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: primary,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(
+                          context.radius.xxl.r,
+                        ),
+                      ),
+                      elevation: 0,
+                    ),
+                    child: Text(
+                      config.primaryActionLabel,
+                      style:
+                          theme.textTheme.titleMedium?.copyWith(
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.w600,
+                          ) ??
+                          TextStyle(
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.w600,
+                          ),
+                    ),
+                  ),
+                ),
+              SizedBox(height: context.spacing.sm.h),
+              SizedBox(
+                width: double.infinity,
+                height: 42.h,
+                child: ElevatedButton(
+                  key: const ValueKey('app-confirmation-secondary'),
+                  onPressed: handleSecondary,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: secondaryBg,
+                    foregroundColor: secondary,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(context.radius.xxl.r),
+                    ),
+                    elevation: 0,
+                  ),
+                  child: Text(
+                    config.secondaryActionLabel,
+                    style:
+                        theme.textTheme.titleMedium?.copyWith(
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.w600,
+                        ) ??
+                        TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w600),
+                  ),
+                ),
+              ),
+            ],
           ),
-          ],
         ),
       ),
     );
