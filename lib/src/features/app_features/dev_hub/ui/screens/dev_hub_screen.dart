@@ -12,7 +12,13 @@ import 'package:elfulk/src/core/widgets/app_confirmation_dialog.dart';
 import 'package:elfulk/src/core/widgets/app_error_card.dart';
 import 'package:elfulk/src/core/widgets/app_filter_chip.dart';
 import 'package:elfulk/src/core/widgets/app_loading_view.dart';
+import 'package:elfulk/src/core/widgets/activity_stats_card.dart';
+import 'package:elfulk/src/core/widgets/child_card.dart';
+import 'package:elfulk/src/core/widgets/device_card.dart';
 import 'package:elfulk/src/core/widgets/empty_state.dart';
+import 'package:elfulk/src/core/widgets/home_greeting_header.dart';
+import 'package:elfulk/src/core/widgets/library_content_row.dart';
+import 'package:elfulk/src/core/widgets/notification_card.dart';
 import 'package:elfulk/src/core/widgets/parent_bottom_nav.dart';
 import 'package:elfulk/src/core/widgets/section_header.dart';
 import 'package:elfulk/src/core/widgets/helpers/show_app_confirmation_dialog.dart';
@@ -41,6 +47,8 @@ class DevHubScreen extends StatelessWidget {
             const _SettingsListTilePreview(),
             SizedBox(height: context.spacing.lg.h),
             const _FoundationPreview(),
+            SizedBox(height: context.spacing.lg.h),
+            const _P1Preview(),
             SizedBox(height: context.spacing.lg.h),
             ..._buildSections(context, theme),
           ],
@@ -634,6 +642,164 @@ class _FoundationPreviewState extends State<_FoundationPreview> {
           ),
         ),
       ],
+    );
+  }
+
+  void _snack(BuildContext context, String text) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(text)),
+    );
+  }
+}
+
+/// Dev-only preview of the P1 widgets (Home dashboard + notifications).
+///
+/// One sample per widget with the reference Arabic copy: greeting header
+/// with tabs, notification card (dismiss actually removes it), child
+/// card, activity stats, device card and a library section. Taps report
+/// via [SnackBar]. Full screens stay reachable through the route catalog
+/// below (Home, Parent Home, Notifications).
+class _P1Preview extends StatefulWidget {
+  const _P1Preview();
+
+  @override
+  State<_P1Preview> createState() => _P1PreviewState();
+}
+
+class _P1PreviewState extends State<_P1Preview> {
+  int _tab = 0;
+  bool _showCard = true;
+
+  static const List<HomeTabChip> _tabs = <HomeTabChip>[
+    HomeTabChip(label: 'الكل', icon: Icons.grid_view_rounded),
+    HomeTabChip(label: 'الاشعارات', icon: Icons.notifications_outlined),
+    HomeTabChip(label: 'اطفالي', icon: Icons.people_outline_rounded),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            'P1 Home + Notifications (preview)',
+            style: theme.textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.w800,
+              color: theme.colorScheme.primary,
+            ),
+          ),
+          SizedBox(height: context.spacing.sm.h),
+          HomeGreetingHeader(
+            title: 'طاب يومك اسم المستخدم 👋',
+            subtitle: 'تقارير أطفالك جاهزة للمراجعة!',
+            notificationCount: 9,
+            onNotifications: () => _snack(context, 'bell tapped'),
+            tabs: _tabs,
+            selectedTab: _tab,
+            onTabSelected: (int i) => setState(() => _tab = i),
+          ),
+          SizedBox(height: context.spacing.md.h),
+          if (_showCard)
+            NotificationCard(
+              childLabel: 'أنس مالك',
+              category: NotificationCategory.alerts,
+              categoryLabel: 'التنبيهات',
+              title: 'تجاوز الحد الصحي الموصى به',
+              body:
+                  'تجاوز إجمالي وقت شاشة طفلك اليوم الحد الصحي الموصى به لفئته العمرية.',
+              primaryLabel: 'قفل الجهاز فوراً',
+              onPrimary: () => _snack(context, 'lock tapped'),
+              secondaryLabel: 'مراجعة التفاصيل',
+              onSecondary: () => _snack(context, 'details tapped'),
+              onDismiss: () => setState(() => _showCard = false),
+            ),
+          SizedBox(height: context.spacing.md.h),
+          ChildCard(
+            name: 'أنس مالك',
+            usagePrefix: 'مدة الاستخدام اليوم:',
+            usageValue: '2 ساعات و 10 دقائق.',
+            stats: [
+              ChildStat(
+                label: 'العمر',
+                value: '08 سنوات',
+                valueColor: theme.colorScheme.primary,
+              ),
+              const ChildStat(label: 'الجنس', value: 'ذكر'),
+              const ChildStat(
+                label: 'التنبيهات المعلقة',
+                value: '01 تنبيه',
+                valueColor: Color(0xFFF59E0B),
+              ),
+            ],
+            actionLabel: 'الانتقال إلى وجهته الخاصة',
+            onAction: () => _snack(context, 'child action tapped'),
+            onMenu: () => _snack(context, 'child menu tapped'),
+          ),
+          SizedBox(height: context.spacing.md.h),
+          AddChildDashedCard(
+            label: 'إضافة طفل جديد',
+            onTap: () => _snack(context, 'add child tapped'),
+          ),
+          SizedBox(height: context.spacing.md.h),
+          ActivityStatsCard(
+            title: 'بعض بيانات النشاط داخل المنصة بأطفالك',
+            childLabel: 'أنس مالك',
+            allowedLine: 'المدة المسموح بها: 2 ساعات و 30 دقيقة.',
+            remainingLine:
+                'الوقت المتبقي من المدة المسموح بها هو: 27 دقيقة.',
+            progress: 0.85,
+            progressStartLabel: '0% من الوقت',
+            progressEndLabel: '100% من الوقت',
+            categories: const [
+              ActivityCategory(
+                  label: 'الفيديوهات',
+                  fraction: 0.6,
+                  percentLabel: '60% من الوقت'),
+              ActivityCategory(
+                  label: 'القصص',
+                  fraction: 0.3,
+                  percentLabel: '30% من الوقت'),
+              ActivityCategory(
+                  label: 'الألعاب',
+                  fraction: 0.1,
+                  percentLabel: '10% من الوقت'),
+            ],
+            actionLabel: 'عرض تقرير النشاط كامل',
+            onAction: () => _snack(context, 'report tapped'),
+          ),
+          SizedBox(height: context.spacing.md.h),
+          DeviceCard(
+            deviceName: 'اسم الجهاز',
+            userName: 'المستخدم أحمد محسن.',
+            statusLabel: 'الحالة',
+            statusValue: 'نشط حاليا',
+            usageLabel: 'مدة الاستخدام',
+            usageValue: '03 س و 10 د',
+            enrolledLabel: 'تاريخ التسجيل',
+            enrolledValue: '30 أكتوبر 2026',
+            onLock: () => _snack(context, 'lock tapped'),
+            onPause: () => _snack(context, 'pause tapped'),
+            onEdit: () => _snack(context, 'edit tapped'),
+          ),
+          SizedBox(height: context.spacing.md.h),
+          const LibrarySection(
+            title: 'اضيفة فيديوهات جديدة مقترحة من فريقنا لمكتبة',
+            childLabel: 'أنس مالك',
+            rows: [
+              LibraryContentRow(
+                title: 'الأرنب السريع وأصدقاء الغابة.',
+                tags: ['تربية وقيم', 'علوم وتعليم'],
+                badge: '15:12',
+              ),
+            ],
+            actionLabel: 'عرض كامل مكتبة فيديوهات طفلك',
+          ),
+        ],
+      ),
     );
   }
 
