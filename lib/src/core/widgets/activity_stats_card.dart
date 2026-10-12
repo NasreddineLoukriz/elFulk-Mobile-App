@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:elfulk/src/core/helpers/helpers.dart';
+import 'package:elfulk/src/core/widgets/app_dashed_divider.dart';
 
 /// فئة نشاط واحدة (مثال: الفيديوهات / `60% من الوقت`).
 class ActivityCategory {
@@ -55,11 +56,20 @@ class ActivityStatsCard extends StatelessWidget {
   /// فئات النشاط الفرعية بأشرطتها المصغرة.
   final List<ActivityCategory> categories;
 
-  /// نص زر التقرير (مثال: `'عرض تقرير النشاط كامل'`).
-  final String actionLabel;
+  /// نص زر التقرير (null = بلا زر كما في بطاقة الاستخدام).
+  final String? actionLabel;
 
   /// يُستدعى عند ضغط زر التقرير.
   final VoidCallback? onAction;
+
+  /// أيقونة بداية بجانب العنوان (null = بلا أيقونة).
+  final Widget? leadingIcon;
+
+  /// يُستدعى عند ضغط زر التعديل (null = بلا زر).
+  final VoidCallback? onEdit;
+
+  /// إظهار فاصل منقط بعد سطر المتبقي (كما في بطاقة الاستخدام).
+  final bool showDivider;
 
   /// لون خلفية البطاقة (افتراضياً لون البطاقة من الثيم).
   final Color? backgroundColor;
@@ -74,8 +84,11 @@ class ActivityStatsCard extends StatelessWidget {
     required this.progressStartLabel,
     required this.progressEndLabel,
     this.categories = const <ActivityCategory>[],
-    required this.actionLabel,
+    this.actionLabel,
     this.onAction,
+    this.leadingIcon,
+    this.onEdit,
+    this.showDivider = false,
     this.backgroundColor,
   });
 
@@ -97,6 +110,10 @@ class ActivityStatsCard extends StatelessWidget {
           children: [
             Row(
               children: [
+                if (leadingIcon != null) ...[
+                  leadingIcon!,
+                  SizedBox(width: context.spacing.sm.w),
+                ],
                 Expanded(
                   child: Text(
                     title,
@@ -138,6 +155,32 @@ class ActivityStatsCard extends StatelessWidget {
                     ),
                   ),
                 ],
+                if (onEdit != null) ...[
+                  SizedBox(width: context.spacing.sm.w),
+                  GestureDetector(
+                    key: const ValueKey('activity-stats-edit'),
+                    onTap: onEdit,
+                    behavior: HitTestBehavior.opaque,
+                    child: Container(
+                      width: 32.w,
+                      height: 32.h,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: theme.colorScheme.outlineVariant,
+                        ),
+                      ),
+                      child: Center(
+                        child: Icon(
+                          Icons.edit_outlined,
+                          size: 16.sp,
+                          color: theme.colorScheme.onSurface
+                              .withValues(alpha: 0.6),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ],
             ),
             SizedBox(height: context.spacing.sm.h),
@@ -155,9 +198,14 @@ class ActivityStatsCard extends StatelessWidget {
               textAlign: TextAlign.end,
               style: TextStyle(
                 fontSize: 13.sp,
-                color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                color:
+                    theme.colorScheme.onSurface.withValues(alpha: 0.6),
               ),
             ),
+            if (showDivider) ...[
+              SizedBox(height: context.spacing.sm.h),
+              const AppDashedDivider(),
+            ],
             SizedBox(height: context.spacing.sm.h),
             _ProgressBar(fraction: progress, height: 10.h),
             SizedBox(height: 4.h),
@@ -229,8 +277,10 @@ class ActivityStatsCard extends StatelessWidget {
                 ],
               ),
             ],
-            SizedBox(height: context.spacing.md.h),
-            _ActionButton(onAction: onAction, actionLabel: actionLabel),
+            if (actionLabel != null) ...[
+              SizedBox(height: context.spacing.md.h),
+              _ActionButton(onAction: onAction, actionLabel: actionLabel!),
+            ],
           ],
         ),
       ),
