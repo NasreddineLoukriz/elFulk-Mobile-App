@@ -258,13 +258,17 @@ class _TimePickerBodyState extends State<_TimePickerBody> {
                 top: (150.h - _itemExtent.h) / 2,
                 start: 12.w,
                 end: 12.w,
-                child: const AppDashedDivider(),
+                child: const AppDashedDivider(
+                  key: ValueKey('time-picker-rule-top'),
+                ),
               ),
               PositionedDirectional(
                 bottom: (150.h - _itemExtent.h) / 2,
                 start: 12.w,
                 end: 12.w,
-                child: const AppDashedDivider(),
+                child: const AppDashedDivider(
+                  key: ValueKey('time-picker-rule-bottom'),
+                ),
               ),
             ],
           ),

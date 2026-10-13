@@ -25,7 +25,6 @@ class AppDashedDivider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      key: const ValueKey('app-dashed-divider'),
       width: double.infinity,
       height: 1.h,
       child: CustomPaint(
