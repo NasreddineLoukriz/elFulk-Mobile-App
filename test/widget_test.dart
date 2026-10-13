@@ -26,6 +26,7 @@ import 'package:elfulk/src/features/parent_features/profile/ui/screens/language_
 import 'package:elfulk/src/features/parent_features/profile/ui/screens/linked_devices_screen.dart';
 import 'package:elfulk/src/features/parent_features/profile/ui/screens/profile_screen.dart';
 import 'package:elfulk/src/core/widgets/app_confirmation_dialog.dart';
+import 'package:elfulk/src/core/widgets/app_dashed_divider.dart';
 import 'package:elfulk/src/core/widgets/app_error_card.dart';
 import 'package:elfulk/src/core/widgets/app_filter_chip.dart';
 import 'package:elfulk/src/core/widgets/app_loading_view.dart';
@@ -37,6 +38,7 @@ import 'package:elfulk/src/core/widgets/parent_shell_scaffold.dart';
 import 'package:elfulk/src/core/widgets/pin_display_row.dart';
 import 'package:elfulk/src/core/widgets/section_header.dart';
 import 'package:elfulk/src/core/widgets/settings_list_tile.dart';
+import 'package:elfulk/src/core/widgets/time_picker_sheet.dart';
 import 'package:elfulk/src/features/app_features/home/data/repos/home_dashboard_repository.dart';
 import 'package:elfulk/src/features/app_features/home/logic/dashboard_cubit/home_dashboard_cubit.dart';
 import 'package:elfulk/src/features/app_features/home/ui/screens/home_screen.dart';
@@ -276,6 +278,84 @@ void main() {
     await tester.tap(find.text('إشعارات التنبيهات الحرجة.'));
     await tester.pump();
     expect(tapped, isTrue);
+  });
+
+  testWidgets('fix-64: dashed tile dividers carry unique keys', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      ScreenUtilInit(
+        designSize: const Size(390, 844),
+        minTextAdapt: true,
+        builder: (context, child) => const MaterialApp(
+          home: Scaffold(
+            body: SettingsListTile(
+              title: 'اللغة',
+              subtitle: 'وصف',
+              dashedDivider: true,
+            ),
+          ),
+        ),
+      ),
+    );
+
+    // Mid + bottom dashed dividers both render with distinct keys,
+    // and the old duplicated inner key is gone.
+    expect(find.byType(AppDashedDivider), findsNWidgets(2));
+    expect(
+      find.byKey(const ValueKey('settings-tile-divider-mid')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('settings-tile-divider')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('app-dashed-divider')),
+      findsNothing,
+    );
+  });
+
+  testWidgets('fix-64: time picker frame rules carry unique keys', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      ScreenUtilInit(
+        designSize: const Size(390, 844),
+        minTextAdapt: true,
+        builder: (context, child) => MaterialApp(
+          home: Builder(
+            builder: (context) => Scaffold(
+              body: TextButton(
+                onPressed: () => showTimePickerSheet(
+                  context: context,
+                  title: 'المدة اليومية',
+                  saveLabel: 'حفظ',
+                  columns: const [
+                    PickerColumnData(values: ['01', '02', '03']),
+                  ],
+                ),
+                child: const Text('open-picker'),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    await tester.tap(find.text('open-picker'));
+    await tester.pumpAndSettle();
+
+    // Both frame rules render with distinct keys (no duplicates).
+    expect(find.byType(AppDashedDivider), findsNWidgets(2));
+    expect(
+      find.byKey(const ValueKey('time-picker-rule-top')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('time-picker-rule-bottom')),
+      findsOneWidget,
+    );
   });
 
   testWidgets('settings tile renders its own card background', (
