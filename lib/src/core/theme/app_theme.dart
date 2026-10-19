@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:elfulk/src/core/constants/app_raduis.dart';
 import 'package:elfulk/src/core/theme/app_colors.dart';
+import 'package:elfulk/src/core/theme/app_fonts.dart';
 
 ThemeData buildLightTheme() => _buildTheme(const AppColors.light());
 
@@ -28,6 +29,7 @@ ThemeData _buildTheme(AppColors colors) {
     useMaterial3: true,
     colorScheme: colorScheme,
     brightness: brightness,
+    fontFamily: AppFonts.parent,
   );
 
   return baseTheme.copyWith(
@@ -89,52 +91,93 @@ ThemeData _buildTheme(AppColors colors) {
       ),
     ),
     textTheme: baseTheme.textTheme.copyWith(
+      displayLarge: baseTheme.textTheme.displayLarge?.copyWith(
+        fontSize: 40.sp,
+        height: 1.2,
+        color: colors.text,
+        fontWeight: FontWeight.w800,
+      ),
+      displayMedium: baseTheme.textTheme.displayMedium?.copyWith(
+        fontSize: 34.sp,
+        height: 1.2,
+        color: colors.text,
+        fontWeight: FontWeight.w800,
+      ),
       displaySmall: baseTheme.textTheme.displaySmall?.copyWith(
-        fontSize: 36.sp,
+        fontSize: 28.sp,
+        height: 1.25,
         color: colors.text,
         fontWeight: FontWeight.w800,
       ),
       headlineLarge: baseTheme.textTheme.headlineLarge?.copyWith(
-        fontSize: 32.sp,
+        fontSize: 26.sp,
+        height: 1.25,
         color: colors.text,
         fontWeight: FontWeight.w800,
       ),
       headlineMedium: baseTheme.textTheme.headlineMedium?.copyWith(
-        fontSize: 28.sp,
+        fontSize: 22.sp,
+        height: 1.25,
         color: colors.text,
         fontWeight: FontWeight.w800,
       ),
       headlineSmall: baseTheme.textTheme.headlineSmall?.copyWith(
-        fontSize: 24.sp,
+        fontSize: 20.sp,
+        height: 1.3,
         color: colors.text,
-        fontWeight: FontWeight.w800,
+        fontWeight: FontWeight.w700,
       ),
       titleLarge: baseTheme.textTheme.titleLarge?.copyWith(
-        fontSize: 20.sp,
+        fontSize: 18.sp,
+        height: 1.3,
         color: colors.text,
         fontWeight: FontWeight.w700,
       ),
       titleMedium: baseTheme.textTheme.titleMedium?.copyWith(
-        fontSize: 18.sp,
+        fontSize: 16.sp,
+        height: 1.35,
         color: colors.text,
         fontWeight: FontWeight.w700,
       ),
+      titleSmall: baseTheme.textTheme.titleSmall?.copyWith(
+        fontSize: 14.sp,
+        height: 1.35,
+        color: colors.text,
+        fontWeight: FontWeight.w600,
+      ),
       bodyLarge: baseTheme.textTheme.bodyLarge?.copyWith(
-        fontSize: 16.sp,
+        fontSize: 18.sp,
+        height: 24 / 18,
         color: colors.textMuted,
-        height: 1.45,
+        fontWeight: FontWeight.w400,
       ),
       bodyMedium: baseTheme.textTheme.bodyMedium?.copyWith(
-        fontSize: 14.sp,
+        fontSize: 16.sp,
+        height: 22 / 16,
         color: colors.textMuted,
-        height: 1.5,
+        fontWeight: FontWeight.w400,
       ),
       bodySmall: baseTheme.textTheme.bodySmall?.copyWith(
-        fontSize: 12.sp,
+        fontSize: 14.sp,
+        height: 20 / 14,
         color: colors.textMuted,
+        fontWeight: FontWeight.w400,
       ),
-      labelLarge: baseTheme.textTheme.labelLarge?.copyWith(fontSize: 14.sp),
-      labelMedium: baseTheme.textTheme.labelMedium?.copyWith(fontSize: 12.sp),
+      labelLarge: baseTheme.textTheme.labelLarge?.copyWith(
+        fontSize: 14.sp,
+        height: 18 / 14,
+        fontWeight: FontWeight.w600,
+      ),
+      labelMedium: baseTheme.textTheme.labelMedium?.copyWith(
+        fontSize: 12.sp,
+        height: 14 / 12,
+        fontWeight: FontWeight.w600,
+      ),
+      labelSmall: baseTheme.textTheme.labelSmall?.copyWith(
+        fontSize: 11.sp,
+        height: 14 / 11,
+        fontWeight: FontWeight.w500,
+      ),
     ),
   );
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:elfulk/src/core/config/app_environment.dart';
@@ -27,6 +28,13 @@ class ElFulkApp extends StatelessWidget {
               return MaterialApp.router(
                 debugShowCheckedModeBanner: false,
                 title: environment.appName,
+                locale: const Locale('ar'),
+                supportedLocales: const <Locale>[Locale('ar')],
+                localizationsDelegates: const <LocalizationsDelegate<dynamic>>[
+                  GlobalMaterialLocalizations.delegate,
+                  GlobalWidgetsLocalizations.delegate,
+                  GlobalCupertinoLocalizations.delegate,
+                ],
                 theme: buildLightTheme(),
                 darkTheme: buildDarkTheme(),
                 themeMode: state.mode,

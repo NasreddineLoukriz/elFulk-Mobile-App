@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'package:elfulk/src/core/theme/app_fonts.dart';
+import 'package:elfulk/src/core/theme/app_theme.dart';
 
 import 'package:elfulk/src/core/widgets/app_badge.dart';
 import 'package:elfulk/src/core/theme/logic/cubit/theme_cubit.dart';
@@ -1217,5 +1221,65 @@ void main() {
     await tester.ensureVisible(find.text('مكتبة الألعاب'));
     await tester.pumpAndSettle();
     expect(find.text('مكتبة الألعاب'), findsOneWidget);
+  });
+
+  testWidgets('theme uses Lama Sans and the handoff text scale', (
+    WidgetTester tester,
+  ) async {
+    tester.view.physicalSize = const Size(390, 844);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await tester.pumpWidget(
+      ScreenUtilInit(
+        designSize: const Size(390, 844),
+        minTextAdapt: true,
+        builder: (context, child) => const SizedBox.shrink(),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final TextTheme light = buildLightTheme().textTheme;
+    final TextTheme dark = buildDarkTheme().textTheme;
+
+    expect(light.bodyMedium?.fontFamily, 'LamaSans');
+    expect(dark.bodyMedium?.fontFamily, 'LamaSans');
+    expect(AppFonts.child, 'BalooBhaijaan2');
+
+    expect(light.displayLarge?.fontSize, 40);
+    expect(light.displayMedium?.fontSize, 34);
+    expect(light.displaySmall?.fontSize, 28);
+    expect(light.headlineLarge?.fontSize, 26);
+    expect(light.headlineMedium?.fontSize, 22);
+    expect(light.headlineSmall?.fontSize, 20);
+    expect(light.titleLarge?.fontSize, 18);
+    expect(light.titleMedium?.fontSize, 16);
+    expect(light.bodyLarge?.fontSize, 18);
+    expect(light.bodyMedium?.fontSize, 16);
+    expect(light.bodySmall?.fontSize, 14);
+    expect(light.labelMedium?.fontSize, 12);
+    expect(light.labelSmall?.fontSize, 11);
+  });
+
+  testWidgets('app boots in Arabic RTL', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        locale: const Locale('ar'),
+        supportedLocales: const <Locale>[Locale('ar')],
+        localizationsDelegates: const <LocalizationsDelegate<dynamic>>[
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        home: Builder(
+          builder: (BuildContext context) {
+            expect(Directionality.of(context), TextDirection.rtl);
+            return const Scaffold(body: SizedBox.shrink());
+          },
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
   });
 }
