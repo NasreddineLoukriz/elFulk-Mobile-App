@@ -9,6 +9,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
   cupertino_icons: ^1.0.9
   flutter_svg: ^2.3.0
   firebase_core: ^4.14.0
@@ -42,6 +44,17 @@ flutter:
   assets:
     - assets/images/
     - assets/icons/
-    
+  fonts:
+    - family: LamaSans
+      fonts:
+        - asset: assets/fonts/parent/LamaSans-Regular.otf
+          weight: 400
+        - asset: assets/fonts/parent/LamaSans-Bold.otf
+          weight: 700
+    - family: BalooBhaijaan2
+      fonts:
+        - asset: assets/fonts/child/BalooBhaijaan2[wght].ttf
+          weight: 400
+
 
 
