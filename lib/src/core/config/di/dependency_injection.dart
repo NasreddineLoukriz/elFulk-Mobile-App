@@ -8,6 +8,8 @@ import 'package:elfulk/src/core/networking/helper/api_constants.dart';
 import 'package:elfulk/src/core/networking/helper/dio_factory.dart';
 import 'package:elfulk/src/core/networking/parent/parent_api_service.dart';
 import 'package:elfulk/src/features/app_features/architecture/data/repos/architecture_repository.dart';
+import 'package:elfulk/src/features/app_features/auth/data/repos/auth_repository.dart';
+import 'package:elfulk/src/features/app_features/auth/logic/cubit/auth_cubit.dart';
 import 'package:elfulk/src/features/app_features/architecture/logic/cubit/architecture_cubit.dart';
 import 'package:elfulk/src/features/app_features/home/data/repos/home_dashboard_repository.dart';
 import 'package:elfulk/src/features/app_features/home/data/repos/home_repository.dart';
@@ -60,8 +62,12 @@ Future<void> setupGetIt(AppEnvironment environment) async {
   getIt.registerLazySingleton<ArchitectureRepository>(
     () => ArchitectureRepository(getIt<AppEnvironment>()),
   );
+  getIt.registerLazySingleton<AuthRepository>(
+    () => AuthRepository(getIt<AppApiService>()),
+  );
 
   getIt.registerFactory<HomeCubit>(() => HomeCubit(getIt<HomeRepository>()));
+  getIt.registerFactory<AuthCubit>(() => AuthCubit(getIt<AuthRepository>()));
   getIt.registerFactory<HomeDashboardCubit>(
     () => HomeDashboardCubit(const HomeDashboardRepository()),
   );

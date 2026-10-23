@@ -23,6 +23,7 @@ class Routes {
   static const String registerScreen = '/register';
   static const String otpVerificationScreen = '/otp-verification';
   static const String forgetPasswordScreen = '/forget-password';
+  static const String resetPasswordScreen = '/reset-password';
   static const String addChildScreen = '/parent/add-child';
   static const String addNewChildScreen = '/parent/add-new-child';
   static const String parentHomeScreen = '/parent';
@@ -95,6 +96,12 @@ class Routes {
       path: forgetPasswordScreen,
       label: 'Forget Password',
       category: RouteCategory.screen,
+    ),
+    RouteCatalogItem(
+      path: resetPasswordScreen,
+      label: 'Reset Password',
+      category: RouteCategory.screen,
+      description: 'Set a new password after a successful reset OTP.',
     ),
     RouteCatalogItem(
       path: addChildScreen,
