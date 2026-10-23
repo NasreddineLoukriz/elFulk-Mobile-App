@@ -4,7 +4,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:elfulk/src/core/config/di/dependency_injection.dart';
+import 'package:elfulk/src/features/app_features/auth/logic/cubit/auth_cubit.dart';
 import 'package:elfulk/src/features/app_features/auth/ui/screens/login_screen.dart';
+import 'package:elfulk/src/features/app_features/auth/ui/screens/reset_password_screen.dart';
 import 'package:elfulk/src/features/app_features/auth/ui/screens/register_screen.dart';
 import 'package:elfulk/src/features/app_features/auth/ui/screens/forget_password_screen.dart';
 import 'package:elfulk/src/features/app_features/architecture/logic/cubit/architecture_cubit.dart';
@@ -256,12 +258,22 @@ class AppRouter {
         GoRoute(
           path: Routes.loginScreen,
           pageBuilder: (BuildContext context, GoRouterState state) =>
-              const MaterialPage<void>(child: LoginScreen()),
+              MaterialPage<void>(
+                child: BlocProvider<AuthCubit>(
+                  create: (_) => getIt<AuthCubit>(),
+                  child: const LoginScreen(),
+                ),
+              ),
         ),
         GoRoute(
           path: Routes.registerScreen,
           pageBuilder: (BuildContext context, GoRouterState state) =>
-              const MaterialPage<void>(child: RegisterScreen()),
+              MaterialPage<void>(
+                child: BlocProvider<AuthCubit>(
+                  create: (_) => getIt<AuthCubit>(),
+                  child: const RegisterScreen(),
+                ),
+              ),
         ),
         GoRoute(
           path: Routes.otpVerificationScreen,
@@ -277,6 +289,11 @@ class AppRouter {
           path: Routes.forgetPasswordScreen,
           pageBuilder: (BuildContext context, GoRouterState state) =>
               const MaterialPage<void>(child: ForgetPasswordScreen()),
+        ),
+        GoRoute(
+          path: Routes.resetPasswordScreen,
+          pageBuilder: (BuildContext context, GoRouterState state) =>
+              const MaterialPage<void>(child: ResetPasswordScreen()),
         ),
         GoRoute(
           path: Routes.addChildScreen,

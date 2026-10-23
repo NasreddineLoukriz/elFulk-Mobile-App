@@ -7,12 +7,16 @@ class FooterText extends StatefulWidget {
   final VoidCallback onActionTap;
   final int? countdownSeconds;
 
+  /// تغيير القيمة يعيد تشغيل العدّاد (يُستخدم عند إعادة إرسال الرمز).
+  final int restartToken;
+
   const FooterText({
     super.key,
     required this.questionText,
     required this.actionText,
     required this.onActionTap,
     this.countdownSeconds,
+    this.restartToken = 0,
   });
 
   @override
@@ -54,6 +58,16 @@ class _FooterTextState extends State<FooterText> {
   }
 
   @override
+  void didUpdateWidget(covariant FooterText oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.restartToken != widget.restartToken &&
+        widget.countdownSeconds != null &&
+        widget.countdownSeconds! > 0) {
+      _startCountdown(widget.countdownSeconds!);
+    }
+  }
+
+  @override
   void dispose() {
     _timer?.cancel();
     super.dispose();
@@ -63,11 +77,12 @@ class _FooterTextState extends State<FooterText> {
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
     final String displayActionText = _isCountdownActive
-        ? '${(_currentSeconds ~/ 60)}:${(_currentSeconds % 60).toString().padLeft(2, '0')}'
+        ? '${(_currentSeconds ~/ 60).toString().padLeft(2, '0')}:${(_currentSeconds % 60).toString().padLeft(2, '0')}'
         : widget.actionText;
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+    return Wrap(
+      alignment: WrapAlignment.center,
+      crossAxisAlignment: WrapCrossAlignment.center,
       children: [
         Text(
           widget.questionText,

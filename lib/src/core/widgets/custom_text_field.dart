@@ -11,6 +11,10 @@ class CustomTextField extends StatefulWidget {
   final TextEditingController? controller;
   final TextInputType? keyboardType;
   final bool hasError;
+  final String? errorText;
+  final ValueChanged<String>? onChanged;
+  final TextInputAction? textInputAction;
+  final ValueChanged<String>? onFieldSubmitted;
 
   const CustomTextField({
     super.key,
@@ -20,6 +24,10 @@ class CustomTextField extends StatefulWidget {
     this.controller,
     this.keyboardType,
     this.hasError = false,
+    this.errorText,
+    this.onChanged,
+    this.textInputAction,
+    this.onFieldSubmitted,
   });
 
   @override
@@ -32,20 +40,27 @@ class _CustomTextFieldState extends State<CustomTextField> {
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
+    final bool hasError = widget.hasError || widget.errorText != null;
     final Color borderColor =
-        widget.hasError ? theme.colorScheme.error : theme.colorScheme.outline;
+        hasError ? theme.colorScheme.error : theme.colorScheme.outline;
     final Color focusedBorderColor =
-        widget.hasError ? theme.colorScheme.error : theme.colorScheme.primary;
+        hasError ? theme.colorScheme.error : theme.colorScheme.primary;
 
     return TextField(
       controller: widget.controller,
       obscureText: widget.isPassword ? _isObscured : false,
       keyboardType: widget.keyboardType,
+      textInputAction: widget.textInputAction,
+      onSubmitted: widget.onFieldSubmitted,
+      onChanged: widget.onChanged,
       decoration: InputDecoration(
         hintText: widget.hintText,
-        hintStyle: theme.textTheme.bodyMedium?.copyWith(
+        errorText: widget.errorText,
+        errorStyle: theme.textTheme.bodySmall?.copyWith(
+          color: theme.colorScheme.error,
+        ),
+        hintStyle: theme.textTheme.bodySmall?.copyWith(
           color: theme.colorScheme.onSurface.withValues(alpha: 0.4),
-          fontSize: 13.sp,
         ),
         prefixIcon: Padding(
           padding: EdgeInsets.all(context.spacing.m.r),
